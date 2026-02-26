@@ -276,6 +276,7 @@ class GameSession {
     this.questionStartTime = Date.now();
     this.roundAnswers = new Map();
     this._roundParticipants = new Set();
+    this._shuffledAnswerKey = null;
 
     const qData = {
       index: this.currentIndex,
@@ -289,12 +290,15 @@ class GameSession {
 
     if (qData.type === 'abcd') {
       if (this.shuffleOptions) {
-        const { shuffled } = shuffleOptions(this.currentQuestion.options);
+        const { shuffled, mapping } = shuffleOptions(this.currentQuestion.options);
         qData.options = shuffled;
         this._currentShuffledOptions = shuffled;
+        const origAnswer = this.currentQuestion.answer;
+        this._shuffledAnswerKey = Object.keys(mapping).find(k => mapping[k] === origAnswer) || origAnswer;
       } else {
         qData.options = this.currentQuestion.options;
         this._currentShuffledOptions = this.currentQuestion.options;
+        this._shuffledAnswerKey = this.currentQuestion.answer;
       }
     }
 
@@ -338,7 +342,9 @@ class GameSession {
     }
 
     const timeElapsed = Date.now() - this.questionStartTime;
-    const isCorrect = checkAnswer(this.currentQuestion, answer);
+    const isCorrect = (!isFree && this._shuffledAnswerKey)
+      ? normalizeAnswer(answer) === normalizeAnswer(this._shuffledAnswerKey)
+      : checkAnswer(this.currentQuestion, answer);
     const pointsAwarded = isCorrect ? calculatePoints() : 0;
 
     if (!isFree || isCorrect) {
@@ -443,8 +449,9 @@ class GameSession {
   _getCorrectAnswerText() {
     if (!this.currentQuestion) return '';
     if (this.currentQuestion.type === 'abcd') {
-      const key = this.currentQuestion.answer;
-      return `${key}) ${this.currentQuestion.options[key]}`;
+      const key = this._shuffledAnswerKey || this.currentQuestion.answer;
+      const options = this._currentShuffledOptions || this.currentQuestion.options;
+      return `${key}) ${options[key]}`;
     }
     const ans = this.currentQuestion.answer;
     return Array.isArray(ans) ? ans[0] : ans;
