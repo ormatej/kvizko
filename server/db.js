@@ -102,7 +102,13 @@ const stmts = {
     SELECT p.nickname, p.email FROM scores s
     JOIN players p ON p.id = s.player_id
     WHERE s.game_id = ?
-  `)
+  `),
+
+  resetLeaderboard: db.transaction(() => {
+    db.prepare('DELETE FROM answer_log').run();
+    db.prepare('DELETE FROM scores').run();
+    db.prepare('DELETE FROM games').run();
+  })
 };
 
 module.exports = { db, stmts };

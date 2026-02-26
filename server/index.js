@@ -116,6 +116,18 @@ app.get('/api/leaderboard', (req, res) => {
   res.json(stmts.getLeaderboard.all());
 });
 
+app.delete('/api/leaderboard', (req, res) => {
+  if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    stmts.resetLeaderboard();
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // --- Socket.IO ---
 
 function wireGameEvents(session) {

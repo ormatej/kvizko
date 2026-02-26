@@ -116,6 +116,9 @@
             <button class="btn-sm" id="exportLeadsBtn">Export Leads (CSV)</button>
             <button class="btn-sm" id="exportScoresBtn">Export Scores (CSV)</button>
           </div>
+          <div style="margin-top:12px;">
+            <button class="btn-sm danger" id="resetLeaderboardBtn">Reset Leaderboard</button>
+          </div>
         </div>
       </div>
     </div>
@@ -389,6 +392,22 @@
       a.href = url; a.download = filename; a.click();
       URL.revokeObjectURL(url);
     }
+
+    // Reset Leaderboard
+    document.getElementById('resetLeaderboardBtn').addEventListener('click', async () => {
+      if (!confirm('This will delete ALL game scores, answer logs, and game history. Continue?')) return;
+      try {
+        const res = await fetch('/api/leaderboard', {
+          method: 'DELETE',
+          headers: { 'x-admin-password': adminPassword }
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        log('Leaderboard reset successfully');
+      } catch (err) {
+        log(`Reset error: ${err.message}`);
+      }
+    });
 
     // Log
     function log(msg) {
