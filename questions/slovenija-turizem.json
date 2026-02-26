@@ -1,0 +1,1071 @@
+{
+  "title": "Koliko poznaš Slovenijo?",
+  "description": "Zabaven kviz o Sloveniji – geografija, kultura, narava, hrana in znamenitosti. Preizkusi svoje znanje!",
+  "settings": {
+    "timePerQuestion": 30,
+    "hintsEnabled": true,
+    "shuffleQuestions": true,
+    "shuffleOptions": true
+  },
+  "questions": [
+    {
+      "type": "abcd",
+      "question": "Kako se imenuje najdaljša reka, ki teče po Sloveniji?",
+      "options": {
+        "A": "Sava",
+        "B": "Drava",
+        "C": "Soča",
+        "D": "Krka"
+      },
+      "answer": "A",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri je najvišji vrh Slovenije?",
+      "options": {
+        "A": "Škrlatica",
+        "B": "Triglav",
+        "C": "Mangart",
+        "D": "Jalovec"
+      },
+      "answer": "B",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje edino slovensko pristanišče na Jadranu?",
+      "answer": [
+        "Koper",
+        "koper",
+        "Luka Koper"
+      ],
+      "category": "Geografija",
+      "difficulty": 1,
+      "hint": "K____"
+    },
+    {
+      "type": "abcd",
+      "question": "Koliko sosednjih držav ima Slovenija?",
+      "options": {
+        "A": "3",
+        "B": "4",
+        "C": "5",
+        "D": "2"
+      },
+      "answer": "B",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katera jama je med najbolj znanimi turističnimi jamami na svetu in se nahaja v Sloveniji?",
+      "options": {
+        "A": "Škocjanske jame",
+        "B": "Postojnska jama",
+        "C": "Križna jama",
+        "D": "Vilenica"
+      },
+      "answer": "B",
+      "category": "Znamenitosti",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje slavni beli konji, ki jih vzrejajo v Lipici?",
+      "answer": [
+        "Lipicanci",
+        "lipicanci",
+        "Lipicanec",
+        "lipicanec",
+        "Lipicaner"
+      ],
+      "category": "Kultura",
+      "difficulty": 1,
+      "hint": "L________"
+    },
+    {
+      "type": "abcd",
+      "question": "V katerem mestu stoji Prešernov spomenik na osrednjem trgu?",
+      "options": {
+        "A": "Maribor",
+        "B": "Ljubljana",
+        "C": "Celje",
+        "D": "Kranj"
+      },
+      "answer": "B",
+      "category": "Znamenitosti",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katera slovensko obmorsko mesto je znano po solnih poljih?",
+      "options": {
+        "A": "Portorož",
+        "B": "Izola",
+        "C": "Piran",
+        "D": "Sečovlje"
+      },
+      "answer": "C",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje jezero s cerkvijo na otoku, ki je eden najbolj fotografiranih krajev v Sloveniji?",
+      "answer": [
+        "Bled",
+        "bled",
+        "Blejsko jezero",
+        "blejsko jezero",
+        "Jezero Bled"
+      ],
+      "category": "Znamenitosti",
+      "difficulty": 1,
+      "hint": "B___"
+    },
+    {
+      "type": "abcd",
+      "question": "Katera žival živi v Postojnski jami in ji pravijo 'človeška ribica'?",
+      "options": {
+        "A": "Postranica",
+        "B": "Močeril",
+        "C": "Piškur",
+        "D": "Človeška ribica (proteus)"
+      },
+      "answer": "D",
+      "category": "Narava",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katero mesto je drugo največje v Sloveniji?",
+      "options": {
+        "A": "Celje",
+        "B": "Kranj",
+        "C": "Maribor",
+        "D": "Koper"
+      },
+      "answer": "C",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje tradicionalna slovenska jed iz ajdove kaše, ki jo postrežejo kot prilogo?",
+      "answer": [
+        "Žganci",
+        "žganci",
+        "Zganci",
+        "zganci",
+        "Ajdovi žganci",
+        "ajdovi žganci"
+      ],
+      "category": "Kulinarika",
+      "difficulty": 2,
+      "hint": "Ž_____"
+    },
+    {
+      "type": "abcd",
+      "question": "V katero morje ima Slovenija izhod?",
+      "options": {
+        "A": "Sredozemsko morje",
+        "B": "Jadransko morje",
+        "C": "Črno morje",
+        "D": "Baltsko morje"
+      },
+      "answer": "B",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kako se imenuje najstarejša trta na svetu, ki raste v Mariboru?",
+      "options": {
+        "A": "Stara trta",
+        "B": "Zlata trta",
+        "C": "Trta upanja",
+        "D": "Marijina trta"
+      },
+      "answer": "A",
+      "category": "Znamenitosti",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje tradicionalna slovenska potica?",
+      "answer": [
+        "Potica",
+        "potica",
+        "Orehova potica",
+        "orehova potica"
+      ],
+      "category": "Kulinarika",
+      "difficulty": 1,
+      "hint": "P_____"
+    },
+    {
+      "type": "abcd",
+      "question": "Na katerem slovenskem gradu so snemali sceno iz filma o Hannibalu?",
+      "options": {
+        "A": "Grad Snežnik",
+        "B": "Predjamski grad",
+        "C": "Ljubljanski grad",
+        "D": "Blejski grad"
+      },
+      "answer": "B",
+      "category": "Znamenitosti",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Katera slovenska pokrajina je znana po vinogradih in termah?",
+      "options": {
+        "A": "Gorenjska",
+        "B": "Koroška",
+        "C": "Štajerska",
+        "D": "Notranjska"
+      },
+      "answer": "C",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje slovenska prestolnica?",
+      "answer": [
+        "Ljubljana",
+        "ljubljana"
+      ],
+      "category": "Geografija",
+      "difficulty": 1,
+      "hint": "L________"
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri slovenski arhitekt je zasnoval Tromostovje in Narodno in univerzitetno knjižnico v Ljubljani?",
+      "options": {
+        "A": "Ivan Cankar",
+        "B": "Jože Plečnik",
+        "C": "Boris Podrecca",
+        "D": "Max Fabiani"
+      },
+      "answer": "B",
+      "category": "Kultura",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Koliko dolga je slovenska obala (približno)?",
+      "options": {
+        "A": "Približno 47 km",
+        "B": "Približno 120 km",
+        "C": "Približno 200 km",
+        "D": "Približno 15 km"
+      },
+      "answer": "A",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje reka smaragdno zelene barve, ki teče skozi Sočo dolino?",
+      "answer": [
+        "Soča",
+        "soča",
+        "Soca",
+        "soca"
+      ],
+      "category": "Narava",
+      "difficulty": 1,
+      "hint": "S___"
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri narodni park se nahaja v Julijskih Alpah?",
+      "options": {
+        "A": "Kozjanski park",
+        "B": "Triglavski narodni park",
+        "C": "Notranjski park",
+        "D": "Goričko"
+      },
+      "answer": "B",
+      "category": "Narava",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katero slovensko mesto je znano po karnevalu – Kurentovanju?",
+      "options": {
+        "A": "Ljubljana",
+        "B": "Maribor",
+        "C": "Ptuj",
+        "D": "Celje"
+      },
+      "answer": "C",
+      "category": "Kultura",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje otoček na Blejskem jezeru?",
+      "answer": [
+        "Blejski otok",
+        "blejski otok",
+        "Otok",
+        "otok"
+      ],
+      "category": "Znamenitosti",
+      "difficulty": 1,
+      "hint": "Blejski o___"
+    },
+    {
+      "type": "abcd",
+      "question": "Iz katere države je Slovenija razglasila neodvisnost leta 1991?",
+      "options": {
+        "A": "Avstrija",
+        "B": "Jugoslavija",
+        "C": "Italija",
+        "D": "Madžarska"
+      },
+      "answer": "B",
+      "category": "Zgodovina",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katero slovensko zdravilišče je eno najstarejših v Evropi?",
+      "options": {
+        "A": "Terme Čatež",
+        "B": "Rogaška Slatina",
+        "C": "Terme Olimia",
+        "D": "Radenci"
+      },
+      "answer": "B",
+      "category": "Turizem",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje najvišji slap v Sloveniji?",
+      "answer": [
+        "Boka",
+        "boka",
+        "Slap Boka"
+      ],
+      "category": "Narava",
+      "difficulty": 2,
+      "hint": "B___"
+    },
+    {
+      "type": "abcd",
+      "question": "Katero slovensko mesto je bilo Evropska prestolnica kulture leta 2012?",
+      "options": {
+        "A": "Ljubljana",
+        "B": "Novo mesto",
+        "C": "Maribor",
+        "D": "Koper"
+      },
+      "answer": "C",
+      "category": "Kultura",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Katera žival je simbol Triglavskega narodnega parka?",
+      "options": {
+        "A": "Medved",
+        "B": "Ris",
+        "C": "Kozorog",
+        "D": "Volk"
+      },
+      "answer": "C",
+      "category": "Narava",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje znana slovenska kremna rezina, ki prihaja z Bleda?",
+      "answer": [
+        "Kremna rezina",
+        "kremna rezina",
+        "Kremšnita",
+        "kremšnita",
+        "kremshnita",
+        "Blejska kremna rezina"
+      ],
+      "category": "Kulinarika",
+      "difficulty": 1,
+      "hint": "K_____ r_____"
+    },
+    {
+      "type": "abcd",
+      "question": "Katera država NE meji na Slovenijo?",
+      "options": {
+        "A": "Avstrija",
+        "B": "Hrvaška",
+        "C": "Slovaška",
+        "D": "Madžarska"
+      },
+      "answer": "C",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Koliko prebivalcev ima Slovenija (približno)?",
+      "options": {
+        "A": "Približno 500.000",
+        "B": "Približno 2 milijona",
+        "C": "Približno 5 milijonov",
+        "D": "Približno 10 milijonov"
+      },
+      "answer": "B",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje maskota pustnega karnevala iz Ptuja?",
+      "answer": [
+        "Kurent",
+        "kurent",
+        "Korant",
+        "korant"
+      ],
+      "category": "Kultura",
+      "difficulty": 1,
+      "hint": "K_____"
+    },
+    {
+      "type": "abcd",
+      "question": "V katerem slovenskem mestu se nahaja najstarejša trta na svetu?",
+      "options": {
+        "A": "Ljubljana",
+        "B": "Celje",
+        "C": "Ptuj",
+        "D": "Maribor"
+      },
+      "answer": "D",
+      "category": "Znamenitosti",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katero jezero v Sloveniji je znano po svoji spremenljivi gladini in občasnem izginjanju?",
+      "options": {
+        "A": "Blejsko jezero",
+        "B": "Bohinjsko jezero",
+        "C": "Cerkniško jezero",
+        "D": "Zbiljsko jezero"
+      },
+      "answer": "C",
+      "category": "Narava",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje znani slovenski pesnik, po katerem je poimenovan osrednji trg v Ljubljani?",
+      "answer": [
+        "Prešeren",
+        "preseren",
+        "France Prešeren",
+        "France Preseren",
+        "Prešern",
+        "Presern"
+      ],
+      "category": "Kultura",
+      "difficulty": 1,
+      "hint": "P_______ (France)"
+    },
+    {
+      "type": "abcd",
+      "question": "Katera slovenska jed ima zaščiteno označbo porekla v EU?",
+      "options": {
+        "A": "Pica",
+        "B": "Kraški pršut",
+        "C": "Hamburger",
+        "D": "Tortilija"
+      },
+      "answer": "B",
+      "category": "Kulinarika",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri zmaj krasi Zmajski most v Ljubljani?",
+      "options": {
+        "A": "Zlati zmaj",
+        "B": "Bakreni zmaj",
+        "C": "Ljubljanski zmaj",
+        "D": "Ognjeni zmaj"
+      },
+      "answer": "C",
+      "category": "Znamenitosti",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "V katero gorsko verigo spadajo Julijske Alpe?",
+      "answer": [
+        "Alpe",
+        "alpe",
+        "Jugovzhodne Alpe",
+        "Južne Alpe"
+      ],
+      "category": "Geografija",
+      "difficulty": 1,
+      "hint": "A___"
+    },
+    {
+      "type": "abcd",
+      "question": "Katera je uradna valuta v Sloveniji?",
+      "options": {
+        "A": "Slovenski tolar",
+        "B": "Evro",
+        "C": "Hrvaška kuna",
+        "D": "Švicarski frank"
+      },
+      "answer": "B",
+      "category": "Splošno",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Koliko je visok Triglav (v metrih)?",
+      "options": {
+        "A": "2.864 m",
+        "B": "3.100 m",
+        "C": "2.500 m",
+        "D": "1.948 m"
+      },
+      "answer": "A",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje predor pod Karavankami, ki povezuje Slovenijo z Avstrijo?",
+      "answer": [
+        "Karavanški predor",
+        "karavanški predor",
+        "Predor Karavanke",
+        "predor Karavanke",
+        "Karavanke"
+      ],
+      "category": "Turizem",
+      "difficulty": 2,
+      "hint": "K_________ predor"
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri je najstarejši grad v Sloveniji?",
+      "options": {
+        "A": "Ljubljanski grad",
+        "B": "Blejski grad",
+        "C": "Grad Snežnik",
+        "D": "Predjamski grad"
+      },
+      "answer": "B",
+      "category": "Znamenitosti",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kje se nahajajo Škocjanske jame, ki so na UNESCO seznamu?",
+      "options": {
+        "A": "Na Gorenjskem",
+        "B": "Na Krasu",
+        "C": "V Prekmurju",
+        "D": "Na Koroškem"
+      },
+      "answer": "B",
+      "category": "Znamenitosti",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje tradicionalna slovenska jed iz krompirjevega testa z nadevom?",
+      "answer": [
+        "Štruklji",
+        "štruklji",
+        "Struklji",
+        "struklji",
+        "Idrijski žlikrofi",
+        "žlikrofi",
+        "Zlikrofi"
+      ],
+      "category": "Kulinarika",
+      "difficulty": 2,
+      "hint": "Ž_______ ali Š______"
+    },
+    {
+      "type": "abcd",
+      "question": "Na kateri slovenski reki je mogoče s kajakom ali raftingom doživeti pravo pustolovščino?",
+      "options": {
+        "A": "Ljubljanica",
+        "B": "Soča",
+        "C": "Mura",
+        "D": "Krka"
+      },
+      "answer": "B",
+      "category": "Turizem",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katero mesto je znano kot 'mesto cvetja'?",
+      "options": {
+        "A": "Novo mesto",
+        "B": "Velenje",
+        "C": "Celje",
+        "D": "Volčji Potok"
+      },
+      "answer": "D",
+      "category": "Turizem",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje slana, sušena svinjska šunka s Krasa?",
+      "answer": [
+        "Kraški pršut",
+        "kraški pršut",
+        "Pršut",
+        "prsut",
+        "Kraski prsut"
+      ],
+      "category": "Kulinarika",
+      "difficulty": 1,
+      "hint": "K_____ p_____"
+    },
+    {
+      "type": "abcd",
+      "question": "Kdaj praznujemo dan državnosti v Sloveniji?",
+      "options": {
+        "A": "25. junija",
+        "B": "1. maja",
+        "C": "8. februarja",
+        "D": "26. decembra"
+      },
+      "answer": "A",
+      "category": "Zgodovina",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katera slovenska smučarka je ena najuspešnejših vseh časov?",
+      "options": {
+        "A": "Ilka Štuhec",
+        "B": "Tina Maze",
+        "C": "Ana Bucik",
+        "D": "Špela Pretnar"
+      },
+      "answer": "B",
+      "category": "Šport",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje gora, ki je upodobljena na slovenskem grbu in zastavi?",
+      "answer": [
+        "Triglav",
+        "triglav"
+      ],
+      "category": "Splošno",
+      "difficulty": 1,
+      "hint": "T______"
+    },
+    {
+      "type": "abcd",
+      "question": "Katera pokrajina v vzhodni Sloveniji je znana po bučnem olju in prekmurski gibanici?",
+      "options": {
+        "A": "Dolenjska",
+        "B": "Primorska",
+        "C": "Prekmurje",
+        "D": "Gorenjska"
+      },
+      "answer": "C",
+      "category": "Kulinarika",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri slovenski smučarski center je znan po prireditvah za svetovni pokal?",
+      "options": {
+        "A": "Rogla",
+        "B": "Kranjska Gora",
+        "C": "Krvavec",
+        "D": "Vogel"
+      },
+      "answer": "B",
+      "category": "Šport",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje slovenska tradicionalna čebelarska kultura, po kateri je Slovenija znana po celem svetu?",
+      "answer": [
+        "Čebelarstvo",
+        "čebelarstvo",
+        "Cebelarstvo",
+        "cebelarstvo",
+        "Kranjska sivka",
+        "Kranjska čebela"
+      ],
+      "category": "Kultura",
+      "difficulty": 2,
+      "hint": "Č_________"
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri je največji naravni park v Sloveniji?",
+      "options": {
+        "A": "Krajinski park Sečoveljske soline",
+        "B": "Triglavski narodni park",
+        "C": "Notranjski park",
+        "D": "Kozjanski park"
+      },
+      "answer": "B",
+      "category": "Narava",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "S katerim prometnim sredstvom se lahko peljete do Bohinjskega jezera in nato z gondolo na Vogel?",
+      "options": {
+        "A": "Ladja",
+        "B": "Vlak in žičnica",
+        "C": "Podmornica",
+        "D": "Helikopter"
+      },
+      "answer": "B",
+      "category": "Turizem",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje znani prelaz, ki vodi iz Kranjske Gore v Vršič in naprej v Posočje?",
+      "answer": [
+        "Vršič",
+        "vrsic",
+        "Vrsic",
+        "vršič",
+        "Prelaz Vršič"
+      ],
+      "category": "Geografija",
+      "difficulty": 1,
+      "hint": "V_____"
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri praznik je v Sloveniji posvečen kulturi in je hkrati dela prost dan?",
+      "options": {
+        "A": "Prešernov dan (8. februar)",
+        "B": "Gregorjevo",
+        "C": "Jurjevanje",
+        "D": "Martinovanje"
+      },
+      "answer": "A",
+      "category": "Kultura",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri slovenski smučarski skakalec je postavil rekord leta 2005 na 239 metrih?",
+      "options": {
+        "A": "Peter Prevc",
+        "B": "Robert Kranjec",
+        "C": "Primož Peterka",
+        "D": "Rok Benkovič"
+      },
+      "answer": "A",
+      "category": "Šport",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje znano jezero v Triglavskem narodnem parku, ki velja za najgloblje v Sloveniji?",
+      "answer": [
+        "Bohinjsko jezero",
+        "bohinjsko jezero",
+        "Bohinj",
+        "bohinj"
+      ],
+      "category": "Narava",
+      "difficulty": 1,
+      "hint": "B________"
+    },
+    {
+      "type": "abcd",
+      "question": "Kje v Sloveniji najdemo Sečoveljske soline?",
+      "options": {
+        "A": "Na Gorenjskem",
+        "B": "V Prekmurju",
+        "C": "Na Primorskem, blizu Pirana",
+        "D": "Na Koroškem"
+      },
+      "answer": "C",
+      "category": "Narava",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kako imenujemo tradicionalne slovenske lesene čebelnjake s poslikavami?",
+      "options": {
+        "A": "Kozolci",
+        "B": "Panjske končnice",
+        "C": "Mlini",
+        "D": "Skedenj"
+      },
+      "answer": "B",
+      "category": "Kultura",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje jed iz kislega zelja, krompirja, fižola in svinjine, značilna za Slovenijo?",
+      "answer": [
+        "Jota",
+        "jota"
+      ],
+      "category": "Kulinarika",
+      "difficulty": 2,
+      "hint": "J___"
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri grad stoji v stenah pečine in je zapisan v Guinnessovo knjigo rekordov?",
+      "options": {
+        "A": "Grad Otočec",
+        "B": "Predjamski grad",
+        "C": "Grad Žužemberk",
+        "D": "Stari grad Celje"
+      },
+      "answer": "B",
+      "category": "Znamenitosti",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kakšna je slovenska zastava?",
+      "options": {
+        "A": "Rdeča, bela, zelena",
+        "B": "Bela, modra, rdeča z grbom",
+        "C": "Modra, rumena, zelena",
+        "D": "Rdeča z belim križem"
+      },
+      "answer": "B",
+      "category": "Splošno",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "V katerem letu se je Slovenija pridružila Evropski uniji?",
+      "answer": [
+        "2004",
+        "leta 2004"
+      ],
+      "category": "Zgodovina",
+      "difficulty": 2,
+      "hint": "200_"
+    },
+    {
+      "type": "abcd",
+      "question": "Kakšen tip podnebja prevladuje na slovenski obali?",
+      "options": {
+        "A": "Tropsko",
+        "B": "Sredozemsko",
+        "C": "Celinsko",
+        "D": "Polarno"
+      },
+      "answer": "B",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katero slovensko vino je znano po svetu, prihaja pa iz Goriških brd?",
+      "options": {
+        "A": "Cviček",
+        "B": "Rebula",
+        "C": "Teran",
+        "D": "Šipon"
+      },
+      "answer": "B",
+      "category": "Kulinarika",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje tradicionalna slovenska kmetija, ki ponuja domačo hrano?",
+      "answer": [
+        "Turistična kmetija",
+        "turistična kmetija",
+        "Turisticna kmetija",
+        "Gostilna",
+        "Kmetija"
+      ],
+      "category": "Turizem",
+      "difficulty": 2,
+      "hint": "T_________ k______"
+    },
+    {
+      "type": "abcd",
+      "question": "Katera jed je značilna za Idrijo?",
+      "options": {
+        "A": "Gibanica",
+        "B": "Štruklji",
+        "C": "Žlikrofi",
+        "D": "Potica"
+      },
+      "answer": "C",
+      "category": "Kulinarika",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj lahko obiščete v mestu Idrija, povezano z rudarsko dediščino?",
+      "options": {
+        "A": "Rudnik živega srebra",
+        "B": "Rudnik zlata",
+        "C": "Rudnik diamantov",
+        "D": "Rudnik soli"
+      },
+      "answer": "A",
+      "category": "Znamenitosti",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje pogorje na severozahodu Slovenije, v katerem leži Triglav?",
+      "answer": [
+        "Julijske Alpe",
+        "julijske alpe",
+        "Julijske alpe"
+      ],
+      "category": "Geografija",
+      "difficulty": 1,
+      "hint": "J_______ A___"
+    },
+    {
+      "type": "abcd",
+      "question": "Koliko UNESCO krajev ima Slovenija (približno)?",
+      "options": {
+        "A": "1",
+        "B": "3–5",
+        "C": "10",
+        "D": "0"
+      },
+      "answer": "B",
+      "category": "Kultura",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Na katero morsko živali je vezano ime otoka pri Piranu?",
+      "options": {
+        "A": "Na delfina",
+        "B": "Na morsko zvezdo",
+        "C": "Na ničesar – Piran nima otoka",
+        "D": "Na jelko"
+      },
+      "answer": "C",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje dolina vrtnic, znana po sadjarstvu in vinogradništvu, ki leži ob reki Dravi?",
+      "answer": [
+        "Dravska dolina",
+        "dravska dolina",
+        "Podravje",
+        "podravje"
+      ],
+      "category": "Geografija",
+      "difficulty": 2,
+      "hint": "P_______ / Dravska dolina"
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri grad stoji sredi reke Krke in je edini vodni grad v Sloveniji?",
+      "options": {
+        "A": "Grad Turjak",
+        "B": "Grad Otočec",
+        "C": "Grad Mokrice",
+        "D": "Grad Bogenšperk"
+      },
+      "answer": "B",
+      "category": "Znamenitosti",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri slovenski športnik je znan kot 'Tour de France' zmagovalec?",
+      "options": {
+        "A": "Peter Prevc",
+        "B": "Luka Dončić",
+        "C": "Tadej Pogačar",
+        "D": "Jan Oblak"
+      },
+      "answer": "C",
+      "category": "Šport",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje slovenska tradicionalna slaščica iz Prekmurja z makom, orehi, skuto in jabolki?",
+      "answer": [
+        "Prekmurska gibanica",
+        "prekmurska gibanica",
+        "Gibanica",
+        "gibanica"
+      ],
+      "category": "Kulinarika",
+      "difficulty": 1,
+      "hint": "P_________ g_______"
+    },
+    {
+      "type": "abcd",
+      "question": "Katero slovensko mesto leži na sotočju Savinje in Ložnice ter je znano po starem gradu?",
+      "options": {
+        "A": "Kranj",
+        "B": "Celje",
+        "C": "Škofja Loka",
+        "D": "Velenje"
+      },
+      "answer": "B",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V kateri regiji je Planica, dom smučarskih poletov?",
+      "options": {
+        "A": "Primorska",
+        "B": "Štajerska",
+        "C": "Gorenjska",
+        "D": "Koroška"
+      },
+      "answer": "C",
+      "category": "Šport",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje znani kolesarski dogodek, ki poteka po slovenskih cestah vsako leto?",
+      "answer": [
+        "Maraton Franja",
+        "maraton Franja",
+        "Franja",
+        "franja"
+      ],
+      "category": "Šport",
+      "difficulty": 2,
+      "hint": "Maraton F_____"
+    }
+  ]
+}
