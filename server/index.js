@@ -48,6 +48,11 @@ app.get('/api/questions', (req, res) => {
   res.json(listQuestionFiles());
 });
 
+app.get('/api/questions/template', (req, res) => {
+  const filePath = path.join(__dirname, '..', 'questions', '_template.json');
+  res.download(filePath, 'kvizko-template.json');
+});
+
 app.get('/api/questions/:filename', (req, res) => {
   try {
     const data = loadQuestionFile(req.params.filename);

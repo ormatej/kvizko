@@ -1,0 +1,117 @@
+{
+  "title": "My Quiz Title",
+  "description": "A short description of what this quiz is about. This is shown to admins when selecting a question set.",
+  "settings": {
+    "timePerQuestion": 30,
+    "hintsEnabled": true,
+    "shuffleQuestions": true,
+    "shuffleOptions": true
+  },
+  "questions": [
+    {
+      "type": "abcd",
+      "question": "What is the capital of France?",
+      "options": {
+        "A": "London",
+        "B": "Paris",
+        "C": "Berlin",
+        "D": "Madrid"
+      },
+      "answer": "B",
+      "category": "Geography",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Which planet is known as the Red Planet?",
+      "options": {
+        "A": "Venus",
+        "B": "Jupiter",
+        "C": "Mars",
+        "D": "Saturn"
+      },
+      "answer": "C",
+      "category": "Science",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "What is the chemical symbol for gold?",
+      "options": {
+        "A": "Go",
+        "B": "Gd",
+        "C": "Ag",
+        "D": "Au"
+      },
+      "answer": "D",
+      "category": "Science",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "In which year did World War II end?",
+      "options": {
+        "A": "1943",
+        "B": "1944",
+        "C": "1945",
+        "D": "1946"
+      },
+      "answer": "C",
+      "category": "History",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "What does DNA stand for?",
+      "options": {
+        "A": "Deoxyribonucleic Acid",
+        "B": "Dinitrogen Acid",
+        "C": "Dynamic Nuclear Arrangement",
+        "D": "Dual Neutron Assembly"
+      },
+      "answer": "A",
+      "category": "Science",
+      "difficulty": 3
+    },
+    {
+      "type": "free",
+      "question": "What is the largest ocean on Earth?",
+      "answer": ["Pacific", "Pacific Ocean"],
+      "category": "Geography",
+      "difficulty": 1,
+      "hint": "P______"
+    },
+    {
+      "type": "free",
+      "question": "Who painted the Mona Lisa?",
+      "answer": ["Leonardo da Vinci", "Da Vinci", "Leonardo"],
+      "category": "Art",
+      "difficulty": 1,
+      "hint": "Leonardo da V____"
+    },
+    {
+      "type": "free",
+      "question": "What is the speed of light in km/s (rounded)?",
+      "answer": ["300000", "300,000", "300 000"],
+      "category": "Science",
+      "difficulty": 2,
+      "hint": "3_____"
+    },
+    {
+      "type": "free",
+      "question": "What element has the atomic number 1?",
+      "answer": ["Hydrogen", "hydrogen", "H"],
+      "category": "Science",
+      "difficulty": 1,
+      "hint": "H_______"
+    },
+    {
+      "type": "free",
+      "question": "In what year was the first iPhone released?",
+      "answer": ["2007"],
+      "category": "Technology",
+      "difficulty": 2,
+      "hint": "200_"
+    }
+  ]
+}
