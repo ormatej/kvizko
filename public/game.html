@@ -224,6 +224,22 @@
           case 'bot':
             addMsg(`<span class="timestamp">${formatTime(ts)}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> ${escHtml(entry.message)}`);
             break;
+          case 'question':
+            addMsg(`<span class="timestamp">${formatTime(ts)}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> <span class="question-text">Q${entry.index + 1}: ${escHtml(entry.question)}</span>`);
+            break;
+          case 'hint':
+            addMsg(`<span class="timestamp">${formatTime(ts)}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> HINT: <span class="hint-text">${escHtml(entry.hint)}</span>`);
+            break;
+          case 'correct': {
+            const div = document.createElement('div');
+            div.className = 'msg correct-flash';
+            div.innerHTML = `<span class="timestamp">${formatTime(ts)}</span> * <span class="correct-text">${escHtml(entry.message)}</span>`;
+            chatMessages.appendChild(div);
+            break;
+          }
+          case 'wrong':
+            addMsg(`<span class="timestamp">${formatTime(ts)}</span> <span class="nick" style="color:${entry.color}">&lt;${escHtml(entry.nickname)}&gt;</span> <span class="wrong-text">${escHtml(entry.answer)}</span>`);
+            break;
           case 'action': {
             const div = document.createElement('div');
             div.className = 'msg action';
