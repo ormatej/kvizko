@@ -1,0 +1,10 @@
+node_modules
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+.env
+.git
+.gitignore
+.DS_Store
+*.log
