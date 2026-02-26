@@ -891,7 +891,8 @@ select:focus-visible {
 /* ===== LEADERBOARD PAGE ===== */
 html:has(.leaderboard-container),
 html:has(.leaderboard-container) body {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   height: auto;
 }
 
@@ -1066,7 +1067,8 @@ html:has(.leaderboard-container) body {
 /* ===== ADMIN PAGE ===== */
 html.admin-view,
 html.admin-view body {
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   height: auto;
 }
 
@@ -1410,16 +1412,29 @@ html.admin-view body {
 
   .admin-container {
     min-height: auto;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   .admin-body {
     grid-template-columns: 1fr;
     gap: 12px;
     padding: 12px;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   .admin-panel {
     padding: 14px;
+    overflow-x: hidden;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .admin-panel input[type="file"] {
+    max-width: 100%;
+    min-width: 0;
+    font-size: 11px;
   }
 
   .admin-header {
@@ -1427,6 +1442,15 @@ html.admin-view body {
     gap: 4px;
     padding: 10px 14px;
     text-align: center;
+  }
+
+  .btn-row {
+    flex-wrap: wrap;
+  }
+
+  .admin-channel-view {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .game-code-display {
