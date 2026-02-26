@@ -157,7 +157,7 @@ app.get('/api/games/:code/qr', async (req, res) => {
     const svg = await QRCode.toString(joinUrl, {
       type: 'svg',
       margin: 1,
-      color: { dark: '#00ff41', light: '#00000000' }
+      color: { dark: '#000000', light: '#00000000' }
     });
     res.type('svg').send(svg);
   } catch {
