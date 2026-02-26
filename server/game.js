@@ -94,6 +94,7 @@ class GameSession {
     this.hintsEnabled = settings.hintsEnabled ?? qs.hintsEnabled ?? true;
     this.shuffleQuestions = settings.shuffleQuestions ?? qs.shuffleQuestions ?? true;
     this.shuffleOptions = settings.shuffleOptions ?? qs.shuffleOptions ?? true;
+    this.theme = settings.theme || 'default';
 
     let questions = questionData.questions || [];
     if (this.shuffleQuestions) questions = shuffleArray(questions);

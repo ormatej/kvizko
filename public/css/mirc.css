@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&display=swap');
 
-:root {
+/* ===== DEFAULT THEME (mIRC) ===== */
+:root, [data-theme="default"] {
   --bg-primary: #0c0c0c;
   --bg-secondary: #1a1a2e;
   --bg-channel-bar: #16213e;
@@ -27,7 +28,81 @@
   --nick-6: #ffaa00;
   --scrollbar-bg: #1a1a1a;
   --scrollbar-thumb: #333;
+  --scanline-opacity: 0.08;
+  --countdown-bg: rgba(0,0,0,0.85);
+  --btn-text: #000;
 }
+
+/* ===== AURAVERSE THEME ===== */
+[data-theme="auraverse"] {
+  --bg-primary: #0a0118;
+  --bg-secondary: #140b2e;
+  --bg-channel-bar: #1a0e3a;
+  --bg-input: #0e0520;
+  --bg-sidebar: #0d0322;
+  --text-primary: #e0d6f0;
+  --text-muted: #7b6b9e;
+  --text-bot: #00e5ff;
+  --text-action: #ff6ec7;
+  --text-error: #ff4081;
+  --text-system: #9580b8;
+  --border: #2d1b5e;
+  --accent: #00e5ff;
+  --accent-dim: #0097a7;
+  --btn-a: #d500f9;
+  --btn-b: #00b8d4;
+  --btn-c: #76ff03;
+  --btn-d: #ff9100;
+  --nick-1: #e040fb;
+  --nick-2: #40c4ff;
+  --nick-3: #69f0ae;
+  --nick-4: #ff80ab;
+  --nick-5: #b388ff;
+  --nick-6: #ffab40;
+  --scrollbar-bg: #0e0520;
+  --scrollbar-thumb: #2d1b5e;
+  --scanline-opacity: 0.04;
+  --countdown-bg: rgba(10,1,24,0.92);
+  --btn-text: #fff;
+}
+
+/* ===== AURAVERSE GLOW EFFECTS ===== */
+[data-theme="auraverse"] .join-box,
+[data-theme="auraverse"] .admin-panel {
+  border-color: #2d1b5e;
+  box-shadow: 0 0 20px rgba(0,229,255,0.06), inset 0 0 30px rgba(13,0,51,0.3);
+}
+
+[data-theme="auraverse"] .game-code-display {
+  text-shadow: 0 0 12px rgba(0,229,255,0.5);
+}
+
+[data-theme="auraverse"] .channel-bar,
+[data-theme="auraverse"] .status-bar {
+  background: linear-gradient(90deg, #1a0e3a 0%, #160a35 50%, #1a0e3a 100%);
+}
+
+[data-theme="auraverse"] .abcd-btn.correct {
+  border-color: var(--accent);
+  box-shadow: 0 0 16px rgba(0,229,255,0.5);
+}
+
+[data-theme="auraverse"] .countdown-number {
+  text-shadow: 0 0 40px rgba(0,229,255,0.6), 0 0 80px rgba(0,229,255,0.3);
+}
+
+[data-theme="auraverse"] .join-box h1,
+[data-theme="auraverse"] .admin-header h1,
+[data-theme="auraverse"] .leaderboard-header h1 {
+  text-shadow: 0 0 20px rgba(0,229,255,0.4);
+}
+
+[data-theme="auraverse"] .podium-place.first { border-color: #e040fb; box-shadow: 0 0 12px rgba(224,64,251,0.3); }
+[data-theme="auraverse"] .podium-place.second { border-color: #40c4ff; box-shadow: 0 0 12px rgba(64,196,255,0.3); }
+[data-theme="auraverse"] .podium-place.third { border-color: #b388ff; box-shadow: 0 0 12px rgba(179,136,255,0.3); }
+[data-theme="auraverse"] .podium-place.first .podium-rank { color: #e040fb; }
+[data-theme="auraverse"] .podium-place.second .podium-rank { color: #40c4ff; }
+[data-theme="auraverse"] .podium-place.third .podium-rank { color: #b388ff; }
 
 * {
   margin: 0;
@@ -61,8 +136,8 @@ html, body {
   touch-action: none;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0,0,0,0.08) 0px,
-    rgba(0,0,0,0.08) 1px,
+    rgba(0,0,0,var(--scanline-opacity, 0.08)) 0px,
+    rgba(0,0,0,var(--scanline-opacity, 0.08)) 1px,
     transparent 1px,
     transparent 3px
   );
@@ -145,7 +220,7 @@ html, body {
   display: inline-block;
   padding: 12px 24px;
   background: var(--accent-dim);
-  color: #000;
+  color: var(--btn-text, #000);
   border: none;
   font-family: inherit;
   font-size: 14px;
@@ -359,7 +434,7 @@ html, body {
 .input-bar button {
   padding: 8px 16px;
   background: var(--accent-dim);
-  color: #000;
+  color: var(--btn-text, #000);
   border: none;
   font-family: inherit;
   font-weight: 700;
@@ -698,7 +773,7 @@ html, body {
 
 .btn-sm.primary {
   background: var(--accent-dim);
-  color: #000;
+  color: var(--btn-text, #000);
   border-color: var(--accent-dim);
 }
 
@@ -713,7 +788,7 @@ html, body {
 
 .btn-sm.danger:hover {
   background: var(--text-error);
-  color: #000;
+  color: var(--btn-text, #000);
 }
 
 .game-code-display {
@@ -764,7 +839,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.85);
+  background: var(--countdown-bg, rgba(0,0,0,0.85));
   z-index: 100;
   pointer-events: none;
 }
@@ -792,8 +867,37 @@ html, body {
     display: none;
   }
 
+  .admin-container {
+    min-height: auto;
+  }
+
+  html.admin-view,
+  html.admin-view body {
+    overflow: auto;
+    height: auto;
+  }
+
   .admin-body {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .admin-panel {
+    padding: 14px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 14px;
+    text-align: center;
+  }
+
+  .game-code-display {
+    font-size: 24px;
+    padding: 10px;
+    letter-spacing: 4px;
   }
 
   .podium {

@@ -39,6 +39,12 @@
     const prefilledCode = params.get('game');
     if (prefilledCode) {
       document.getElementById('gameCode').value = prefilledCode.toUpperCase();
+      fetch(`/api/games/${prefilledCode.toUpperCase()}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.theme) document.documentElement.setAttribute('data-theme', data.theme);
+        })
+        .catch(() => {});
     }
 
     document.getElementById('joinForm').addEventListener('submit', (e) => {
