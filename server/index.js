@@ -30,6 +30,13 @@ function generateCode() {
 
 // --- REST API ---
 
+app.post('/api/admin/auth', (req, res) => {
+  if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Wrong password' });
+  }
+  res.json({ ok: true });
+});
+
 app.get('/api/questions', (req, res) => {
   res.json(listQuestionFiles());
 });

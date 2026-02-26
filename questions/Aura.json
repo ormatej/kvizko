@@ -1,0 +1,2530 @@
+{
+  "title": "AURA Trivia Quiz",
+  "description": "200 vprašanj o AURI (moduli, procesi, integracije, infrastruktura, varnost).",
+  "settings": {
+    "timePerQuestion": 30,
+    "hintsEnabled": true,
+    "shuffleQuestions": true,
+    "shuffleOptions": true
+  },
+  "questions": [
+    {
+      "type": "free",
+      "question": "Kako se imenuje osnovni koncept večnajemniške arhitekture v AURI?",
+      "answer": [
+        "tenant",
+        "najemnik"
+      ],
+      "category": "Arhitektura",
+      "difficulty": 1,
+      "hint": "T_____"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje tipičen objekt, ki predstavlja naročilo/operacijo v dvoriščni logistiki AURE?",
+      "answer": [
+        "WorkOrder",
+        "workorder",
+        "delovni nalog"
+      ],
+      "category": "Moduli",
+      "difficulty": 1,
+      "hint": "W_______ / delovni nalog"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje objekt za vnaprejšnjo najavo obiska/vožnje v AURI?",
+      "answer": [
+        "Reservation",
+        "rezervacija",
+        "najava"
+      ],
+      "category": "Moduli",
+      "difficulty": 1,
+      "hint": "R________"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje objekt, ki predstavlja dejanski prihod/odhod in stanje na lokaciji?",
+      "answer": [
+        "Session",
+        "seja"
+      ],
+      "category": "Moduli",
+      "difficulty": 1,
+      "hint": "S______"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje žeton, ki ga API tipično vrne po prijavi?",
+      "answer": [
+        "JWT",
+        "jwt",
+        "JSON Web Token"
+      ],
+      "category": "API",
+      "difficulty": 1,
+      "hint": "J__"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje tipičen zunanji portal/most do lokalnih AURA instanc (cloud multi-tenant koncept)?",
+      "answer": [
+        "Pegasus",
+        "PEGASUS"
+      ],
+      "category": "Pegasus",
+      "difficulty": 1,
+      "hint": "P______"
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj AURA tipično upravlja na logističnem dvorišču?",
+      "options": {
+        "A": "Tok vozil, prehode, rezervacije in delovne naloge",
+        "B": "Izključno računovodstvo",
+        "C": "Samo HR evidence",
+        "D": "Samo urejanje slik"
+      },
+      "answer": "A",
+      "category": "Osnove",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri nivo redundance je v praksi najbolj smiseln, če aplikacija sama ne podpira aktivno-aktivnega delovanja?",
+      "options": {
+        "A": "HA na nivoju host/VM (failover)",
+        "B": "RAID0 na enem disku",
+        "C": "En sam fizični strežnik brez backupov",
+        "D": "Samo ročni restart aplikacije"
+      },
+      "answer": "A",
+      "category": "Infrastruktura",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipična vloga ANPR (LPR) kamer v AURI?",
+      "options": {
+        "A": "Prepoznava registrskih tablic za identifikacijo vozil",
+        "B": "Merjenje temperature skladišča",
+        "C": "Urejanje e-pošte",
+        "D": "Generiranje 3D modelov"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katera hierarhija lokacij je tipična za modeliranje kompleksnega dvorišča?",
+      "options": {
+        "A": "Enterprise → Site → Area → Dock",
+        "B": "CPU → RAM → Disk → GPU",
+        "C": "Invoice → VAT → Tax → Ledger",
+        "D": "Color → Font → Icon → Theme"
+      },
+      "answer": "A",
+      "category": "Modeliranje",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je glavna prednost vnaprejšnje rezervacije (Reservation) v AURI?",
+      "options": {
+        "A": "Uskladitev časa prihoda z zmogljivostjo lokacije",
+        "B": "Povečanje števila gesel",
+        "C": "Onemogočanje integracij",
+        "D": "Zamenjava vseh kamer z ročnimi zapisi"
+      },
+      "answer": "A",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Katera izjava najbolje opisuje 'Session' v AURI?",
+      "options": {
+        "A": "Dejanski potek obiska/vožnje z dogodki (vstop, tehtanje, izstop)",
+        "B": "Samo statičen seznam uporabnikov",
+        "C": "Samo definicija cenika",
+        "D": "Samo konfiguracija mrežnih kartic"
+      },
+      "answer": "A",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri protokol se pogosto uporablja za integracijo z PLC/krmilniki prek HTTP klicev?",
+      "options": {
+        "A": "REST API",
+        "B": "POP3",
+        "C": "IMAP",
+        "D": "Telnet za produkcijo brez avtentikacije"
+      },
+      "answer": "A",
+      "category": "Integracije",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen 'single source of truth' za identiteto vozila v AURI pri integraciji z zunanjimi sistemi?",
+      "options": {
+        "A": "Registrska tablica (plate) ali dogovorjeni ID ključ",
+        "B": "Ime voznika brez preverjanja",
+        "C": "Barva vozila",
+        "D": "Naključna številka seje"
+      },
+      "answer": "A",
+      "category": "API",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'CORE' v AURI je:",
+      "options": {
+        "A": "Izključno upravljanje plačil s karticami",
+        "B": "Samo grafično oblikovanje logotipa",
+        "C": "Samo nadzor klime v hotelskih sobah",
+        "D": "Osnovni gradniki sistema: uporabniki, šifranti, pravila, osnovni API"
+      },
+      "answer": "D",
+      "category": "Moduli",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'AP CONTROL' v AURI je:",
+      "options": {
+        "A": "Generiranje računovodskih bilanc",
+        "B": "Kompresija videa za socialna omrežja",
+        "C": "Upravljanje točk prehoda (zapornice, turniketi) in pravila dostopa",
+        "D": "Urejanje glasbe v ozadju"
+      },
+      "answer": "C",
+      "category": "Moduli",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'AP LOGISTICS' v AURI je:",
+      "options": {
+        "A": "Samo upravljanje tiskalnikov v pisarni",
+        "B": "Izključno spremljanje delnic",
+        "C": "Samo spreminjanje barv UI",
+        "D": "Modeliranje logističnih procesov (delovni nalogi, rezervacije, usmerjanje)"
+      },
+      "answer": "D",
+      "category": "Moduli",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'Parking' v AURI je:",
+      "options": {
+        "A": "Samo urejanje CAD načrtov",
+        "B": "Samo CRM za prodajo",
+        "C": "Upravljanje parkiranja (dovolilnice, režimi, zasedenost, prehodi)",
+        "D": "Izključno nadzor požarnega sistema"
+      },
+      "answer": "C",
+      "category": "Parking",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'Visitor Management' v AURI je:",
+      "options": {
+        "A": "Samo urejanje DNS zapisov",
+        "B": "Samo upravljanje baterij UPS",
+        "C": "Samo izdelava 3D renderjev",
+        "D": "Proces najave in obravnave obiskovalcev (registracija, potrditev, pravila vstopa)"
+      },
+      "answer": "D",
+      "category": "Visitor Management",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'Weighbridge' v AURI je:",
+      "options": {
+        "A": "Upravljanje telefonskega imenika",
+        "B": "Izključno urejanje pravil firewall-a",
+        "C": "Samo izvoz slik v PDF",
+        "D": "Avtomatizacija tehtanja in povezava tehtnice z dogodki in dokumenti"
+      },
+      "answer": "D",
+      "category": "Weighbridge",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'VMS' v AURI je:",
+      "options": {
+        "A": "Urejanje pogodbenih prilog",
+        "B": "Šifriranje diskov na strežniku",
+        "C": "Prikaz informacij na velikih zaslonih/LED tablah (navodila, status, klici)",
+        "D": "Programiranje mikrokontrolerjev za igrače"
+      },
+      "answer": "C",
+      "category": "VMS",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'Documents' v AURI je:",
+      "options": {
+        "A": "Samo risanje ikon",
+        "B": "Urejanje playlist v Spotify",
+        "C": "Generiranje in podpisovanje izjav/dovolilnic ter dokumentni tok",
+        "D": "Nadzor tlaka v pnevmatikah"
+      },
+      "answer": "C",
+      "category": "Documents",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'SMS Notifications' v AURI je:",
+      "options": {
+        "A": "Pošiljanje SMS obvestil voznikom/obiskovalcem (npr. QR koda, navodila)",
+        "B": "Samo izdelava maket",
+        "C": "Defragmentacija diska",
+        "D": "Samo prenos datotek prek FTP"
+      },
+      "answer": "A",
+      "category": "Komunikacija",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Najbolj realna vloga modula 'Video Correlation' v AURI je:",
+      "options": {
+        "A": "Samo prevajanje besedil",
+        "B": "Izključno upravljanje tiskalnih tonerjev",
+        "C": "Povezava dogodkov (prehodi) z video posnetki za pregled in dokazovanje",
+        "D": "Samo ustvarjanje animacij"
+      },
+      "answer": "C",
+      "category": "Video",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kateri objekt v AURI običajno hrani šifrante (codebooks) za enotno klasifikacijo (npr. tipi vozil, partnerji, razlogi)?",
+      "answer": [
+        "Codebook",
+        "Codebooks",
+        "Šifrant",
+        "Sifrant",
+        "codebook"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "C_______ / šifrant"
+    },
+    {
+      "type": "free",
+      "question": "Kako imenujemo parameter API klica, ki filtrira vozilo po registrski tablici?",
+      "answer": [
+        "plate",
+        "Plate"
+      ],
+      "category": "API",
+      "difficulty": 1,
+      "hint": "p_____"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje tipičen razlog, ki ga varnostnik zabeleži pri ročnem odpiranju zapornice?",
+      "answer": [
+        "reason",
+        "Reason",
+        "razlog"
+      ],
+      "category": "Varnost",
+      "difficulty": 1,
+      "hint": "r_____ / razlog"
+    },
+    {
+      "type": "free",
+      "question": "Kako se v modernih API-jih običajno imenuje standardni format za opis endpointov?",
+      "answer": [
+        "OpenAPI",
+        "Swagger",
+        "OpenAPI Specification"
+      ],
+      "category": "API",
+      "difficulty": 2,
+      "hint": "O______ / S______"
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj tipičen namen integracije AURE z 'SAP S/4HANA'?",
+      "options": {
+        "A": "Samo upravljanje ventilatorjev v strežniku",
+        "B": "Samo posodabljanje BIOS-a",
+        "C": "Izključno ustvarjanje grafike za marketing",
+        "D": "Izmenjava podatkov (naročila, partnerji, statusi) med Auro in zunanjim sistemom"
+      },
+      "answer": "D",
+      "category": "Integracije/ERP",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj tipičen namen integracije AURE z 'Infor LN'?",
+      "options": {
+        "A": "Izključno ustvarjanje grafike za marketing",
+        "B": "Samo upravljanje ventilatorjev v strežniku",
+        "C": "Samo posodabljanje BIOS-a",
+        "D": "Izmenjava podatkov (naročila, partnerji, statusi) med Auro in zunanjim sistemom"
+      },
+      "answer": "D",
+      "category": "Integracije/ERP",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj tipičen namen integracije AURE z 'Microsoft Outlook'?",
+      "options": {
+        "A": "Izključno ustvarjanje grafike za marketing",
+        "B": "Samo posodabljanje BIOS-a",
+        "C": "Izmenjava podatkov (naročila, partnerji, statusi) med Auro in zunanjim sistemom",
+        "D": "Samo upravljanje ventilatorjev v strežniku"
+      },
+      "answer": "C",
+      "category": "Integracije/Koledar/Email",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj tipičen namen integracije AURE z 'Siemens S7-1200 PLC'?",
+      "options": {
+        "A": "Samo upravljanje ventilatorjev v strežniku",
+        "B": "Izključno ustvarjanje grafike za marketing",
+        "C": "Samo posodabljanje BIOS-a",
+        "D": "Izmenjava podatkov (naročila, partnerji, statusi) med Auro in zunanjim sistemom"
+      },
+      "answer": "D",
+      "category": "Integracije/OT/PLC",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj tipičen namen integracije AURE z 'AdamInterface REST'?",
+      "options": {
+        "A": "Izmenjava podatkov (naročila, partnerji, statusi) med Auro in zunanjim sistemom",
+        "B": "Samo posodabljanje BIOS-a",
+        "C": "Izključno ustvarjanje grafike za marketing",
+        "D": "Samo upravljanje ventilatorjev v strežniku"
+      },
+      "answer": "A",
+      "category": "Integracije/OT/PLC",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj tipičen namen integracije AURE z 'Tattile ANPR'?",
+      "options": {
+        "A": "Izključno ustvarjanje grafike za marketing",
+        "B": "Izmenjava podatkov (naročila, partnerji, statusi) med Auro in zunanjim sistemom",
+        "C": "Samo upravljanje ventilatorjev v strežniku",
+        "D": "Samo posodabljanje BIOS-a"
+      },
+      "answer": "B",
+      "category": "Integracije/ANPR",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj tipičen namen integracije AURE z 'Hikvision CCTV'?",
+      "options": {
+        "A": "Samo posodabljanje BIOS-a",
+        "B": "Izključno ustvarjanje grafike za marketing",
+        "C": "Samo upravljanje ventilatorjev v strežniku",
+        "D": "Izmenjava podatkov (naročila, partnerji, statusi) med Auro in zunanjim sistemom"
+      },
+      "answer": "D",
+      "category": "Integracije/Video",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj tipičen namen integracije AURE z 'Oracle view (his.tenzor_kp_dozvole)'?",
+      "options": {
+        "A": "Samo posodabljanje BIOS-a",
+        "B": "Izključno ustvarjanje grafike za marketing",
+        "C": "Izmenjava podatkov (naročila, partnerji, statusi) med Auro in zunanjim sistemom",
+        "D": "Samo upravljanje ventilatorjev v strežniku"
+      },
+      "answer": "C",
+      "category": "Integracije/Baza",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Pri semaforju na tehtnici je dober varnostni princip:",
+      "options": {
+        "A": "Naj to dela uporabnik ročno brez pravil",
+        "B": "Preklapljaj naključno",
+        "C": "Vklopi vse luči hkrati",
+        "D": "Interlock logika: nikoli ne dovoli konfliktnih stanj (npr. zeleno in rdeče hkrati)"
+      },
+      "answer": "D",
+      "category": "OT/PLC",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Zakaj so induktivne zanke ali fotocelice koristne pri ANPR točki?",
+      "options": {
+        "A": "Zanesljivo proženje dogodkov pri pravilnem položaju vozila",
+        "B": "Da naredijo Wi‑Fi hitrejši",
+        "C": "Da šifrirajo video",
+        "D": "Da povečajo svetlost monitorja"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipična praksa za visoko berljivost podatkov na velikih zunanjih zaslonih?",
+      "options": {
+        "A": "Velika pisava, visok kontrast, omejeno število vrstic",
+        "B": "Enak kontrast kot ozadje",
+        "C": "Animirani ozadni videi",
+        "D": "Majhna pisava in veliko teksta"
+      },
+      "answer": "A",
+      "category": "VMS",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Tipičen tok za zunanji sistem (partner) prek API-ja je:",
+      "options": {
+        "A": "Authenticate → preveri vozilo → (po potrebi) kreiraj vozilo → kreiraj rezervacijo → kasneje preveri sejo",
+        "B": "Najprej spremeni barvo UI",
+        "C": "Najprej namesti grafično kartico",
+        "D": "Najprej formatiraj disk"
+      },
+      "answer": "A",
+      "category": "Procesi",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri korak je najpogosteje potreben pred kreiranjem rezervacije, če vozilo še ne obstaja?",
+      "options": {
+        "A": "Najprej izbriši vse uporabnike",
+        "B": "Najprej zamenjaj IP naslov strežnika",
+        "C": "Najprej ugasni zapornico",
+        "D": "Najprej kreiraj vozilo (Vehicle) ali ga poišči po tablici"
+      },
+      "answer": "D",
+      "category": "API",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izstop",
+        "B": "preusmeritev",
+        "C": "potrditev nadrejenega",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'ANPR kamera' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "vstop",
+        "B": "izstop",
+        "C": "tehtanje",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'turniket' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "tehtanje",
+        "C": "ročno odpiranje z razlogom",
+        "D": "preklic rezervacije"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'QR skener' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "izstop",
+        "C": "tehtanje",
+        "D": "izstop"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'QR skener' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "tehtanje",
+        "B": "izstop",
+        "C": "ročno odpiranje z razlogom",
+        "D": "izstop"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'turniket' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "ročno odpiranje z razlogom",
+        "B": "tehtanje",
+        "C": "izstop",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'QR skener' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "potrditev nadrejenega",
+        "B": "ročno odpiranje z razlogom",
+        "C": "potrditev nadrejenega",
+        "D": "preusmeritev"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'turniket' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "tehtanje",
+        "B": "ročno odpiranje z razlogom",
+        "C": "izjemni dogodek (pluženje)",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'LED VMS tabla' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "vstop",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "preklic rezervacije",
+        "D": "preklic rezervacije"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "ročno odpiranje z razlogom",
+        "B": "preusmeritev",
+        "C": "izstop",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'LED VMS tabla' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "preklic rezervacije",
+        "C": "potrditev nadrejenega",
+        "D": "vstop"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'RFID čitalec' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izstop",
+        "B": "vstop",
+        "C": "preklic rezervacije",
+        "D": "preusmeritev"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'turniket' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "tehtanje",
+        "B": "ročno odpiranje z razlogom",
+        "C": "potrditev nadrejenega",
+        "D": "izstop"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "potrditev nadrejenega",
+        "C": "ročno odpiranje z razlogom",
+        "D": "tehtanje"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'turniket' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izstop",
+        "B": "tehtanje",
+        "C": "vstop",
+        "D": "preusmeritev"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izstop",
+        "B": "ročno odpiranje z razlogom",
+        "C": "ročno odpiranje z razlogom",
+        "D": "vstop"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'zapornica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preklic rezervacije",
+        "B": "vstop",
+        "C": "izstop",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preklic rezervacije",
+        "B": "ročno odpiranje z razlogom",
+        "C": "tehtanje",
+        "D": "preklic rezervacije"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'QR skener' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "vstop",
+        "C": "vstop",
+        "D": "ročno odpiranje z razlogom"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'QR skener' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preklic rezervacije",
+        "B": "ročno odpiranje z razlogom",
+        "C": "vstop",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'ANPR kamera' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "tehtanje",
+        "B": "tehtanje",
+        "C": "izstop",
+        "D": "tehtanje"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'LED VMS tabla' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izstop",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "preusmeritev",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'zapornica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "vstop",
+        "D": "izstop"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'podpisna tablica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "ročno odpiranje z razlogom",
+        "B": "izstop",
+        "C": "preusmeritev",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'zapornica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "ročno odpiranje z razlogom",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "tehtanje",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "tehtanje",
+        "B": "izstop",
+        "C": "izjemni dogodek (pluženje)",
+        "D": "izstop"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'ANPR kamera' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "potrditev nadrejenega",
+        "B": "preklic rezervacije",
+        "C": "vstop",
+        "D": "izstop"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'LED VMS tabla' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "vstop",
+        "B": "izstop",
+        "C": "ročno odpiranje z razlogom",
+        "D": "preklic rezervacije"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "potrditev nadrejenega",
+        "B": "vstop",
+        "C": "preklic rezervacije",
+        "D": "izstop"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'ANPR kamera' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "izstop",
+        "C": "tehtanje",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'turniket' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "potrditev nadrejenega",
+        "B": "preklic rezervacije",
+        "C": "preklic rezervacije",
+        "D": "vstop"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "potrditev nadrejenega",
+        "B": "tehtanje",
+        "C": "vstop",
+        "D": "izstop"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'LED VMS tabla' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "ročno odpiranje z razlogom",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "preklic rezervacije",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "ročno odpiranje z razlogom",
+        "B": "izstop",
+        "C": "potrditev nadrejenega",
+        "D": "vstop"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "tehtanje",
+        "B": "preklic rezervacije",
+        "C": "preusmeritev",
+        "D": "preusmeritev"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "preklic rezervacije",
+        "C": "tehtanje",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'RFID čitalec' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "vstop",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "preusmeritev",
+        "D": "izstop"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'LED VMS tabla' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "potrditev nadrejenega",
+        "B": "preklic rezervacije",
+        "C": "preusmeritev",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'LED VMS tabla' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "vstop",
+        "C": "preklic rezervacije",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'zapornica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "tehtanje",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "izstop",
+        "C": "izjemni dogodek (pluženje)",
+        "D": "preklic rezervacije"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "tehtanje",
+        "D": "izstop"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'ANPR kamera' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preklic rezervacije",
+        "B": "ročno odpiranje z razlogom",
+        "C": "izjemni dogodek (pluženje)",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'turniket' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "vstop",
+        "C": "ročno odpiranje z razlogom",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'podpisna tablica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "izjemni dogodek (pluženje)",
+        "C": "preklic rezervacije",
+        "D": "tehtanje"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "tehtanje",
+        "C": "tehtanje",
+        "D": "ročno odpiranje z razlogom"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preklic rezervacije",
+        "B": "potrditev nadrejenega",
+        "C": "ročno odpiranje z razlogom",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'RFID čitalec' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "vstop",
+        "B": "preklic rezervacije",
+        "C": "preusmeritev",
+        "D": "tehtanje"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'ANPR kamera' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "potrditev nadrejenega",
+        "B": "potrditev nadrejenega",
+        "C": "preusmeritev",
+        "D": "preklic rezervacije"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'RFID čitalec' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "vstop",
+        "B": "potrditev nadrejenega",
+        "C": "izstop",
+        "D": "ročno odpiranje z razlogom"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'turniket' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "ročno odpiranje z razlogom",
+        "B": "potrditev nadrejenega",
+        "C": "tehtanje",
+        "D": "preklic rezervacije"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "potrditev nadrejenega",
+        "B": "ročno odpiranje z razlogom",
+        "C": "preusmeritev",
+        "D": "tehtanje"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'semafor (rdeča/zelena/oranžna)' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izstop",
+        "B": "tehtanje",
+        "C": "potrditev nadrejenega",
+        "D": "ročno odpiranje z razlogom"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'RFID čitalec' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "vstop",
+        "B": "ročno odpiranje z razlogom",
+        "C": "potrditev nadrejenega",
+        "D": "izjemni dogodek (pluženje)"
+      },
+      "answer": "B",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'QR skener' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preklic rezervacije",
+        "B": "preusmeritev",
+        "C": "preusmeritev",
+        "D": "preusmeritev"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'LED VMS tabla' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "preusmeritev",
+        "B": "ročno odpiranje z razlogom",
+        "C": "izstop",
+        "D": "preklic rezervacije"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'RFID čitalec' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "izstop",
+        "C": "izstop",
+        "D": "preusmeritev"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'podpisna tablica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izstop",
+        "B": "ročno odpiranje z razlogom",
+        "C": "potrditev nadrejenega",
+        "D": "potrditev nadrejenega"
+      },
+      "answer": "A",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'podpisna tablica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izstop",
+        "B": "izstop",
+        "C": "preklic rezervacije",
+        "D": "ročno odpiranje z razlogom"
+      },
+      "answer": "D",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "V AURI je 'tehtnica' na točki prehoda najpogosteje povezan z dogodkom:",
+      "options": {
+        "A": "izjemni dogodek (pluženje)",
+        "B": "ročno odpiranje z razlogom",
+        "C": "tehtanje",
+        "D": "preklic rezervacije"
+      },
+      "answer": "C",
+      "category": "Strojna oprema",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je dobra praksa pri načrtovanju endpointa za iskanje vozil? (primer 1)",
+      "options": {
+        "A": "Vrni naključne rezultate",
+        "B": "Uporabi samo interno številko, ki je zunanji sistemi nimajo",
+        "C": "Omogoči iskanje po 'plate' (tablica) kot berljivem ključu",
+        "D": "Zahtevaj tri obvezne parametre brez razloga"
+      },
+      "answer": "C",
+      "category": "API",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri pristop je najprimernejši za podpisovanje izjav/dovolilnic brez fizičnega tiskanja? (primer 2)",
+      "options": {
+        "A": "Sistemsko podpisovanje (digitalni podpis/elektronska potrditev) in hramba v evidenci",
+        "B": "Samo ustna potrditev",
+        "C": "Tiskanje in izguba papirja",
+        "D": "Slikanje papirja s telefonom brez evidence"
+      },
+      "answer": "A",
+      "category": "Documents",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipična nevarnost, če zunanji portal neposredno odpira lokalne naprave brez pravil in revizije? (primer 3)",
+      "options": {
+        "A": "Hitrejši Wi‑Fi",
+        "B": "Več prostora na disku",
+        "C": "Varnostno tveganje in neizsledljivost (brez audit trail)",
+        "D": "Manj potreb po backupih"
+      },
+      "answer": "C",
+      "category": "Varnost",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 4)",
+      "options": {
+        "A": "Zamenjaj vse kamere",
+        "B": "Onemogoči logiranje",
+        "C": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)",
+        "D": "Izbriši zgodovino dogodkov"
+      },
+      "answer": "C",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipična nevarnost, če zunanji portal neposredno odpira lokalne naprave brez pravil in revizije? (primer 5)",
+      "options": {
+        "A": "Več prostora na disku",
+        "B": "Varnostno tveganje in neizsledljivost (brez audit trail)",
+        "C": "Hitrejši Wi‑Fi",
+        "D": "Manj potreb po backupih"
+      },
+      "answer": "B",
+      "category": "Varnost",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen namen QR kode v procesu najave? (primer 6)",
+      "options": {
+        "A": "Zamenjava TLS certifikata",
+        "B": "Povečanje hitrosti procesorja",
+        "C": "Hitro in enolično prepoznavanje rezervacije/obiska na terminalu",
+        "D": "Defragmentacija baze"
+      },
+      "answer": "C",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj mora biti pri večnajemniškem sistemu vedno jasno ločeno? (primer 7)",
+      "options": {
+        "A": "Podatki med različnimi tenant-i (najemniki)",
+        "B": "Različica brskalnika uporabnika",
+        "C": "Barva ikon",
+        "D": "Ime strežnika"
+      },
+      "answer": "A",
+      "category": "Arhitektura",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipična nevarnost, če zunanji portal neposredno odpira lokalne naprave brez pravil in revizije? (primer 8)",
+      "options": {
+        "A": "Več prostora na disku",
+        "B": "Hitrejši Wi‑Fi",
+        "C": "Manj potreb po backupih",
+        "D": "Varnostno tveganje in neizsledljivost (brez audit trail)"
+      },
+      "answer": "D",
+      "category": "Varnost",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj mora biti pri večnajemniškem sistemu vedno jasno ločeno? (primer 9)",
+      "options": {
+        "A": "Barva ikon",
+        "B": "Podatki med različnimi tenant-i (najemniki)",
+        "C": "Ime strežnika",
+        "D": "Različica brskalnika uporabnika"
+      },
+      "answer": "B",
+      "category": "Arhitektura",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri pristop je najprimernejši za podpisovanje izjav/dovolilnic brez fizičnega tiskanja? (primer 10)",
+      "options": {
+        "A": "Slikanje papirja s telefonom brez evidence",
+        "B": "Samo ustna potrditev",
+        "C": "Sistemsko podpisovanje (digitalni podpis/elektronska potrditev) in hramba v evidenci",
+        "D": "Tiskanje in izguba papirja"
+      },
+      "answer": "C",
+      "category": "Documents",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 11)",
+      "options": {
+        "A": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)",
+        "B": "Onemogoči logiranje",
+        "C": "Zamenjaj vse kamere",
+        "D": "Izbriši zgodovino dogodkov"
+      },
+      "answer": "A",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 12)",
+      "options": {
+        "A": "Izbriši zgodovino dogodkov",
+        "B": "Onemogoči logiranje",
+        "C": "Zamenjaj vse kamere",
+        "D": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)"
+      },
+      "answer": "D",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 13)",
+      "options": {
+        "A": "Zamenjaj vse kamere",
+        "B": "Onemogoči logiranje",
+        "C": "Izbriši zgodovino dogodkov",
+        "D": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)"
+      },
+      "answer": "D",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 14)",
+      "options": {
+        "A": "Zamenjaj vse kamere",
+        "B": "Izbriši zgodovino dogodkov",
+        "C": "Onemogoči logiranje",
+        "D": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)"
+      },
+      "answer": "D",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 15)",
+      "options": {
+        "A": "Onemogoči logiranje",
+        "B": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)",
+        "C": "Izbriši zgodovino dogodkov",
+        "D": "Zamenjaj vse kamere"
+      },
+      "answer": "B",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 16)",
+      "options": {
+        "A": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)",
+        "B": "Izbriši zgodovino dogodkov",
+        "C": "Zamenjaj vse kamere",
+        "D": "Onemogoči logiranje"
+      },
+      "answer": "A",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 17)",
+      "options": {
+        "A": "Zamenjaj vse kamere",
+        "B": "Izbriši zgodovino dogodkov",
+        "C": "Onemogoči logiranje",
+        "D": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)"
+      },
+      "answer": "D",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri pristop je najprimernejši za podpisovanje izjav/dovolilnic brez fizičnega tiskanja? (primer 18)",
+      "options": {
+        "A": "Tiskanje in izguba papirja",
+        "B": "Sistemsko podpisovanje (digitalni podpis/elektronska potrditev) in hramba v evidenci",
+        "C": "Slikanje papirja s telefonom brez evidence",
+        "D": "Samo ustna potrditev"
+      },
+      "answer": "B",
+      "category": "Documents",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 19)",
+      "options": {
+        "A": "Zamenjaj vse kamere",
+        "B": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)",
+        "C": "Izbriši zgodovino dogodkov",
+        "D": "Onemogoči logiranje"
+      },
+      "answer": "B",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 20)",
+      "options": {
+        "A": "Izbriši zgodovino dogodkov",
+        "B": "Onemogoči logiranje",
+        "C": "Zamenjaj vse kamere",
+        "D": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)"
+      },
+      "answer": "D",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj mora biti pri večnajemniškem sistemu vedno jasno ločeno? (primer 21)",
+      "options": {
+        "A": "Barva ikon",
+        "B": "Ime strežnika",
+        "C": "Podatki med različnimi tenant-i (najemniki)",
+        "D": "Različica brskalnika uporabnika"
+      },
+      "answer": "C",
+      "category": "Arhitektura",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen namen QR kode v procesu najave? (primer 22)",
+      "options": {
+        "A": "Zamenjava TLS certifikata",
+        "B": "Hitro in enolično prepoznavanje rezervacije/obiska na terminalu",
+        "C": "Povečanje hitrosti procesorja",
+        "D": "Defragmentacija baze"
+      },
+      "answer": "B",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 23)",
+      "options": {
+        "A": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)",
+        "B": "Zamenjaj vse kamere",
+        "C": "Onemogoči logiranje",
+        "D": "Izbriši zgodovino dogodkov"
+      },
+      "answer": "A",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen namen QR kode v procesu najave? (primer 24)",
+      "options": {
+        "A": "Zamenjava TLS certifikata",
+        "B": "Hitro in enolično prepoznavanje rezervacije/obiska na terminalu",
+        "C": "Povečanje hitrosti procesorja",
+        "D": "Defragmentacija baze"
+      },
+      "answer": "B",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 25)",
+      "options": {
+        "A": "Onemogoči logiranje",
+        "B": "Zamenjaj vse kamere",
+        "C": "Izbriši zgodovino dogodkov",
+        "D": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)"
+      },
+      "answer": "D",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen namen QR kode v procesu najave? (primer 26)",
+      "options": {
+        "A": "Defragmentacija baze",
+        "B": "Hitro in enolično prepoznavanje rezervacije/obiska na terminalu",
+        "C": "Zamenjava TLS certifikata",
+        "D": "Povečanje hitrosti procesorja"
+      },
+      "answer": "B",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri pristop je najprimernejši za podpisovanje izjav/dovolilnic brez fizičnega tiskanja? (primer 27)",
+      "options": {
+        "A": "Tiskanje in izguba papirja",
+        "B": "Slikanje papirja s telefonom brez evidence",
+        "C": "Samo ustna potrditev",
+        "D": "Sistemsko podpisovanje (digitalni podpis/elektronska potrditev) in hramba v evidenci"
+      },
+      "answer": "D",
+      "category": "Documents",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj mora biti pri večnajemniškem sistemu vedno jasno ločeno? (primer 28)",
+      "options": {
+        "A": "Barva ikon",
+        "B": "Različica brskalnika uporabnika",
+        "C": "Ime strežnika",
+        "D": "Podatki med različnimi tenant-i (najemniki)"
+      },
+      "answer": "D",
+      "category": "Arhitektura",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj mora biti pri večnajemniškem sistemu vedno jasno ločeno? (primer 29)",
+      "options": {
+        "A": "Ime strežnika",
+        "B": "Podatki med različnimi tenant-i (najemniki)",
+        "C": "Različica brskalnika uporabnika",
+        "D": "Barva ikon"
+      },
+      "answer": "B",
+      "category": "Arhitektura",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipična nevarnost, če zunanji portal neposredno odpira lokalne naprave brez pravil in revizije? (primer 30)",
+      "options": {
+        "A": "Varnostno tveganje in neizsledljivost (brez audit trail)",
+        "B": "Hitrejši Wi‑Fi",
+        "C": "Manj potreb po backupih",
+        "D": "Več prostora na disku"
+      },
+      "answer": "A",
+      "category": "Varnost",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen namen QR kode v procesu najave? (primer 31)",
+      "options": {
+        "A": "Defragmentacija baze",
+        "B": "Hitro in enolično prepoznavanje rezervacije/obiska na terminalu",
+        "C": "Zamenjava TLS certifikata",
+        "D": "Povečanje hitrosti procesorja"
+      },
+      "answer": "B",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj mora biti pri večnajemniškem sistemu vedno jasno ločeno? (primer 32)",
+      "options": {
+        "A": "Barva ikon",
+        "B": "Različica brskalnika uporabnika",
+        "C": "Podatki med različnimi tenant-i (najemniki)",
+        "D": "Ime strežnika"
+      },
+      "answer": "C",
+      "category": "Arhitektura",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen namen QR kode v procesu najave? (primer 33)",
+      "options": {
+        "A": "Zamenjava TLS certifikata",
+        "B": "Hitro in enolično prepoznavanje rezervacije/obiska na terminalu",
+        "C": "Povečanje hitrosti procesorja",
+        "D": "Defragmentacija baze"
+      },
+      "answer": "B",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je dobra praksa pri načrtovanju endpointa za iskanje vozil? (primer 34)",
+      "options": {
+        "A": "Vrni naključne rezultate",
+        "B": "Zahtevaj tri obvezne parametre brez razloga",
+        "C": "Omogoči iskanje po 'plate' (tablica) kot berljivem ključu",
+        "D": "Uporabi samo interno številko, ki je zunanji sistemi nimajo"
+      },
+      "answer": "C",
+      "category": "API",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri pristop je najprimernejši za podpisovanje izjav/dovolilnic brez fizičnega tiskanja? (primer 35)",
+      "options": {
+        "A": "Tiskanje in izguba papirja",
+        "B": "Samo ustna potrditev",
+        "C": "Slikanje papirja s telefonom brez evidence",
+        "D": "Sistemsko podpisovanje (digitalni podpis/elektronska potrditev) in hramba v evidenci"
+      },
+      "answer": "D",
+      "category": "Documents",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen namen QR kode v procesu najave? (primer 36)",
+      "options": {
+        "A": "Hitro in enolično prepoznavanje rezervacije/obiska na terminalu",
+        "B": "Povečanje hitrosti procesorja",
+        "C": "Zamenjava TLS certifikata",
+        "D": "Defragmentacija baze"
+      },
+      "answer": "A",
+      "category": "Procesi",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je dobra praksa pri načrtovanju endpointa za iskanje vozil? (primer 37)",
+      "options": {
+        "A": "Zahtevaj tri obvezne parametre brez razloga",
+        "B": "Uporabi samo interno številko, ki je zunanji sistemi nimajo",
+        "C": "Omogoči iskanje po 'plate' (tablica) kot berljivem ključu",
+        "D": "Vrni naključne rezultate"
+      },
+      "answer": "C",
+      "category": "API",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 38)",
+      "options": {
+        "A": "Zamenjaj vse kamere",
+        "B": "Izbriši zgodovino dogodkov",
+        "C": "Onemogoči logiranje",
+        "D": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)"
+      },
+      "answer": "D",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kateri pristop je najprimernejši za podpisovanje izjav/dovolilnic brez fizičnega tiskanja? (primer 39)",
+      "options": {
+        "A": "Tiskanje in izguba papirja",
+        "B": "Sistemsko podpisovanje (digitalni podpis/elektronska potrditev) in hramba v evidenci",
+        "C": "Slikanje papirja s telefonom brez evidence",
+        "D": "Samo ustna potrditev"
+      },
+      "answer": "B",
+      "category": "Documents",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je najbolj praktičen 'fallback' način odpiranja zapornice ob izjemnem dogodku (npr. pluženje)? (primer 40)",
+      "options": {
+        "A": "Ročno odpiranje z razlogom ali začasno trajno odprta zapornica (po pravilih)",
+        "B": "Zamenjaj vse kamere",
+        "C": "Izbriši zgodovino dogodkov",
+        "D": "Onemogoči logiranje"
+      },
+      "answer": "A",
+      "category": "Varnost",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Zunanji partner (prevoznik) (vpiši naziv vloge)?",
+      "answer": [
+        "Zunanji partner (prevoznik)",
+        "zunanji partner (prevoznik)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Nadrejenec (approver) (vpiši naziv vloge)?",
+      "answer": [
+        "Nadrejenec (approver)",
+        "nadrejenec (approver)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Zunanji partner (prevoznik) (vpiši naziv vloge)?",
+      "answer": [
+        "Zunanji partner (prevoznik)",
+        "zunanji partner (prevoznik)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Nadrejenec (approver) (vpiši naziv vloge)?",
+      "answer": [
+        "Nadrejenec (approver)",
+        "nadrejenec (approver)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Administrator (vpiši naziv vloge)?",
+      "answer": [
+        "Administrator",
+        "administrator"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Administrator (vpiši naziv vloge)?",
+      "answer": [
+        "Administrator",
+        "administrator"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Administrator (vpiši naziv vloge)?",
+      "answer": [
+        "Administrator",
+        "administrator"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Nadrejenec (approver) (vpiši naziv vloge)?",
+      "answer": [
+        "Nadrejenec (approver)",
+        "nadrejenec (approver)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Gost (vpiši naziv vloge)?",
+      "answer": [
+        "Gost",
+        "gost"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Zunanji partner (prevoznik) (vpiši naziv vloge)?",
+      "answer": [
+        "Zunanji partner (prevoznik)",
+        "zunanji partner (prevoznik)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Vodja izmene (vpiši naziv vloge)?",
+      "answer": [
+        "Vodja izmene",
+        "vodja izmene"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Vodja izmene (vpiši naziv vloge)?",
+      "answer": [
+        "Vodja izmene",
+        "vodja izmene"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Nadrejenec (approver) (vpiši naziv vloge)?",
+      "answer": [
+        "Nadrejenec (approver)",
+        "nadrejenec (approver)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Operater (vpiši naziv vloge)?",
+      "answer": [
+        "Operater",
+        "operater"
+      ],
+      "category": "Vloge",
+      "difficulty": 1,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Nadrejenec (approver) (vpiši naziv vloge)?",
+      "answer": [
+        "Nadrejenec (approver)",
+        "nadrejenec (approver)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Varnostnik (vpiši naziv vloge)?",
+      "answer": [
+        "Varnostnik",
+        "varnostnik"
+      ],
+      "category": "Vloge",
+      "difficulty": 1,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Vodja izmene (vpiši naziv vloge)?",
+      "answer": [
+        "Vodja izmene",
+        "vodja izmene"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Administrator (vpiši naziv vloge)?",
+      "answer": [
+        "Administrator",
+        "administrator"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Operater (vpiši naziv vloge)?",
+      "answer": [
+        "Operater",
+        "operater"
+      ],
+      "category": "Vloge",
+      "difficulty": 1,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Nadrejenec (approver) (vpiši naziv vloge)?",
+      "answer": [
+        "Nadrejenec (approver)",
+        "nadrejenec (approver)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Administrator (vpiši naziv vloge)?",
+      "answer": [
+        "Administrator",
+        "administrator"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Zunanji partner (prevoznik) (vpiši naziv vloge)?",
+      "answer": [
+        "Zunanji partner (prevoznik)",
+        "zunanji partner (prevoznik)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Zunanji partner (prevoznik) (vpiši naziv vloge)?",
+      "answer": [
+        "Zunanji partner (prevoznik)",
+        "zunanji partner (prevoznik)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Gost (vpiši naziv vloge)?",
+      "answer": [
+        "Gost",
+        "gost"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Administrator (vpiši naziv vloge)?",
+      "answer": [
+        "Administrator",
+        "administrator"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Vodja izmene (vpiši naziv vloge)?",
+      "answer": [
+        "Vodja izmene",
+        "vodja izmene"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Varnostnik (vpiši naziv vloge)?",
+      "answer": [
+        "Varnostnik",
+        "varnostnik"
+      ],
+      "category": "Vloge",
+      "difficulty": 1,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Administrator (vpiši naziv vloge)?",
+      "answer": [
+        "Administrator",
+        "administrator"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Nadrejenec (approver) (vpiši naziv vloge)?",
+      "answer": [
+        "Nadrejenec (approver)",
+        "nadrejenec (approver)"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "Katera vloga je v AURI tipično odgovorna za operativno upravljanje prehodov na lokaciji: Vodja izmene (vpiši naziv vloge)?",
+      "answer": [
+        "Vodja izmene",
+        "vodja izmene"
+      ],
+      "category": "Vloge",
+      "difficulty": 2,
+      "hint": "Napiši točno ime vloge"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'rezervacija'?",
+      "answer": [
+        "Reservation",
+        "reservation",
+        "Rezervacija",
+        "rezervacija"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "R________"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'vozilo'?",
+      "answer": [
+        "Vehicle",
+        "vehicle",
+        "Vozilo",
+        "vozilo"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "V______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'rezervacija'?",
+      "answer": [
+        "Reservation",
+        "reservation",
+        "Rezervacija",
+        "rezervacija"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "R________"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'seja'?",
+      "answer": [
+        "Session",
+        "session",
+        "Seja",
+        "seja"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "S______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'seja'?",
+      "answer": [
+        "Session",
+        "session",
+        "Seja",
+        "seja"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "S______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'seja'?",
+      "answer": [
+        "Session",
+        "session",
+        "Seja",
+        "seja"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "S______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'seja'?",
+      "answer": [
+        "Session",
+        "session",
+        "Seja",
+        "seja"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "S______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'partner'?",
+      "answer": [
+        "Company",
+        "company",
+        "Partner",
+        "partner"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "C______ / partner"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'seja'?",
+      "answer": [
+        "Session",
+        "session",
+        "Seja",
+        "seja"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "S______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'partner'?",
+      "answer": [
+        "Company",
+        "company",
+        "Partner",
+        "partner"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "C______ / partner"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'delovni nalog'?",
+      "answer": [
+        "WorkOrder",
+        "workorder",
+        "Delovni nalog",
+        "delovni nalog"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "W_______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'partner'?",
+      "answer": [
+        "Company",
+        "company",
+        "Partner",
+        "partner"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "C______ / partner"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'rezervacija'?",
+      "answer": [
+        "Reservation",
+        "reservation",
+        "Rezervacija",
+        "rezervacija"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "R________"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'delovni nalog'?",
+      "answer": [
+        "WorkOrder",
+        "workorder",
+        "Delovni nalog",
+        "delovni nalog"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "W_______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'rezervacija'?",
+      "answer": [
+        "Reservation",
+        "reservation",
+        "Rezervacija",
+        "rezervacija"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "R________"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'vozilo'?",
+      "answer": [
+        "Vehicle",
+        "vehicle",
+        "Vozilo",
+        "vozilo"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "V______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'vozilo'?",
+      "answer": [
+        "Vehicle",
+        "vehicle",
+        "Vozilo",
+        "vozilo"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "V______"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'partner'?",
+      "answer": [
+        "Company",
+        "company",
+        "Partner",
+        "partner"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "C______ / partner"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'rezervacija'?",
+      "answer": [
+        "Reservation",
+        "reservation",
+        "Rezervacija",
+        "rezervacija"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "R________"
+    },
+    {
+      "type": "free",
+      "question": "V AURI: kako se v angleški terminologiji najpogosteje imenuje objekt 'vozilo'?",
+      "answer": [
+        "Vehicle",
+        "vehicle",
+        "Vozilo",
+        "vozilo"
+      ],
+      "category": "Modeliranje",
+      "difficulty": 2,
+      "hint": "V______"
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je glavni namen Pegasusa v odnosu do lokalne AURE?",
+      "options": {
+        "A": "BIOS nadgradnja",
+        "B": "Cloud portal, ki zunanjim uporabnikom omogoči rezervacije in jih sinhronizira v lokalno Auro",
+        "C": "Lokalni gonilnik za tiskalnik",
+        "D": "Program za urejanje slik"
+      },
+      "answer": "B",
+      "category": "Pegasus",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Zakaj je pri Pegasusu pomembno ujemanje (match) zunanjih podatkov z obstoječimi v AURI?",
+      "options": {
+        "A": "Da zmanjšamo varnost JWT",
+        "B": "Da onemogočimo audit trail",
+        "C": "Da povečamo število dupliciranih zapisov",
+        "D": "Da se izognemo podvajanju vozil/partnerjev in ohranimo integriteto podatkov"
+      },
+      "answer": "D",
+      "category": "Pegasus",
+      "difficulty": 3
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je tipičen kriterij za preverjanje dovolilnice v parking modulu?",
+      "options": {
+        "A": "Barva vozila",
+        "B": "Veljavnost v času in pripadnost vozila/uporabnika pravilnemu režimu",
+        "C": "Število vrat",
+        "D": "Naključni generator"
+      },
+      "answer": "B",
+      "category": "Parking",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Kaj je realen razlog za 'multi-site support' v AURI?",
+      "options": {
+        "A": "En tenant upravlja več lokacij z različnimi pravili in napravami",
+        "B": "Da se uporablja več različnih fontov",
+        "C": "Da se ne dela backupov",
+        "D": "Da se doda več animacij"
+      },
+      "answer": "A",
+      "category": "Arhitektura",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje standardni statusni kod HTTP za uspeh? (št. 196)",
+      "answer": [
+        "200",
+        "200 OK"
+      ],
+      "category": "API",
+      "difficulty": 1,
+      "hint": "2__"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje standardni statusni kod HTTP za 'Not Found'? (št. 197)",
+      "answer": [
+        "404",
+        "404 Not Found"
+      ],
+      "category": "API",
+      "difficulty": 1,
+      "hint": "4__"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje standardni statusni kod HTTP za 'Not Found'? (št. 198)",
+      "answer": [
+        "404",
+        "404 Not Found"
+      ],
+      "category": "API",
+      "difficulty": 1,
+      "hint": "4__"
+    },
+    {
+      "type": "free",
+      "question": "Kateri format se običajno uporablja za izmenjavo podatkov prek REST API? (št. 199)",
+      "answer": [
+        "JSON",
+        "json"
+      ],
+      "category": "API",
+      "difficulty": 1,
+      "hint": "J___"
+    },
+    {
+      "type": "free",
+      "question": "Kako se imenuje standardni statusni kod HTTP za uspeh? (št. 200)",
+      "answer": [
+        "200",
+        "200 OK"
+      ],
+      "category": "API",
+      "difficulty": 1,
+      "hint": "2__"
+    }
+  ]
+}

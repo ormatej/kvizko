@@ -59,7 +59,7 @@
 
         <div class="hidden" id="gameCreated" style="margin-top:20px;">
           <div class="game-code-display" id="displayCode"></div>
-          <div id="qrContainer" style="text-align:center;margin:10px 0;"></div>
+          <div id="qrContainer" style="text-align:center;margin:10px 0;max-width:160px;margin-left:auto;margin-right:auto;"></div>
           <div style="text-align:center;color:var(--text-muted);font-size:12px;" id="joinUrlDisplay"></div>
         </div>
       </div>
@@ -144,8 +144,11 @@
       authError.classList.add('hidden');
 
       try {
-        const res = await fetch('/api/questions', { headers: { 'x-admin-password': adminPassword } });
-        if (!res.ok && res.status === 401) throw new Error('Wrong password');
+        const res = await fetch('/api/admin/auth', {
+          method: 'POST',
+          headers: { 'x-admin-password': adminPassword }
+        });
+        if (!res.ok) throw new Error('Wrong password');
         authScreen.classList.add('hidden');
         adminDashboard.classList.remove('hidden');
         loadQuestionSets();
