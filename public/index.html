@@ -4,29 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Kvizko - Join Game</title>
+  <meta name="description" content="Join a Kvizko retro quiz game - real-time trivia for events">
+  <meta name="theme-color" content="#003399">
   <link rel="stylesheet" href="/css/mirc.css">
 </head>
 <body class="scanlines">
-  <div class="join-container" id="joinPage">
+  <div class="join-container" id="joinPage" role="main">
     <div class="join-box">
       <h1>KVIZKO</h1>
-      <div class="subtitle">[ retro quiz experience ]</div>
+      <div class="subtitle" aria-label="Retro quiz experience">[ retro quiz experience ]</div>
 
-      <form id="joinForm">
+      <form id="joinForm" aria-label="Join game form">
         <div class="form-group">
-          <label>Game Code</label>
-          <input type="text" id="gameCode" placeholder="Enter code..." maxlength="6" autocomplete="off" required>
+          <label for="gameCode">Game Code</label>
+          <input type="text" id="gameCode" placeholder="Enter code..." maxlength="6" autocomplete="off" required aria-required="true" inputmode="text" style="text-transform: uppercase;">
         </div>
         <div class="form-group">
-          <label>Nickname</label>
-          <input type="text" id="nickname" placeholder="Your IRC nick..." maxlength="20" autocomplete="off" required>
+          <label for="nickname">Nickname</label>
+          <input type="text" id="nickname" placeholder="Your IRC nick..." maxlength="20" autocomplete="off" required aria-required="true">
         </div>
         <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="your@email.com" autocomplete="email" aria-describedby="emailHint">
+          <span id="emailHint" style="display:none;">Optional - for prize contact</span>
         </div>
         <button type="submit" class="btn" id="joinBtn">JOIN CHANNEL</button>
-        <div class="error-msg hidden" id="joinError"></div>
+        <div class="error-msg hidden" id="joinError" role="alert" aria-live="assertive"></div>
       </form>
 
       <div class="brand">powered by Tenzor d.o.o.</div>

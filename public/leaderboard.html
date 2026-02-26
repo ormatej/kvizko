@@ -10,15 +10,19 @@
       display: inline-block;
       background: #ff3333;
       color: #fff;
-      padding: 2px 8px;
+      padding: 3px 10px;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       animation: livePulse 2s ease-in-out infinite;
     }
     @keyframes livePulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      50% { opacity: 0.4; }
+    }
+    .live-badge.final {
+      background: var(--accent);
+      animation: none;
     }
     .score-row {
       transition: all 0.3s ease;
@@ -27,11 +31,11 @@
       background: var(--highlight-row, rgba(0,0,0,0.04));
     }
     @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
+      from { opacity: 0; transform: translateX(-16px); }
       to { opacity: 1; transform: translateX(0); }
     }
     .score-row {
-      animation: slideIn 0.3s ease-out;
+      animation: slideIn 0.3s ease-out both;
     }
   </style>
 </head>
@@ -169,12 +173,16 @@
     });
 
     socket.on('game:ended', (data) => {
-      document.querySelector('.live-badge').textContent = 'FINAL';
+      const badge = document.querySelector('.live-badge');
+      badge.textContent = 'FINAL';
+      badge.classList.add('final');
       if (data.scoreboard) renderScoreboard(data.scoreboard);
     });
 
     socket.on('game:restarting', () => {
-      document.querySelector('.live-badge').textContent = 'LIVE';
+      const badge = document.querySelector('.live-badge');
+      badge.textContent = 'LIVE';
+      badge.classList.remove('final');
       scoreBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:40px;">New game starting...</td></tr>';
       podium.classList.add('hidden');
     });
@@ -194,24 +202,23 @@
 
       podium.classList.remove('hidden');
 
-      // Podium
       [1,2,3].forEach(i => {
         const p = sb[i-1];
-        document.getElementById(`podium${i}Nick`).textContent = p ? p.nickname : '—';
+        document.getElementById(`podium${i}Nick`).textContent = p ? p.nickname : '\u2014';
         document.getElementById(`podium${i}Score`).textContent = p ? `${p.points} pts` : '';
         if (p) document.getElementById(`podium${i}Nick`).style.color = p.color || 'var(--text-primary)';
       });
 
-      // Table
       scoreBody.innerHTML = '';
       sb.forEach((s, idx) => {
         const tr = document.createElement('tr');
         tr.className = 'score-row';
         if (idx < 3) tr.classList.add('highlight');
+        tr.style.animationDelay = `${idx * 40}ms`;
         const gamesCol = s._alltime ? `<td style="text-align:center;">${s.games_played || 0}</td>` : '';
         tr.innerHTML = `
           <td class="rank-col">${s.rank}</td>
-          <td style="color:${s.color || 'var(--text-primary)'}">${s.nickname}</td>
+          <td style="color:${s.color || 'var(--text-primary)'};font-weight:${idx < 3 ? '700' : '400'}">${s.nickname}</td>
           ${gamesCol}
           <td style="text-align:right;">${s.correct || 0}</td>
           <td class="points-col">${s.points}</td>
