@@ -409,7 +409,23 @@
       }
 
       if (data.scoreboard) updateMyScore(data.scoreboard);
-      channelTopic.textContent = 'Game Over — Thanks for playing!';
+      if (data.autoRestart) {
+        channelTopic.textContent = 'Game Over — New game starting soon...';
+        addSystemMsg('A new game will start automatically...');
+      } else {
+        channelTopic.textContent = 'Game Over — Thanks for playing!';
+      }
+    });
+
+    socket.on('game:restarting', (data) => {
+      addActionMsg(`New game starting in ${data.seconds} seconds!`);
+      channelTopic.textContent = 'New game starting...';
+      myScore = 0;
+      myRank = '-';
+      statusScore.textContent = 'Score: 0';
+      statusRank.textContent = 'Rank: -';
+      answered = false;
+      chatInput.disabled = false;
     });
 
     socket.on('scoreboard:update', (data) => {

@@ -273,15 +273,21 @@
 
       socket.on('round:correct', (data) => {
         log(`✓ ${data.nickname} answered correctly (+${data.points} pts)`);
+        refreshGameState();
       });
 
       socket.on('round:playerAnswered', (data) => {
         log(`${data.nickname} answered (${data.totalAnswered}/${data.totalPlayers})`);
       });
 
+      socket.on('round:wrong', (data) => {
+        log(`✗ ${data.nickname} wrong: "${data.answer}"`);
+      });
+
       socket.on('round:ended', (data) => {
         log(`Round ended. ${data.correctCount}/${data.totalPlayers} correct. Answer: ${data.answer}`);
         if (data.scoreboard) updateScoreboard(data.scoreboard);
+        refreshGameState();
       });
 
       socket.on('round:skipped', (data) => {
@@ -299,9 +305,21 @@
 
       socket.on('game:ended', (data) => {
         log('GAME OVER');
-        document.getElementById('adminGameStatus').textContent = 'Status: ended';
+        if (data.autoRestart) {
+          document.getElementById('adminGameStatus').textContent = 'Status: ended (restarting...)';
+          log('New game will start automatically in 15 seconds...');
+        } else {
+          document.getElementById('adminGameStatus').textContent = 'Status: ended';
+        }
         if (data.scoreboard) updateScoreboard(data.scoreboard);
-        enableControls(false);
+        if (!data.autoRestart) enableControls(false);
+      });
+
+      socket.on('game:restarting', (data) => {
+        log(`New game starting in ${data.seconds}s...`);
+        document.getElementById('adminGameStatus').textContent = 'Status: restarting';
+        updateScoreboard([]);
+        enableControls(true);
       });
 
       socket.on('scoreboard:update', (data) => {

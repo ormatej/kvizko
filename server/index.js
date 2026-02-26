@@ -147,6 +147,9 @@ function wireGameEvents(session) {
     if (event === 'game:ended') {
       stmts.endGame.run(session.code);
     }
+    if (event === 'game:restarting') {
+      stmts.updateGameStatus.run('waiting', session.code);
+    }
   };
 }
 
@@ -157,7 +160,7 @@ io.on('connection', (socket) => {
   socket.on('join', ({ gameCode, nickname, email }, cb) => {
     const session = games.get(gameCode);
     if (!session) return cb?.({ error: 'Game not found' });
-    if (session.status === 'ended') return cb?.({ error: 'Game has already ended' });
+    if (session.status === 'ended' && !session._restartTimer) return cb?.({ error: 'Game has already ended' });
 
     let dbPlayer = stmts.findPlayerByNickAndEmail.get(nickname, email || '');
     if (!dbPlayer) {

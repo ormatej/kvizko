@@ -106,7 +106,10 @@ class GameSession {
     this.roundTimer = null;
     this.hintTimers = [];
     this.roundAnswers = new Map();
+    this._roundParticipants = new Set();
     this.isPaused = false;
+    this._originalQuestions = questionData.questions || [];
+    this._restartTimer = null;
 
     this.onEvent = null;
   }
@@ -196,12 +199,45 @@ class GameSession {
     return true;
   }
 
-  stop() {
+  stop(autoRestart) {
+    if (this._restartTimer) { clearTimeout(this._restartTimer); this._restartTimer = null; }
     this._clearTimers();
     this.status = 'ended';
     this._saveAllScores();
-    this.emit('game:ended', { scoreboard: this.getScoreboard() });
+    this.emit('game:ended', { scoreboard: this.getScoreboard(), autoRestart: !!autoRestart });
+    if (autoRestart) {
+      this._restartTimer = setTimeout(() => this._restart(), 15000);
+    }
     return true;
+  }
+
+  _restart() {
+    this._restartTimer = null;
+
+    for (const player of this.players.values()) {
+      player.points = 0;
+      player.correctAnswers = 0;
+      player.totalAnswers = 0;
+      player.streak = 0;
+      player.bestStreak = 0;
+    }
+
+    if (this.shuffleQuestions) {
+      this.questions = shuffleArray(this._originalQuestions);
+    } else {
+      this.questions = [...this._originalQuestions];
+    }
+
+    this.currentIndex = -1;
+    this.currentQuestion = null;
+    this.questionStartTime = null;
+    this.roundAnswers = new Map();
+    this._roundParticipants = new Set();
+    this.isPaused = false;
+    this.status = 'waiting';
+
+    this.emit('game:restarting', { seconds: 5 });
+    setTimeout(() => this.start(), 5000);
   }
 
   skip() {
@@ -227,13 +263,14 @@ class GameSession {
 
     this.currentIndex++;
     if (this.currentIndex >= this.questions.length) {
-      this.stop();
+      this.stop(true);
       return;
     }
 
     this.currentQuestion = this.questions[this.currentIndex];
     this.questionStartTime = Date.now();
     this.roundAnswers = new Map();
+    this._roundParticipants = new Set();
 
     const qData = {
       index: this.currentIndex,
@@ -288,21 +325,32 @@ class GameSession {
     const player = this.players.get(socketId);
     if (!player) return null;
 
-    if (this.roundAnswers.has(socketId)) return { alreadyAnswered: true };
+    const isFree = this.currentQuestion.type !== 'abcd';
+
+    if (this.roundAnswers.has(socketId)) {
+      if (!isFree) return { alreadyAnswered: true };
+      if (this.roundAnswers.get(socketId).isCorrect) return { alreadyAnswered: true };
+    }
 
     const timeElapsed = Date.now() - this.questionStartTime;
     const isCorrect = checkAnswer(this.currentQuestion, answer);
     const difficulty = this.currentQuestion.difficulty || 1;
     const pointsAwarded = isCorrect ? calculatePoints(timeElapsed, this.timePerQuestion, difficulty) : 0;
 
-    this.roundAnswers.set(socketId, {
-      answer,
-      isCorrect,
-      timeElapsed,
-      pointsAwarded
-    });
+    if (!isFree || isCorrect) {
+      this.roundAnswers.set(socketId, {
+        answer,
+        isCorrect,
+        timeElapsed,
+        pointsAwarded
+      });
+    }
 
-    player.totalAnswers++;
+    if (!this._roundParticipants.has(socketId)) {
+      this._roundParticipants.add(socketId);
+      player.totalAnswers++;
+    }
+
     if (isCorrect) {
       player.correctAnswers++;
       player.streak++;
@@ -319,7 +367,7 @@ class GameSession {
         answer, 1, timeElapsed, pointsAwarded + streakBonus
       );
 
-      if (this.currentQuestion.type === 'free') {
+      if (isFree) {
         this._clearTimers();
         this.emit('round:correct', {
           nickname: player.nickname,
@@ -341,7 +389,7 @@ class GameSession {
       );
     }
 
-    if (this.currentQuestion.type === 'abcd') {
+    if (!isFree) {
       this.emit('round:playerAnswered', {
         nickname: player.nickname,
         color: player.color,
@@ -392,7 +440,7 @@ class GameSession {
       totalPlayers: this.getConnectedPlayers().length,
       results,
       allAnswered,
-      scoreboard: this.getScoreboard().slice(0, 5)
+      scoreboard: this.getScoreboard()
     });
 
     setTimeout(() => this.nextQuestion(), 4000);
@@ -429,6 +477,10 @@ class GameSession {
     if (this.roundTimer) { clearTimeout(this.roundTimer); this.roundTimer = null; }
     this.hintTimers.forEach(t => clearTimeout(t));
     this.hintTimers = [];
+  }
+
+  cancelRestart() {
+    if (this._restartTimer) { clearTimeout(this._restartTimer); this._restartTimer = null; }
   }
 }
 
