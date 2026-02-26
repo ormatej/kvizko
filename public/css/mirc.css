@@ -792,8 +792,37 @@ html, body {
     display: none;
   }
 
+  .admin-container {
+    min-height: auto;
+  }
+
+  html.admin-view,
+  html.admin-view body {
+    overflow: auto;
+    height: auto;
+  }
+
   .admin-body {
     grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .admin-panel {
+    padding: 14px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 14px;
+    text-align: center;
+  }
+
+  .game-code-display {
+    font-size: 24px;
+    padding: 10px;
+    letter-spacing: 4px;
   }
 
   .podium {

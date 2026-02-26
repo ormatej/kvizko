@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="admin-view">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,34 +38,36 @@
       <!-- Game Setup Panel -->
       <div class="admin-panel" id="setupPanel">
         <h2>Game Setup</h2>
-        <label style="color:var(--text-muted);font-size:12px;">Question Set</label>
-        <select id="questionSelect"></select>
+        <div id="setupForm">
+          <label style="color:var(--text-muted);font-size:12px;">Question Set</label>
+          <select id="questionSelect"></select>
 
-        <label style="color:var(--text-muted);font-size:12px;">Time per Question (seconds)</label>
-        <input type="number" id="timePerQuestion" value="30" min="5" max="120">
+          <label style="color:var(--text-muted);font-size:12px;">Time per Question (seconds)</label>
+          <input type="number" id="timePerQuestion" value="30" min="5" max="120">
 
-        <div style="margin:10px 0">
-          <label style="color:var(--text-muted);font-size:12px;">
-            <input type="checkbox" id="shuffleQuestions" checked> Shuffle questions
-          </label>
+          <div style="margin:10px 0">
+            <label style="color:var(--text-muted);font-size:12px;">
+              <input type="checkbox" id="shuffleQuestions" checked> Shuffle questions
+            </label>
+          </div>
+          <div style="margin:10px 0">
+            <label style="color:var(--text-muted);font-size:12px;">
+              <input type="checkbox" id="shuffleOptions" checked> Shuffle ABCD options
+            </label>
+          </div>
+
+          <button class="btn" id="createGameBtn" style="margin-top:10px;">CREATE GAME</button>
         </div>
-        <div style="margin:10px 0">
-          <label style="color:var(--text-muted);font-size:12px;">
-            <input type="checkbox" id="shuffleOptions" checked> Shuffle ABCD options
-          </label>
-        </div>
-
-        <button class="btn" id="createGameBtn" style="margin-top:10px;">CREATE GAME</button>
 
         <div class="hidden" id="gameCreated" style="margin-top:20px;">
           <div class="game-code-display" id="displayCode"></div>
           <div id="qrContainer" style="text-align:center;margin:10px 0;max-width:160px;margin-left:auto;margin-right:auto;"></div>
-          <div style="text-align:center;color:var(--text-muted);font-size:12px;" id="joinUrlDisplay"></div>
+          <div style="text-align:center;margin:8px 0;" id="joinUrlDisplay"></div>
         </div>
       </div>
 
       <!-- Game Controls Panel -->
-      <div class="admin-panel">
+      <div class="admin-panel" id="controlsPanel">
         <h2>Game Controls</h2>
         <div class="btn-row">
           <button class="btn-sm primary" id="startBtn" disabled>Start</button>
@@ -193,7 +195,16 @@
 
         currentGameCode = data.code;
         document.getElementById('displayCode').textContent = data.code;
-        document.getElementById('joinUrlDisplay').textContent = data.joinUrl;
+
+        const joinLink = document.createElement('a');
+        joinLink.href = data.joinUrl;
+        joinLink.textContent = data.joinUrl;
+        joinLink.target = '_blank';
+        joinLink.style.cssText = 'color:var(--accent);font-size:12px;word-break:break-all;';
+        const joinContainer = document.getElementById('joinUrlDisplay');
+        joinContainer.innerHTML = '';
+        joinContainer.appendChild(joinLink);
+
         document.getElementById('adminGameCode').textContent = `Game: ${data.code}`;
         document.getElementById('adminGameStatus').textContent = 'Status: waiting';
 
@@ -201,11 +212,17 @@
         const qrSvg = await qrRes.text();
         document.getElementById('qrContainer').innerHTML = qrSvg;
 
+        document.getElementById('setupForm').classList.add('hidden');
         document.getElementById('gameCreated').classList.remove('hidden');
 
         connectSocket(data.code);
         enableControls(true);
         log(`Game created: ${data.code} (${data.questionCount} questions)`);
+
+        const controlsPanel = document.getElementById('controlsPanel');
+        if (controlsPanel) {
+          controlsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       } catch (err) {
         log(`Error: ${err.message}`);
       }
