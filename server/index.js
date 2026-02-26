@@ -100,7 +100,11 @@ app.post('/api/games', (req, res) => {
 app.get('/api/games/:code/qr', async (req, res) => {
   const joinUrl = `${BASE_URL}/?game=${req.params.code}`;
   try {
-    const svg = await QRCode.toString(joinUrl, { type: 'svg', margin: 1 });
+    const svg = await QRCode.toString(joinUrl, {
+      type: 'svg',
+      margin: 1,
+      color: { dark: '#00ff41', light: '#00000000' }
+    });
     res.type('svg').send(svg);
   } catch {
     res.status(500).json({ error: 'QR generation failed' });

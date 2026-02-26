@@ -4,7 +4,7 @@ const { stmts } = require('./db');
 
 const QUESTIONS_DIR = path.join(__dirname, '..', 'questions');
 
-const IRC_COLORS = ['#ff5555', '#5555ff', '#55ff55', '#ff55ff', '#55ffff', '#ffaa00', '#ff7777', '#77aaff', '#aaffaa', '#ffaaff', '#aaffff', '#ffcc55'];
+const IRC_COLORS = ['#cc0000', '#0000cc', '#009900', '#990099', '#008888', '#cc6600', '#aa0044', '#2255bb', '#338833', '#884488', '#006688', '#aa7700'];
 
 function assignColor(index) {
   return IRC_COLORS[index % IRC_COLORS.length];
@@ -94,10 +94,14 @@ class GameSession {
     this.hintsEnabled = settings.hintsEnabled ?? qs.hintsEnabled ?? true;
     this.shuffleQuestions = settings.shuffleQuestions ?? qs.shuffleQuestions ?? true;
     this.shuffleOptions = settings.shuffleOptions ?? qs.shuffleOptions ?? true;
+    this.questionsPerGame = settings.questionsPerGame || qs.questionsPerGame || 0;
     this.theme = settings.theme || 'default';
 
     let questions = questionData.questions || [];
     if (this.shuffleQuestions) questions = shuffleArray(questions);
+    if (this.questionsPerGame > 0 && this.questionsPerGame < questions.length) {
+      questions = questions.slice(0, this.questionsPerGame);
+    }
     this.questions = questions;
 
     this.currentIndex = -1;
@@ -222,11 +226,16 @@ class GameSession {
       player.bestStreak = 0;
     }
 
+    let questions;
     if (this.shuffleQuestions) {
-      this.questions = shuffleArray(this._originalQuestions);
+      questions = shuffleArray(this._originalQuestions);
     } else {
-      this.questions = [...this._originalQuestions];
+      questions = [...this._originalQuestions];
     }
+    if (this.questionsPerGame > 0 && this.questionsPerGame < questions.length) {
+      questions = questions.slice(0, this.questionsPerGame);
+    }
+    this.questions = questions;
 
     this.currentIndex = -1;
     this.currentQuestion = null;

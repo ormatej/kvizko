@@ -29,6 +29,7 @@
 
       <!-- Sidebar -->
       <div class="sidebar" id="sidebar">
+        <div class="sidebar-qr" id="sidebarQr"></div>
         <div class="sidebar-title">Players</div>
         <div id="playerList"></div>
       </div>
@@ -95,6 +96,7 @@
     const statusConnection = document.getElementById('statusConnection');
     const countdownOverlay = document.getElementById('countdownOverlay');
     const countdownNumber = document.getElementById('countdownNumber');
+    const sidebarQr = document.getElementById('sidebarQr');
 
     const abcdBtns = {
       A: document.getElementById('btnA'),
@@ -126,6 +128,7 @@
         }
         channelTopic.textContent = res.gameTitle || 'Kvizko Game';
         updatePlayerList(res.players || []);
+        loadSidebarQr();
         addBotMsg(`Welcome to #tenzor-kvizko, ${nickname}!`);
         if (res.status === 'waiting') {
           addSystemMsg('Waiting for the quiz master to start the game...');
@@ -196,6 +199,14 @@
         playerList.appendChild(el);
       });
       statusPlayers.textContent = `Players: ${players.length}`;
+    }
+
+    async function loadSidebarQr() {
+      try {
+        const res = await fetch(`/api/games/${gameCode}/qr`);
+        const svg = await res.text();
+        sidebarQr.innerHTML = svg + '<div class="sidebar-qr-label">Scan to join</div>';
+      } catch {}
     }
 
     // --- Score ---
@@ -288,6 +299,7 @@
     });
 
     socket.on('chat:message', (data) => {
+      if (data.nickname === nickname) return;
       addPlayerMsg(data.nickname, data.color, data.message);
     });
 
@@ -449,7 +461,7 @@
       if (!text) return;
       chatInput.value = '';
 
-      addPlayerMsg(nickname, '#d4d4d4', text);
+      addPlayerMsg(nickname, getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#000', text);
 
       if (currentQuestionType === 'free' && !answered) {
         socket.emit('answer', { answer: text }, (res) => {

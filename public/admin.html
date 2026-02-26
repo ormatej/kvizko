@@ -45,6 +45,9 @@
           <label style="color:var(--text-muted);font-size:12px;">Time per Question (seconds)</label>
           <input type="number" id="timePerQuestion" value="30" min="5" max="120">
 
+          <label style="color:var(--text-muted);font-size:12px;">Questions per Game (0 = all)</label>
+          <input type="number" id="questionsPerGame" value="0" min="0" max="9999">
+
           <div style="margin:10px 0">
             <label style="color:var(--text-muted);font-size:12px;">
               <input type="checkbox" id="shuffleQuestions" checked> Shuffle questions
@@ -58,8 +61,9 @@
 
           <label style="color:var(--text-muted);font-size:12px;">Theme</label>
           <select id="themeSelect">
-            <option value="default">mIRC Classic (Green Terminal)</option>
-            <option value="auraverse">Auraverse (Cosmic Purple/Cyan)</option>
+            <option value="default">mIRC Classic (White)</option>
+            <option value="auraverse">Auraverse (White / Pastel Rainbow)</option>
+            <option value="tenzor">Tenzor (Dark / Red / Grey)</option>
           </select>
 
           <button class="btn" id="createGameBtn" style="margin-top:10px;">CREATE GAME</button>
@@ -69,6 +73,7 @@
           <div class="game-code-display" id="displayCode"></div>
           <div id="qrContainer" style="text-align:center;margin:10px 0;max-width:160px;margin-left:auto;margin-right:auto;"></div>
           <div style="text-align:center;margin:8px 0;" id="joinUrlDisplay"></div>
+          <button class="btn hidden" id="newGameBtn" style="margin-top:14px;background:var(--text-error);">NEW GAME</button>
         </div>
       </div>
 
@@ -129,6 +134,22 @@
           </div>
         </div>
       </div>
+
+      <!-- Live Channel View -->
+      <div class="admin-panel admin-channel-view">
+        <h2>Live Channel View</h2>
+        <div class="channel-view-wrap">
+          <div class="channel-view-bar">
+            <span class="channel-name">#tenzor-kvizko</span>
+            <span class="channel-topic" id="channelViewTopic">Waiting for game to start...</span>
+            <span class="channel-view-timer hidden" id="channelViewTimer">30s</span>
+          </div>
+          <div class="channel-view-timer-bar hidden" id="channelViewTimerBar">
+            <div class="timer-fill" id="channelViewTimerFill"></div>
+          </div>
+          <div class="channel-view-messages" id="channelViewMessages"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -187,6 +208,7 @@
       const theme = document.getElementById('themeSelect').value;
       const settings = {
         timePerQuestion: parseInt(document.getElementById('timePerQuestion').value) || 30,
+        questionsPerGame: parseInt(document.getElementById('questionsPerGame').value) || 0,
         shuffleQuestions: document.getElementById('shuffleQuestions').checked,
         shuffleOptions: document.getElementById('shuffleOptions').checked,
         theme: theme
@@ -237,6 +259,69 @@
       }
     });
 
+    // --- Channel View helpers ---
+    const cvMessages = document.getElementById('channelViewMessages');
+    const cvTopic = document.getElementById('channelViewTopic');
+    const cvTimer = document.getElementById('channelViewTimer');
+    const cvTimerBar = document.getElementById('channelViewTimerBar');
+    const cvTimerFill = document.getElementById('channelViewTimerFill');
+    let cvTimerInterval = null;
+
+    function cvTime() {
+      const d = new Date();
+      return `[${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}]`;
+    }
+
+    function escHtml(s) {
+      const el = document.createElement('span');
+      el.textContent = s;
+      return el.innerHTML;
+    }
+
+    function cvAdd(html, cls) {
+      const div = document.createElement('div');
+      div.className = 'msg' + (cls ? ' ' + cls : '');
+      div.innerHTML = html;
+      cvMessages.appendChild(div);
+      cvMessages.scrollTop = cvMessages.scrollHeight;
+    }
+
+    function cvBot(text) {
+      cvAdd(`<span class="timestamp">${cvTime()}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> ${escHtml(text)}`);
+    }
+
+    function cvAction(text) {
+      cvAdd(`<span class="timestamp">${cvTime()}</span> * KvizkoBot ${escHtml(text)}`, 'action');
+    }
+
+    function cvSystem(text) {
+      cvAdd(`<span class="timestamp">${cvTime()}</span> — ${escHtml(text)}`, 'system');
+    }
+
+    function cvStartTimer(totalMs) {
+      cvTimer.classList.remove('hidden');
+      cvTimerBar.classList.remove('hidden');
+      const started = Date.now();
+      clearInterval(cvTimerInterval);
+      cvTimerInterval = setInterval(() => {
+        let remaining = totalMs - (Date.now() - started);
+        if (remaining < 0) remaining = 0;
+        cvTimer.textContent = `${Math.ceil(remaining / 1000)}s`;
+        const pct = (remaining / totalMs) * 100;
+        cvTimerFill.style.width = pct + '%';
+        cvTimerFill.className = 'timer-fill';
+        if (pct < 33) cvTimerFill.classList.add('danger');
+        else if (pct < 66) cvTimerFill.classList.add('warning');
+        if (remaining <= 0) clearInterval(cvTimerInterval);
+      }, 100);
+    }
+
+    function cvStopTimer() {
+      clearInterval(cvTimerInterval);
+      cvTimer.classList.add('hidden');
+      cvTimerBar.classList.add('hidden');
+    }
+
     function connectSocket(code) {
       socket = io();
       socket.on('connect', () => {
@@ -246,6 +331,8 @@
             return;
           }
           log('Connected as admin');
+          cvSystem('Connected to channel #tenzor-kvizko as admin');
+          cvTopic.textContent = res.gameTitle || 'Kvizko Game';
           updatePlayers(res.players);
           updateScoreboard(res.scoreboard);
         });
@@ -253,77 +340,139 @@
 
       socket.on('player:joined', (data) => {
         log(`${data.nickname} joined (${data.playerCount} players)`);
+        cvAction(`${data.nickname} has joined #tenzor-kvizko (${data.playerCount} players)`);
         refreshGameState();
       });
 
       socket.on('player:left', (data) => {
         log(`${data.nickname} left (${data.playerCount} players)`);
+        cvAction(`${data.nickname} has left (${data.playerCount} players)`);
         refreshGameState();
       });
 
-      socket.on('game:countdown', () => {
+      socket.on('game:countdown', (data) => {
         log('Game starting...');
         document.getElementById('adminGameStatus').textContent = 'Status: starting';
+        cvAction('Game starting...');
       });
 
       socket.on('round:question', (data) => {
         log(`Q${data.index + 1}/${data.total}: ${data.question} [${data.type}]`);
         document.getElementById('adminGameStatus').textContent = `Status: Q${data.index + 1}/${data.total}`;
+        cvTopic.textContent = `${data.category || 'Quiz'} — Question ${data.index + 1}/${data.total}`;
+        cvStartTimer(data.timeMs);
+        cvAdd(`<span class="timestamp">${cvTime()}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> <span class="question-text">Q${data.index + 1}: ${escHtml(data.question)}</span>`);
+        if (data.type === 'abcd' && data.options) {
+          cvBot(`A) ${data.options.A}`);
+          cvBot(`B) ${data.options.B}`);
+          cvBot(`C) ${data.options.C}`);
+          cvBot(`D) ${data.options.D}`);
+        }
+      });
+
+      socket.on('round:hint', (data) => {
+        cvAdd(`<span class="timestamp">${cvTime()}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> HINT: <span class="hint-text">${escHtml(data.hint)}</span>`);
       });
 
       socket.on('round:correct', (data) => {
         log(`✓ ${data.nickname} answered correctly (+${data.points} pts)`);
+        cvStopTimer();
+        const streakText = data.streak >= 3 ? ` 🔥 ${data.streak} streak!` : '';
+        cvAdd(`<span class="timestamp">${cvTime()}</span> * <span class="correct-text">${escHtml(data.nickname)} got it right! +${data.points} pts (${(data.timeMs/1000).toFixed(1)}s)${streakText}</span>`);
         refreshGameState();
       });
 
       socket.on('round:playerAnswered', (data) => {
         log(`${data.nickname} answered (${data.totalAnswered}/${data.totalPlayers})`);
+        cvSystem(`${data.nickname} answered. (${data.totalAnswered}/${data.totalPlayers})`);
       });
 
       socket.on('round:wrong', (data) => {
         log(`✗ ${data.nickname} wrong: "${data.answer}"`);
+        cvAdd(`<span class="timestamp">${cvTime()}</span> <span class="nick" style="color:${data.color}">&lt;${escHtml(data.nickname)}&gt;</span> <span class="wrong-text">${escHtml(data.answer)}</span>`);
       });
 
       socket.on('round:ended', (data) => {
         log(`Round ended. ${data.correctCount}/${data.totalPlayers} correct. Answer: ${data.answer}`);
+        cvStopTimer();
+        cvAction(`Answer: ${data.answer}`);
+        cvSystem(`${data.correctCount}/${data.totalPlayers} players got it right.`);
+        if (data.scoreboard && data.scoreboard.length) {
+          const top = data.scoreboard.map(s => `${s.nickname}: ${s.points}`).join(' | ');
+          cvBot(`Top scores: ${top}`);
+        }
         if (data.scoreboard) updateScoreboard(data.scoreboard);
         refreshGameState();
       });
 
       socket.on('round:skipped', (data) => {
         log(`Question skipped. Answer: ${data.answer}`);
+        cvStopTimer();
+        cvAction(`Question skipped. Answer was: ${data.answer}`);
       });
 
       socket.on('game:paused', () => {
         log('Game paused');
         document.getElementById('adminGameStatus').textContent = 'Status: paused';
+        cvStopTimer();
+        cvAction('Game paused by quiz master.');
       });
 
       socket.on('game:resumed', () => {
         log('Game resumed');
+        cvAction('Game resumed!');
+      });
+
+      socket.on('chat:message', (data) => {
+        cvAdd(`<span class="timestamp">${cvTime()}</span> <span class="nick" style="color:${data.color}">&lt;${escHtml(data.nickname)}&gt;</span> ${escHtml(data.message)}`);
+      });
+
+      socket.on('chat:bot', (data) => {
+        cvBot(data.message);
       });
 
       socket.on('game:ended', (data) => {
         log('GAME OVER');
+        cvStopTimer();
+        cvAction('GAME OVER!');
+        if (data.scoreboard && data.scoreboard.length) {
+          cvBot('=== FINAL SCOREBOARD ===');
+          data.scoreboard.forEach((s, i) => {
+            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${s.rank}`;
+            cvBot(`${medal} ${s.nickname} — ${s.points} pts (${s.correct} correct)`);
+          });
+        }
         if (data.autoRestart) {
           document.getElementById('adminGameStatus').textContent = 'Status: ended (restarting...)';
           log('New game will start automatically in 15 seconds...');
+          cvSystem('A new game will start automatically...');
+          cvTopic.textContent = 'Game Over — New game starting soon...';
         } else {
           document.getElementById('adminGameStatus').textContent = 'Status: ended';
+          cvTopic.textContent = 'Game Over — Thanks for playing!';
         }
         if (data.scoreboard) updateScoreboard(data.scoreboard);
-        if (!data.autoRestart) enableControls(false);
+        if (!data.autoRestart) {
+          enableControls(false);
+          document.getElementById('newGameBtn').classList.remove('hidden');
+        }
       });
 
       socket.on('game:restarting', (data) => {
         log(`New game starting in ${data.seconds}s...`);
         document.getElementById('adminGameStatus').textContent = 'Status: restarting';
+        cvAction(`New game starting in ${data.seconds} seconds!`);
+        cvTopic.textContent = 'New game starting...';
         updateScoreboard([]);
         enableControls(true);
       });
 
       socket.on('scoreboard:update', (data) => {
-        if (data.scoreboard) updateScoreboard(data.scoreboard);
+        if (data.scoreboard) {
+          updateScoreboard(data.scoreboard);
+          const top = data.scoreboard.map(s => `#${s.rank} ${s.nickname}: ${s.points}`).join(' | ');
+          cvBot(`Scoreboard: ${top}`);
+        }
       });
 
       socket.on('admin:help', (data) => {
@@ -455,6 +604,27 @@
         log(`Reset error: ${err.message}`);
       }
     });
+
+    // New Game — reset setup panel
+    function resetSetup() {
+      if (socket) { socket.disconnect(); socket = null; }
+      currentGameCode = null;
+      document.getElementById('setupForm').classList.remove('hidden');
+      document.getElementById('gameCreated').classList.add('hidden');
+      document.getElementById('newGameBtn').classList.add('hidden');
+      document.getElementById('adminGameCode').textContent = '';
+      document.getElementById('adminGameStatus').textContent = '';
+      document.getElementById('displayCode').textContent = '';
+      document.getElementById('qrContainer').innerHTML = '';
+      document.getElementById('joinUrlDisplay').innerHTML = '';
+      document.getElementById('adminPlayerList').innerHTML = '';
+      document.getElementById('playerCount').textContent = '0';
+      document.getElementById('adminScoreboard').innerHTML = '<div style="color:var(--text-muted);font-size:12px;">No scores yet</div>';
+      enableControls(false);
+      loadQuestionSets();
+    }
+
+    document.getElementById('newGameBtn').addEventListener('click', resetSetup);
 
     // Theme preview
     document.getElementById('themeSelect').addEventListener('change', (e) => {
