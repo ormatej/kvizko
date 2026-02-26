@@ -60,6 +60,9 @@
     </div>
   </div>
 
+  <!-- Mobile QR Corner -->
+  <div class="mobile-qr-corner" id="mobileQrCorner"></div>
+
   <!-- Countdown Overlay -->
   <div class="countdown-overlay hidden" id="countdownOverlay">
     <div class="countdown-number" id="countdownNumber">3</div>
@@ -98,6 +101,7 @@
     const countdownOverlay = document.getElementById('countdownOverlay');
     const countdownNumber = document.getElementById('countdownNumber');
     const sidebarQr = document.getElementById('sidebarQr');
+    const mobileQrCorner = document.getElementById('mobileQrCorner');
 
     const abcdBtns = {
       A: document.getElementById('btnA'),
@@ -227,6 +231,7 @@
         const res = await fetch(`/api/games/${gameCode}/qr`);
         const svg = await res.text();
         sidebarQr.innerHTML = svg + '<div class="sidebar-qr-label">Scan to join</div>';
+        mobileQrCorner.innerHTML = svg + '<div class="qr-label">Join</div>';
       } catch {}
     }
 
