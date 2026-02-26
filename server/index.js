@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const QRCode = require('qrcode');
 const { v4: uuidv4 } = require('uuid');
+const multer = require('multer');
 const { db, stmts } = require('./db');
 const { GameSession, loadQuestionFile, listQuestionFiles } = require('./game');
 const { parseCommand, HELP_TEXT } = require('./commands');
@@ -53,6 +54,50 @@ app.get('/api/questions/:filename', (req, res) => {
     res.json(data);
   } catch {
     res.status(404).json({ error: 'Question file not found' });
+  }
+});
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (!file.originalname.endsWith('.json')) {
+      return cb(new Error('Only .json files are allowed'));
+    }
+    cb(null, true);
+  }
+});
+
+app.post('/api/questions/upload', upload.single('file'), (req, res) => {
+  if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  try {
+    const content = req.file.buffer.toString('utf-8');
+    const data = JSON.parse(content);
+
+    if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
+      return res.status(400).json({ error: 'Invalid question file: must contain a non-empty "questions" array' });
+    }
+
+    const filename = req.file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const filePath = path.join(__dirname, '..', 'questions', filename);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+
+    res.json({
+      ok: true,
+      filename,
+      title: data.title || filename,
+      count: data.questions.length
+    });
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      return res.status(400).json({ error: 'Invalid JSON format' });
+    }
+    res.status(500).json({ error: e.message });
   }
 });
 
