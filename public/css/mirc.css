@@ -1525,7 +1525,7 @@ html.admin-view body {
   .mobile-qr-corner {
     display: block;
     position: fixed;
-    bottom: 50px;
+    bottom: 100px;
     right: 8px;
     z-index: 90;
     opacity: 0.8;
