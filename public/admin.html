@@ -46,7 +46,7 @@
           <input type="number" id="timePerQuestion" value="30" min="5" max="120">
 
           <label style="color:var(--text-muted);font-size:12px;">Questions per Game (0 = all)</label>
-          <input type="number" id="questionsPerGame" value="0" min="0" max="9999">
+          <input type="number" id="questionsPerGame" value="10" min="0" max="9999">
 
           <div style="margin:10px 0">
             <label style="color:var(--text-muted);font-size:12px;">
@@ -312,6 +312,8 @@
         opt.textContent = `${f.title} (${f.count} questions)`;
         select.appendChild(opt);
       });
+      const defaultFile = files.find(f => f.filename === 'slovenija-turizem.json');
+      if (defaultFile) select.value = defaultFile.filename;
     }
 
     // Create Game

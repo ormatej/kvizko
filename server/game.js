@@ -60,12 +60,8 @@ function generateHint(answer, revealPercent) {
   }).join(' ');
 }
 
-function calculatePoints(timeElapsedMs, totalTimeMs, difficulty = 1) {
-  const basePoints = 100;
-  const timeRatio = Math.max(0, 1 - (timeElapsedMs / totalTimeMs));
-  const speedMultiplier = 1 + (timeRatio * 0.5);
-  const difficultyMultiplier = 1 + ((difficulty - 1) * 0.25);
-  return Math.round(basePoints * speedMultiplier * difficultyMultiplier);
+function calculatePoints() {
+  return 1;
 }
 
 function shuffleOptions(options) {
@@ -94,7 +90,7 @@ class GameSession {
     this.hintsEnabled = settings.hintsEnabled ?? qs.hintsEnabled ?? true;
     this.shuffleQuestions = settings.shuffleQuestions ?? qs.shuffleQuestions ?? true;
     this.shuffleOptions = settings.shuffleOptions ?? qs.shuffleOptions ?? true;
-    this.questionsPerGame = settings.questionsPerGame || qs.questionsPerGame || 0;
+    this.questionsPerGame = settings.questionsPerGame || qs.questionsPerGame || 10;
     this.theme = settings.theme || 'default';
 
     let questions = questionData.questions || [];
@@ -343,8 +339,7 @@ class GameSession {
 
     const timeElapsed = Date.now() - this.questionStartTime;
     const isCorrect = checkAnswer(this.currentQuestion, answer);
-    const difficulty = this.currentQuestion.difficulty || 1;
-    const pointsAwarded = isCorrect ? calculatePoints(timeElapsed, this.timePerQuestion, difficulty) : 0;
+    const pointsAwarded = isCorrect ? calculatePoints() : 0;
 
     if (!isFree || isCorrect) {
       this.roundAnswers.set(socketId, {
@@ -365,31 +360,25 @@ class GameSession {
       player.streak++;
       if (player.streak > player.bestStreak) player.bestStreak = player.streak;
 
-      let streakBonus = 0;
-      if (player.streak >= 3) {
-        streakBonus = Math.round(pointsAwarded * 0.1 * Math.min(player.streak - 2, 5));
-      }
-      player.points += pointsAwarded + streakBonus;
+      player.points += pointsAwarded;
 
       stmts.logAnswer.run(
         this._getGameDbId(), player.playerId, this.currentIndex,
-        answer, 1, timeElapsed, pointsAwarded + streakBonus
+        answer, 1, timeElapsed, pointsAwarded
       );
 
-      if (isFree) {
-        this._clearTimers();
-        this.emit('round:correct', {
-          nickname: player.nickname,
-          color: player.color,
-          points: pointsAwarded + streakBonus,
-          timeMs: timeElapsed,
-          streak: player.streak,
-          questionIndex: this.currentIndex,
-          answer: this._getCorrectAnswerText()
-        });
-        setTimeout(() => this.nextQuestion(), 3000);
-        return { isCorrect: true, points: pointsAwarded + streakBonus, timeMs: timeElapsed };
-      }
+      this._clearTimers();
+      this.emit('round:correct', {
+        nickname: player.nickname,
+        color: player.color,
+        points: pointsAwarded,
+        timeMs: timeElapsed,
+        streak: player.streak,
+        questionIndex: this.currentIndex,
+        answer: this._getCorrectAnswerText()
+      });
+      setTimeout(() => this.nextQuestion(), 3000);
+      return { isCorrect: true, points: pointsAwarded, timeMs: timeElapsed };
     } else {
       player.streak = 0;
       stmts.logAnswer.run(
@@ -407,11 +396,7 @@ class GameSession {
         totalPlayers: this.getConnectedPlayers().length
       });
 
-      if (this.roundAnswers.size >= this.getConnectedPlayers().length) {
-        this._endRound(true);
-      }
-
-      return { isCorrect, points: pointsAwarded, timeMs: timeElapsed, revealed: false };
+      return { isCorrect: false, points: 0, timeMs: timeElapsed, revealed: false };
     }
 
     this.emit('round:wrong', {
