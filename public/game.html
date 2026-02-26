@@ -4,15 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Kvizko - #tenzor-kvizko</title>
+  <meta name="theme-color" content="#003399">
   <link rel="stylesheet" href="/css/mirc.css">
 </head>
 <body class="scanlines">
-  <div class="game-container" id="gameContainer">
+  <div class="game-container" id="gameContainer" role="main">
     <!-- Channel Bar -->
-    <div class="channel-bar">
+    <div class="channel-bar" role="banner">
       <span class="channel-name">#tenzor-kvizko</span>
       <span class="channel-topic" id="channelTopic">Waiting for game to start...</span>
-      <span class="timer hidden" id="timerDisplay">30s</span>
+      <span class="timer hidden" id="timerDisplay" aria-live="polite" aria-label="Time remaining">30s</span>
     </div>
 
     <!-- Timer Bar -->
@@ -43,15 +44,15 @@
     </div>
 
     <!-- ABCD Buttons (multiple choice) -->
-    <div class="abcd-bar hidden" id="abcdBar">
-      <button class="abcd-btn" data-option="A" id="btnA">A)</button>
-      <button class="abcd-btn" data-option="B" id="btnB">B)</button>
-      <button class="abcd-btn" data-option="C" id="btnC">C)</button>
-      <button class="abcd-btn" data-option="D" id="btnD">D)</button>
+    <div class="abcd-bar hidden" id="abcdBar" role="group" aria-label="Answer options">
+      <button class="abcd-btn" data-option="A" id="btnA" aria-label="Option A">A)</button>
+      <button class="abcd-btn" data-option="B" id="btnB" aria-label="Option B">B)</button>
+      <button class="abcd-btn" data-option="C" id="btnC" aria-label="Option C">C)</button>
+      <button class="abcd-btn" data-option="D" id="btnD" aria-label="Option D">D)</button>
     </div>
 
     <!-- Status Bar -->
-    <div class="status-bar">
+    <div class="status-bar" role="status" aria-live="polite">
       <span class="status-item" id="statusConnection">Connected</span>
       <span class="status-item" id="statusPlayers">Players: 0</span>
       <span class="status-item highlight" id="statusScore">Score: 0</span>
@@ -260,8 +261,15 @@
         const pct = (remaining / totalMs) * 100;
         timerFill.style.width = pct + '%';
         timerFill.className = 'timer-fill';
-        if (pct < 33) timerFill.classList.add('danger');
-        else if (pct < 66) timerFill.classList.add('warning');
+        if (pct < 33) {
+          timerFill.classList.add('danger');
+          timerDisplay.classList.add('danger');
+        } else if (pct < 66) {
+          timerFill.classList.add('warning');
+          timerDisplay.classList.remove('danger');
+        } else {
+          timerDisplay.classList.remove('danger');
+        }
 
         if (remaining <= 0) clearInterval(timerInterval);
       }, 100);
@@ -270,7 +278,21 @@
     function stopTimer() {
       clearInterval(timerInterval);
       timerDisplay.classList.add('hidden');
+      timerDisplay.classList.remove('danger');
       timerBar.classList.add('hidden');
+    }
+
+    function flashScreen(type) {
+      const el = document.createElement('div');
+      el.className = type === 'correct' ? 'answer-correct-flash' : 'answer-wrong-flash';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+
+    function bumpScore() {
+      statusScore.classList.remove('score-changed');
+      void statusScore.offsetWidth;
+      statusScore.classList.add('score-changed');
     }
 
     // --- Input mode ---
@@ -331,15 +353,19 @@
       countdownOverlay.classList.remove('hidden');
       let n = data.seconds;
       countdownNumber.textContent = n;
+      countdownNumber.classList.remove('go');
       const ci = setInterval(() => {
         n--;
         if (n <= 0) {
           clearInterval(ci);
-          countdownOverlay.classList.add('hidden');
           countdownNumber.textContent = 'GO!';
-          setTimeout(() => countdownOverlay.classList.add('hidden'), 500);
+          countdownNumber.classList.add('go');
+          setTimeout(() => countdownOverlay.classList.add('hidden'), 600);
         } else {
           countdownNumber.textContent = n;
+          countdownNumber.style.animation = 'none';
+          void countdownNumber.offsetWidth;
+          countdownNumber.style.animation = '';
         }
       }, 1000);
       addActionMsg('Game starting...');
@@ -371,11 +397,17 @@
       stopTimer();
       disableInput();
       const isMe = data.nickname === nickname;
-      const streakText = data.streak >= 3 ? ` 🔥 ${data.streak} streak!` : '';
-      addMsg(`<span class="timestamp">${formatTime()}</span> * <span class="correct-text">${escHtml(data.nickname)} got it right! +${data.points} pts (${(data.timeMs/1000).toFixed(1)}s)${streakText}</span>`);
+      const streakText = data.streak >= 3 ? ` \u{1F525} ${data.streak} streak!` : '';
+      const div = document.createElement('div');
+      div.className = 'msg correct-flash';
+      div.innerHTML = `<span class="timestamp">${formatTime()}</span> * <span class="correct-text">${escHtml(data.nickname)} got it right! +${data.points} pts (${(data.timeMs/1000).toFixed(1)}s)${streakText}</span>`;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
       if (isMe) {
         myScore += data.points;
         statusScore.textContent = `Score: ${myScore}`;
+        flashScreen('correct');
+        bumpScore();
       }
     });
 
@@ -513,6 +545,17 @@
           }
         });
       });
+    });
+
+    socket.on('round:ended', (data) => {
+      if (currentQuestionType === 'abcd') {
+        const correctKey = data.answer.charAt(0);
+        const myAnswer = document.querySelector('.abcd-btn.selected');
+        if (myAnswer) {
+          const myKey = myAnswer.getAttribute('data-option');
+          if (myKey !== correctKey) flashScreen('wrong');
+        }
+      }
     });
 
   })();
