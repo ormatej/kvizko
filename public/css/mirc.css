@@ -58,6 +58,7 @@ html, body {
   position: fixed;
   inset: 0;
   pointer-events: none;
+  touch-action: none;
   background: repeating-linear-gradient(
     0deg,
     rgba(0,0,0,0.08) 0px,
@@ -66,6 +67,8 @@ html, body {
     transparent 3px
   );
   z-index: 9999;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* ===== JOIN PAGE ===== */
@@ -321,6 +324,8 @@ html, body {
   border-top: 1px solid var(--border);
   gap: 8px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 10000;
 }
 
 .input-nick {
@@ -337,8 +342,14 @@ html, body {
   border: 1px solid var(--border);
   color: var(--text-primary);
   font-family: inherit;
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  touch-action: manipulation;
+  position: relative;
+  z-index: 1;
 }
 
 .input-bar input:focus {
@@ -353,6 +364,9 @@ html, body {
   font-family: inherit;
   font-weight: 700;
   cursor: pointer;
+  touch-action: manipulation;
+  position: relative;
+  z-index: 1;
 }
 
 .input-bar button:hover {
@@ -368,6 +382,8 @@ html, body {
   background: var(--bg-input);
   border-top: 1px solid var(--border);
   flex-shrink: 0;
+  position: relative;
+  z-index: 10000;
 }
 
 .abcd-btn {

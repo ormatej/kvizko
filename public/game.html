@@ -243,6 +243,7 @@
 
     function setInputMode(type, options) {
       answered = false;
+      chatInput.disabled = false;
       if (type === 'abcd' && options) {
         inputBar.classList.add('hidden');
         abcdBar.classList.remove('hidden');
