@@ -111,7 +111,21 @@ class GameSession {
     this._originalQuestions = questionData.questions || [];
     this._restartTimer = null;
 
+    this.chatHistory = [];
     this.onEvent = null;
+  }
+
+  addToHistory(entry) {
+    entry.timestamp = entry.timestamp || Date.now();
+    this.chatHistory.push(entry);
+    const MAX_HISTORY = 500;
+    if (this.chatHistory.length > MAX_HISTORY) {
+      this.chatHistory = this.chatHistory.slice(-MAX_HISTORY);
+    }
+  }
+
+  getChatHistory() {
+    return this.chatHistory;
   }
 
   addPlayer(socketId, nickname, email, playerId) {
