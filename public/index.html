@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Kvizko - Join Game</title>
+  <link rel="stylesheet" href="/css/mirc.css">
+</head>
+<body class="scanlines">
+  <div class="join-container" id="joinPage">
+    <div class="join-box">
+      <h1>KVIZKO</h1>
+      <div class="subtitle">[ retro quiz experience ]</div>
+
+      <form id="joinForm">
+        <div class="form-group">
+          <label>Game Code</label>
+          <input type="text" id="gameCode" placeholder="Enter code..." maxlength="6" autocomplete="off" required>
+        </div>
+        <div class="form-group">
+          <label>Nickname</label>
+          <input type="text" id="nickname" placeholder="Your IRC nick..." maxlength="20" autocomplete="off" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+        </div>
+        <button type="submit" class="btn" id="joinBtn">JOIN CHANNEL</button>
+        <div class="error-msg hidden" id="joinError"></div>
+      </form>
+
+      <div class="brand">powered by Tenzor d.o.o.</div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const prefilledCode = params.get('game');
+    if (prefilledCode) {
+      document.getElementById('gameCode').value = prefilledCode.toUpperCase();
+    }
+
+    document.getElementById('joinForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = document.getElementById('gameCode').value.trim().toUpperCase();
+      const nick = document.getElementById('nickname').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const errorEl = document.getElementById('joinError');
+      const btn = document.getElementById('joinBtn');
+
+      if (!code || !nick) {
+        errorEl.textContent = 'Game code and nickname are required.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'CONNECTING...';
+      errorEl.classList.add('hidden');
+
+      const socket = io();
+      socket.on('connect', () => {
+        socket.emit('join', { gameCode: code, nickname: nick, email }, (res) => {
+          if (res.error) {
+            errorEl.textContent = res.error;
+            errorEl.classList.remove('hidden');
+            btn.disabled = false;
+            btn.textContent = 'JOIN CHANNEL';
+            socket.disconnect();
+            return;
+          }
+
+          sessionStorage.setItem('kvizko_socket', socket.id);
+          sessionStorage.setItem('kvizko_game', code);
+          sessionStorage.setItem('kvizko_nick', nick);
+          sessionStorage.setItem('kvizko_email', email);
+          sessionStorage.setItem('kvizko_data', JSON.stringify(res));
+
+          window.location.href = `/game.html?game=${code}`;
+        });
+      });
+
+      socket.on('connect_error', () => {
+        errorEl.textContent = 'Cannot connect to server.';
+        errorEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'JOIN CHANNEL';
+      });
+    });
+  </script>
+</body>
+</html>

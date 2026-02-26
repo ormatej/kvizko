@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Kvizko - #tenzor-kvizko</title>
+  <link rel="stylesheet" href="/css/mirc.css">
+</head>
+<body class="scanlines">
+  <div class="game-container" id="gameContainer">
+    <!-- Channel Bar -->
+    <div class="channel-bar">
+      <span class="channel-name">#tenzor-kvizko</span>
+      <span class="channel-topic" id="channelTopic">Waiting for game to start...</span>
+      <span class="timer hidden" id="timerDisplay">30s</span>
+    </div>
+
+    <!-- Timer Bar -->
+    <div class="timer-bar hidden" id="timerBar">
+      <div class="timer-fill" id="timerFill"></div>
+    </div>
+
+    <!-- Main Area -->
+    <div class="main-area">
+      <!-- Chat Panel -->
+      <div class="chat-panel">
+        <div class="chat-messages" id="chatMessages"></div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-title">Players</div>
+        <div id="playerList"></div>
+      </div>
+    </div>
+
+    <!-- Input Bar (free-type) -->
+    <div class="input-bar" id="inputBar">
+      <span class="input-nick" id="inputNick">&lt;Player&gt;</span>
+      <input type="text" id="chatInput" placeholder="Type your answer..." autocomplete="off">
+      <button id="sendBtn">Send</button>
+    </div>
+
+    <!-- ABCD Buttons (multiple choice) -->
+    <div class="abcd-bar hidden" id="abcdBar">
+      <button class="abcd-btn" data-option="A" id="btnA">A)</button>
+      <button class="abcd-btn" data-option="B" id="btnB">B)</button>
+      <button class="abcd-btn" data-option="C" id="btnC">C)</button>
+      <button class="abcd-btn" data-option="D" id="btnD">D)</button>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span class="status-item" id="statusConnection">Connected</span>
+      <span class="status-item" id="statusPlayers">Players: 0</span>
+      <span class="status-item highlight" id="statusScore">Score: 0</span>
+      <span class="status-item" id="statusRank">Rank: -</span>
+    </div>
+  </div>
+
+  <!-- Countdown Overlay -->
+  <div class="countdown-overlay hidden" id="countdownOverlay">
+    <div class="countdown-number" id="countdownNumber">3</div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    const gameCode = new URLSearchParams(window.location.search).get('game');
+    const nickname = sessionStorage.getItem('kvizko_nick');
+    const email = sessionStorage.getItem('kvizko_email') || '';
+
+    if (!gameCode || !nickname) {
+      window.location.href = '/';
+      return;
+    }
+
+    // DOM refs
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const inputBar = document.getElementById('inputBar');
+    const abcdBar = document.getElementById('abcdBar');
+    const inputNick = document.getElementById('inputNick');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerBar = document.getElementById('timerBar');
+    const timerFill = document.getElementById('timerFill');
+    const channelTopic = document.getElementById('channelTopic');
+    const playerList = document.getElementById('playerList');
+    const statusPlayers = document.getElementById('statusPlayers');
+    const statusScore = document.getElementById('statusScore');
+    const statusRank = document.getElementById('statusRank');
+    const statusConnection = document.getElementById('statusConnection');
+    const countdownOverlay = document.getElementById('countdownOverlay');
+    const countdownNumber = document.getElementById('countdownNumber');
+
+    const abcdBtns = {
+      A: document.getElementById('btnA'),
+      B: document.getElementById('btnB'),
+      C: document.getElementById('btnC'),
+      D: document.getElementById('btnD')
+    };
+
+    let myScore = 0;
+    let myRank = '-';
+    let currentQuestionType = null;
+    let timerInterval = null;
+    let answered = false;
+
+    inputNick.textContent = `<${nickname}>`;
+
+    // Socket
+    const socket = io();
+
+    socket.on('connect', () => {
+      statusConnection.textContent = 'Connected';
+      socket.emit('join', { gameCode, nickname, email }, (res) => {
+        if (res.error) {
+          addSystemMsg(`Error: ${res.error}`);
+          return;
+        }
+        channelTopic.textContent = res.gameTitle || 'Kvizko Game';
+        updatePlayerList(res.players || []);
+        addBotMsg(`Welcome to #tenzor-kvizko, ${nickname}!`);
+        if (res.status === 'waiting') {
+          addSystemMsg('Waiting for the quiz master to start the game...');
+        }
+        if (res.scoreboard) updateMyScore(res.scoreboard);
+      });
+    });
+
+    socket.on('disconnect', () => {
+      statusConnection.textContent = 'Disconnected';
+      addSystemMsg('Connection lost. Reconnecting...');
+    });
+
+    // --- Chat ---
+
+    function formatTime(ts) {
+      const d = ts ? new Date(ts) : new Date();
+      return `[${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}]`;
+    }
+
+    function addMsg(html) {
+      const div = document.createElement('div');
+      div.className = 'msg';
+      div.innerHTML = html;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addBotMsg(text) {
+      addMsg(`<span class="timestamp">${formatTime()}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> ${escHtml(text)}`);
+    }
+
+    function addActionMsg(text) {
+      const div = document.createElement('div');
+      div.className = 'msg action';
+      div.innerHTML = `<span class="timestamp">${formatTime()}</span> * KvizkoBot ${escHtml(text)}`;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addSystemMsg(text) {
+      const div = document.createElement('div');
+      div.className = 'msg system';
+      div.innerHTML = `<span class="timestamp">${formatTime()}</span> — ${escHtml(text)}`;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addPlayerMsg(nick, color, text) {
+      addMsg(`<span class="timestamp">${formatTime()}</span> <span class="nick" style="color:${color}">&lt;${escHtml(nick)}&gt;</span> ${escHtml(text)}`);
+    }
+
+    function escHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    // --- Player list ---
+
+    function updatePlayerList(players) {
+      playerList.innerHTML = '';
+      players.forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'user-item';
+        el.style.color = p.color;
+        el.textContent = p.nickname;
+        playerList.appendChild(el);
+      });
+      statusPlayers.textContent = `Players: ${players.length}`;
+    }
+
+    // --- Score ---
+
+    function updateMyScore(scoreboard) {
+      const me = scoreboard.find(s => s.nickname === nickname);
+      if (me) {
+        myScore = me.points;
+        myRank = me.rank;
+        statusScore.textContent = `Score: ${myScore}`;
+        statusRank.textContent = `Rank: #${myRank}`;
+      }
+    }
+
+    // --- Timer ---
+
+    function startTimer(totalMs) {
+      timerDisplay.classList.remove('hidden');
+      timerBar.classList.remove('hidden');
+      let remaining = totalMs;
+      const started = Date.now();
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        remaining = totalMs - (Date.now() - started);
+        if (remaining < 0) remaining = 0;
+
+        const secs = Math.ceil(remaining / 1000);
+        timerDisplay.textContent = `${secs}s`;
+
+        const pct = (remaining / totalMs) * 100;
+        timerFill.style.width = pct + '%';
+        timerFill.className = 'timer-fill';
+        if (pct < 33) timerFill.classList.add('danger');
+        else if (pct < 66) timerFill.classList.add('warning');
+
+        if (remaining <= 0) clearInterval(timerInterval);
+      }, 100);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerDisplay.classList.add('hidden');
+      timerBar.classList.add('hidden');
+    }
+
+    // --- Input mode ---
+
+    function setInputMode(type, options) {
+      answered = false;
+      if (type === 'abcd' && options) {
+        inputBar.classList.add('hidden');
+        abcdBar.classList.remove('hidden');
+        Object.keys(abcdBtns).forEach(key => {
+          const btn = abcdBtns[key];
+          btn.textContent = `${key}) ${options[key]}`;
+          btn.disabled = false;
+          btn.className = 'abcd-btn';
+          btn.setAttribute('data-option', key);
+        });
+      } else {
+        abcdBar.classList.add('hidden');
+        inputBar.classList.remove('hidden');
+        chatInput.value = '';
+        chatInput.focus();
+      }
+    }
+
+    function disableInput() {
+      answered = true;
+      chatInput.disabled = true;
+      Object.values(abcdBtns).forEach(b => b.disabled = true);
+    }
+
+    function enableInput() {
+      chatInput.disabled = false;
+    }
+
+    // --- Events ---
+
+    socket.on('player:joined', (data) => {
+      addActionMsg(`${data.nickname} has joined #tenzor-kvizko (${data.playerCount} players)`);
+      fetch(`/api/games/${gameCode}`).then(r => r.json()).then(d => updatePlayerList(d.players));
+    });
+
+    socket.on('player:left', (data) => {
+      addActionMsg(`${data.nickname} has left (${data.playerCount} players)`);
+      fetch(`/api/games/${gameCode}`).then(r => r.json()).then(d => updatePlayerList(d.players));
+    });
+
+    socket.on('chat:message', (data) => {
+      addPlayerMsg(data.nickname, data.color, data.message);
+    });
+
+    socket.on('chat:bot', (data) => {
+      addBotMsg(data.message);
+    });
+
+    socket.on('game:countdown', (data) => {
+      countdownOverlay.classList.remove('hidden');
+      let n = data.seconds;
+      countdownNumber.textContent = n;
+      const ci = setInterval(() => {
+        n--;
+        if (n <= 0) {
+          clearInterval(ci);
+          countdownOverlay.classList.add('hidden');
+          countdownNumber.textContent = 'GO!';
+          setTimeout(() => countdownOverlay.classList.add('hidden'), 500);
+        } else {
+          countdownNumber.textContent = n;
+        }
+      }, 1000);
+      addActionMsg('Game starting...');
+    });
+
+    socket.on('round:question', (data) => {
+      currentQuestionType = data.type;
+      channelTopic.textContent = `${data.category || 'Quiz'} — Question ${data.index + 1}/${data.total}`;
+      startTimer(data.timeMs);
+
+      addMsg(`<span class="timestamp">${formatTime()}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> <span class="question-text">Q${data.index + 1}: ${escHtml(data.question)}</span>`);
+
+      if (data.type === 'abcd') {
+        setInputMode('abcd', data.options);
+        addBotMsg(`A) ${data.options.A}`);
+        addBotMsg(`B) ${data.options.B}`);
+        addBotMsg(`C) ${data.options.C}`);
+        addBotMsg(`D) ${data.options.D}`);
+      } else {
+        setInputMode('free');
+      }
+    });
+
+    socket.on('round:hint', (data) => {
+      addMsg(`<span class="timestamp">${formatTime()}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> HINT: <span class="hint-text">${escHtml(data.hint)}</span>`);
+    });
+
+    socket.on('round:correct', (data) => {
+      stopTimer();
+      disableInput();
+      const isMe = data.nickname === nickname;
+      const streakText = data.streak >= 3 ? ` 🔥 ${data.streak} streak!` : '';
+      addMsg(`<span class="timestamp">${formatTime()}</span> * <span class="correct-text">${escHtml(data.nickname)} got it right! +${data.points} pts (${(data.timeMs/1000).toFixed(1)}s)${streakText}</span>`);
+      if (isMe) {
+        myScore += data.points;
+        statusScore.textContent = `Score: ${myScore}`;
+      }
+    });
+
+    socket.on('round:wrong', (data) => {
+      if (data.nickname !== nickname) {
+        addMsg(`<span class="timestamp">${formatTime()}</span> <span class="nick" style="color:${data.color}">&lt;${escHtml(data.nickname)}&gt;</span> <span class="wrong-text">${escHtml(data.answer)}</span>`);
+      }
+    });
+
+    socket.on('round:playerAnswered', (data) => {
+      addSystemMsg(`${data.nickname} answered. (${data.totalAnswered}/${data.totalPlayers})`);
+    });
+
+    socket.on('round:ended', (data) => {
+      stopTimer();
+      disableInput();
+      addActionMsg(`Answer: ${data.answer}`);
+      addSystemMsg(`${data.correctCount}/${data.totalPlayers} players got it right.`);
+
+      if (data.scoreboard && data.scoreboard.length) {
+        const top = data.scoreboard.map(s => `${s.nickname}: ${s.points}`).join(' | ');
+        addBotMsg(`Top scores: ${top}`);
+      }
+
+      if (data.scoreboard) updateMyScore(data.scoreboard);
+
+      // Highlight correct ABCD button
+      if (currentQuestionType === 'abcd') {
+        const correctKey = data.answer.charAt(0);
+        Object.keys(abcdBtns).forEach(k => {
+          if (k === correctKey) abcdBtns[k].classList.add('correct');
+          else abcdBtns[k].classList.add('wrong');
+        });
+      }
+    });
+
+    socket.on('round:skipped', (data) => {
+      stopTimer();
+      disableInput();
+      addActionMsg(`Question skipped. Answer was: ${data.answer}`);
+    });
+
+    socket.on('game:paused', () => {
+      stopTimer();
+      addActionMsg('Game paused by quiz master.');
+    });
+
+    socket.on('game:resumed', () => {
+      addActionMsg('Game resumed!');
+    });
+
+    socket.on('game:ended', (data) => {
+      stopTimer();
+      disableInput();
+      addActionMsg('GAME OVER!');
+
+      if (data.scoreboard && data.scoreboard.length) {
+        addBotMsg('=== FINAL SCOREBOARD ===');
+        data.scoreboard.forEach((s, i) => {
+          const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${s.rank}`;
+          addBotMsg(`${medal} ${s.nickname} — ${s.points} pts (${s.correct} correct)`);
+        });
+      }
+
+      if (data.scoreboard) updateMyScore(data.scoreboard);
+      channelTopic.textContent = 'Game Over — Thanks for playing!';
+    });
+
+    socket.on('scoreboard:update', (data) => {
+      if (data.scoreboard) {
+        const top = data.scoreboard.map(s => `#${s.rank} ${s.nickname}: ${s.points}`).join(' | ');
+        addBotMsg(`Scoreboard: ${top}`);
+        updateMyScore(data.scoreboard);
+      }
+    });
+
+    socket.on('kicked', (data) => {
+      addActionMsg(`You have been kicked: ${data.reason || 'No reason given'}`);
+      socket.disconnect();
+      setTimeout(() => { window.location.href = '/'; }, 3000);
+    });
+
+    // --- Send message / answer ---
+
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      chatInput.value = '';
+
+      addPlayerMsg(nickname, '#d4d4d4', text);
+
+      if (currentQuestionType === 'free' && !answered) {
+        socket.emit('answer', { answer: text }, (res) => {
+          if (res && res.alreadyAnswered) {
+            addSystemMsg('You already answered this question.');
+          }
+        });
+      } else {
+        socket.emit('chat', { message: text });
+      }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    Object.keys(abcdBtns).forEach(key => {
+      abcdBtns[key].addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+
+        Object.values(abcdBtns).forEach(b => b.disabled = true);
+        abcdBtns[key].classList.add('selected');
+
+        socket.emit('answer', { answer: key }, (res) => {
+          if (res && res.alreadyAnswered) {
+            addSystemMsg('You already answered this question.');
+          }
+        });
+      });
+    });
+
+  })();
+  </script>
+</body>
+</html>

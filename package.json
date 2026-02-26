@@ -1,0 +1,21 @@
+{
+  "name": "kvizko",
+  "version": "1.0.0",
+  "description": "Retro mIRC-style trivia quiz game for job fairs and events",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "keywords": ["quiz", "trivia", "irc", "mirc", "game", "realtime"],
+  "author": "Tenzor d.o.o.",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0",
+    "socket.io": "^4.8.0",
+    "better-sqlite3": "^11.7.0",
+    "qrcode": "^1.5.4",
+    "dotenv": "^16.4.0",
+    "uuid": "^10.0.0"
+  }
+}

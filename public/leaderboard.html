@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kvizko - Leaderboard</title>
+  <link rel="stylesheet" href="/css/mirc.css">
+  <style>
+    .live-badge {
+      display: inline-block;
+      background: #ff3333;
+      color: #fff;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      animation: livePulse 2s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .score-row {
+      transition: all 0.3s ease;
+    }
+    .score-row.highlight {
+      background: rgba(0, 255, 65, 0.08);
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .score-row {
+      animation: slideIn 0.3s ease-out;
+    }
+  </style>
+</head>
+<body class="scanlines">
+  <div class="leaderboard-container">
+    <div class="leaderboard-header">
+      <h1>KVIZKO</h1>
+      <div class="game-info" id="gameInfo">
+        <span class="live-badge">LIVE</span>
+        <span id="gameTitle" style="margin-left:10px;">Waiting for game...</span>
+      </div>
+    </div>
+
+    <!-- Podium -->
+    <div class="podium hidden" id="podium">
+      <div class="podium-place second" id="podium2">
+        <div class="podium-rank">2</div>
+        <div class="podium-nick" id="podium2Nick">—</div>
+        <div class="podium-score" id="podium2Score">0 pts</div>
+      </div>
+      <div class="podium-place first" id="podium1">
+        <div class="podium-rank">1</div>
+        <div class="podium-nick" id="podium1Nick">—</div>
+        <div class="podium-score" id="podium1Score">0 pts</div>
+      </div>
+      <div class="podium-place third" id="podium3">
+        <div class="podium-rank">3</div>
+        <div class="podium-nick" id="podium3Nick">—</div>
+        <div class="podium-score" id="podium3Score">0 pts</div>
+      </div>
+    </div>
+
+    <!-- Score Table -->
+    <table class="score-table" id="scoreTable">
+      <thead>
+        <tr>
+          <th class="rank-col">#</th>
+          <th>Player</th>
+          <th style="text-align:right;">Correct</th>
+          <th class="points-col">Points</th>
+        </tr>
+      </thead>
+      <tbody id="scoreBody">
+        <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:40px;">Waiting for game data...</td></tr>
+      </tbody>
+    </table>
+
+    <!-- QR Code Corner -->
+    <div class="qr-corner" id="qrCorner">
+      <div id="qrCode"></div>
+      <div class="qr-label">Scan to join!</div>
+    </div>
+
+    <div style="margin-top:40px;text-align:center;color:var(--text-muted);font-size:12px;">
+      powered by <span style="color:var(--accent);">Tenzor d.o.o.</span>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    const params = new URLSearchParams(window.location.search);
+    const gameCode = params.get('game');
+    const mode = params.get('mode') || 'game'; // 'game' or 'alltime'
+
+    const podium = document.getElementById('podium');
+    const scoreBody = document.getElementById('scoreBody');
+    const gameTitle = document.getElementById('gameTitle');
+
+    if (mode === 'alltime') {
+      document.querySelector('.live-badge').textContent = 'ALL TIME';
+      gameTitle.textContent = 'All-Time Leaderboard';
+      loadAllTime();
+      setInterval(loadAllTime, 15000);
+      return;
+    }
+
+    if (!gameCode) {
+      gameTitle.textContent = 'No game code provided. Add ?game=CODE to URL.';
+      return;
+    }
+
+    // Load QR
+    fetch(`/api/games/${gameCode}/qr`)
+      .then(r => r.text())
+      .then(svg => { document.getElementById('qrCode').innerHTML = svg; })
+      .catch(() => {});
+
+    // Socket connection
+    const socket = io();
+
+    socket.on('connect', () => {
+      socket.emit('join', { gameCode, nickname: `Leaderboard_${Date.now()}`, email: '' }, (res) => {
+        if (res.error) {
+          gameTitle.textContent = `Error: ${res.error}`;
+          return;
+        }
+        gameTitle.textContent = res.gameTitle || 'Kvizko Game';
+        if (res.scoreboard) renderScoreboard(res.scoreboard);
+      });
+    });
+
+    socket.on('round:ended', (data) => {
+      if (data.scoreboard) renderScoreboard(data.scoreboard);
+      refreshFull();
+    });
+
+    socket.on('round:correct', () => refreshFull());
+    socket.on('scoreboard:update', (data) => {
+      if (data.scoreboard) renderScoreboard(data.scoreboard);
+    });
+
+    socket.on('game:ended', (data) => {
+      document.querySelector('.live-badge').textContent = 'FINAL';
+      if (data.scoreboard) renderScoreboard(data.scoreboard);
+    });
+
+    async function refreshFull() {
+      try {
+        const res = await fetch(`/api/games/${gameCode}`);
+        const data = await res.json();
+        if (data.scoreboard) renderScoreboard(data.scoreboard);
+      } catch {}
+    }
+
+    setInterval(refreshFull, 5000);
+
+    function renderScoreboard(sb) {
+      if (!sb || !sb.length) return;
+
+      podium.classList.remove('hidden');
+
+      // Podium
+      [1,2,3].forEach(i => {
+        const p = sb[i-1];
+        document.getElementById(`podium${i}Nick`).textContent = p ? p.nickname : '—';
+        document.getElementById(`podium${i}Score`).textContent = p ? `${p.points} pts` : '';
+        if (p) document.getElementById(`podium${i}Nick`).style.color = p.color || 'var(--text-primary)';
+      });
+
+      // Table
+      scoreBody.innerHTML = '';
+      sb.forEach((s, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'score-row';
+        if (idx < 3) tr.classList.add('highlight');
+        tr.innerHTML = `
+          <td class="rank-col">${s.rank}</td>
+          <td style="color:${s.color || 'var(--text-primary)'}">${s.nickname}</td>
+          <td style="text-align:right;">${s.correct || 0}</td>
+          <td class="points-col">${s.points}</td>
+        `;
+        scoreBody.appendChild(tr);
+      });
+    }
+
+    async function loadAllTime() {
+      try {
+        const res = await fetch('/api/leaderboard');
+        const data = await res.json();
+        const sb = data.map((d, i) => ({
+          rank: i + 1,
+          nickname: d.nickname,
+          points: d.total_points,
+          correct: d.total_correct,
+          color: 'var(--text-primary)'
+        }));
+        renderScoreboard(sb);
+      } catch {}
+    }
+
+  })();
+  </script>
+</body>
+</html>

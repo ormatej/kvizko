@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kvizko - Admin Panel</title>
+  <link rel="stylesheet" href="/css/mirc.css">
+</head>
+<body class="scanlines">
+  <!-- Auth Screen -->
+  <div class="join-container" id="authScreen">
+    <div class="join-box">
+      <h1>KVIZKO</h1>
+      <div class="subtitle">[ admin panel ]</div>
+      <form id="authForm">
+        <div class="form-group">
+          <label>Admin Password</label>
+          <input type="password" id="adminPassword" placeholder="Enter password..." required>
+        </div>
+        <button type="submit" class="btn">LOGIN</button>
+        <div class="error-msg hidden" id="authError"></div>
+      </form>
+      <div class="brand">powered by Tenzor d.o.o.</div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div class="admin-container hidden" id="adminDashboard">
+    <div class="admin-header">
+      <h1>KVIZKO ADMIN</h1>
+      <div>
+        <span id="adminGameCode" style="color:var(--accent);font-size:14px;margin-right:16px;"></span>
+        <span id="adminGameStatus" style="color:var(--text-muted);font-size:13px;"></span>
+      </div>
+    </div>
+
+    <div class="admin-body">
+      <!-- Game Setup Panel -->
+      <div class="admin-panel" id="setupPanel">
+        <h2>Game Setup</h2>
+        <label style="color:var(--text-muted);font-size:12px;">Question Set</label>
+        <select id="questionSelect"></select>
+
+        <label style="color:var(--text-muted);font-size:12px;">Time per Question (seconds)</label>
+        <input type="number" id="timePerQuestion" value="30" min="5" max="120">
+
+        <div style="margin:10px 0">
+          <label style="color:var(--text-muted);font-size:12px;">
+            <input type="checkbox" id="shuffleQuestions" checked> Shuffle questions
+          </label>
+        </div>
+        <div style="margin:10px 0">
+          <label style="color:var(--text-muted);font-size:12px;">
+            <input type="checkbox" id="shuffleOptions" checked> Shuffle ABCD options
+          </label>
+        </div>
+
+        <button class="btn" id="createGameBtn" style="margin-top:10px;">CREATE GAME</button>
+
+        <div class="hidden" id="gameCreated" style="margin-top:20px;">
+          <div class="game-code-display" id="displayCode"></div>
+          <div id="qrContainer" style="text-align:center;margin:10px 0;"></div>
+          <div style="text-align:center;color:var(--text-muted);font-size:12px;" id="joinUrlDisplay"></div>
+        </div>
+      </div>
+
+      <!-- Game Controls Panel -->
+      <div class="admin-panel">
+        <h2>Game Controls</h2>
+        <div class="btn-row">
+          <button class="btn-sm primary" id="startBtn" disabled>Start</button>
+          <button class="btn-sm" id="pauseBtn" disabled>Pause</button>
+          <button class="btn-sm" id="resumeBtn" disabled>Resume</button>
+          <button class="btn-sm" id="skipBtn" disabled>Skip</button>
+          <button class="btn-sm" id="hintBtn" disabled>Hint</button>
+          <button class="btn-sm" id="scoresBtn" disabled>Scores</button>
+          <button class="btn-sm danger" id="stopBtn" disabled>Stop</button>
+        </div>
+
+        <div style="margin-top:20px;">
+          <h2>Send Message</h2>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="adminMsg" placeholder="Bot announcement..." style="flex:1;">
+            <button class="btn-sm" id="sayBtn">Say</button>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <h2>Command Line</h2>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="cmdInput" placeholder="!command..." style="flex:1;">
+            <button class="btn-sm" id="cmdBtn">Run</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Players Panel -->
+      <div class="admin-panel">
+        <h2>Players (<span id="playerCount">0</span>)</h2>
+        <ul class="player-list" id="adminPlayerList"></ul>
+
+        <div style="margin-top:20px;">
+          <h2>Scoreboard</h2>
+          <div id="adminScoreboard"></div>
+        </div>
+      </div>
+
+      <!-- Event Log Panel -->
+      <div class="admin-panel">
+        <h2>Event Log</h2>
+        <div class="admin-log" id="adminLog"></div>
+
+        <div style="margin-top:20px;">
+          <h2>Export</h2>
+          <div class="btn-row">
+            <button class="btn-sm" id="exportLeadsBtn">Export Leads (CSV)</button>
+            <button class="btn-sm" id="exportScoresBtn">Export Scores (CSV)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    let adminPassword = '';
+    let currentGameCode = null;
+    let socket = null;
+
+    const authScreen = document.getElementById('authScreen');
+    const adminDashboard = document.getElementById('adminDashboard');
+    const authError = document.getElementById('authError');
+
+    // Auth
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      adminPassword = document.getElementById('adminPassword').value;
+      authError.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/questions', { headers: { 'x-admin-password': adminPassword } });
+        if (!res.ok && res.status === 401) throw new Error('Wrong password');
+        authScreen.classList.add('hidden');
+        adminDashboard.classList.remove('hidden');
+        loadQuestionSets();
+      } catch (err) {
+        authError.textContent = err.message || 'Auth failed';
+        authError.classList.remove('hidden');
+      }
+    });
+
+    async function loadQuestionSets() {
+      const res = await fetch('/api/questions');
+      const files = await res.json();
+      const select = document.getElementById('questionSelect');
+      select.innerHTML = '';
+      files.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.filename;
+        opt.textContent = `${f.title} (${f.count} questions)`;
+        select.appendChild(opt);
+      });
+    }
+
+    // Create Game
+    document.getElementById('createGameBtn').addEventListener('click', async () => {
+      const questionFile = document.getElementById('questionSelect').value;
+      if (!questionFile) return;
+
+      const settings = {
+        timePerQuestion: parseInt(document.getElementById('timePerQuestion').value) || 30,
+        shuffleQuestions: document.getElementById('shuffleQuestions').checked,
+        shuffleOptions: document.getElementById('shuffleOptions').checked
+      };
+
+      try {
+        const res = await fetch('/api/games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPassword },
+          body: JSON.stringify({ questionFile, settings })
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        currentGameCode = data.code;
+        document.getElementById('displayCode').textContent = data.code;
+        document.getElementById('joinUrlDisplay').textContent = data.joinUrl;
+        document.getElementById('adminGameCode').textContent = `Game: ${data.code}`;
+        document.getElementById('adminGameStatus').textContent = 'Status: waiting';
+
+        const qrRes = await fetch(`/api/games/${data.code}/qr`);
+        const qrSvg = await qrRes.text();
+        document.getElementById('qrContainer').innerHTML = qrSvg;
+
+        document.getElementById('gameCreated').classList.remove('hidden');
+
+        connectSocket(data.code);
+        enableControls(true);
+        log(`Game created: ${data.code} (${data.questionCount} questions)`);
+      } catch (err) {
+        log(`Error: ${err.message}`);
+      }
+    });
+
+    function connectSocket(code) {
+      socket = io();
+      socket.on('connect', () => {
+        socket.emit('admin:auth', { gameCode: code, password: adminPassword }, (res) => {
+          if (res.error) {
+            log(`Auth error: ${res.error}`);
+            return;
+          }
+          log('Connected as admin');
+          updatePlayers(res.players);
+          updateScoreboard(res.scoreboard);
+        });
+      });
+
+      socket.on('player:joined', (data) => {
+        log(`${data.nickname} joined (${data.playerCount} players)`);
+        refreshGameState();
+      });
+
+      socket.on('player:left', (data) => {
+        log(`${data.nickname} left (${data.playerCount} players)`);
+        refreshGameState();
+      });
+
+      socket.on('game:countdown', () => {
+        log('Game starting...');
+        document.getElementById('adminGameStatus').textContent = 'Status: starting';
+      });
+
+      socket.on('round:question', (data) => {
+        log(`Q${data.index + 1}/${data.total}: ${data.question} [${data.type}]`);
+        document.getElementById('adminGameStatus').textContent = `Status: Q${data.index + 1}/${data.total}`;
+      });
+
+      socket.on('round:correct', (data) => {
+        log(`✓ ${data.nickname} answered correctly (+${data.points} pts)`);
+      });
+
+      socket.on('round:playerAnswered', (data) => {
+        log(`${data.nickname} answered (${data.totalAnswered}/${data.totalPlayers})`);
+      });
+
+      socket.on('round:ended', (data) => {
+        log(`Round ended. ${data.correctCount}/${data.totalPlayers} correct. Answer: ${data.answer}`);
+        if (data.scoreboard) updateScoreboard(data.scoreboard);
+      });
+
+      socket.on('round:skipped', (data) => {
+        log(`Question skipped. Answer: ${data.answer}`);
+      });
+
+      socket.on('game:paused', () => {
+        log('Game paused');
+        document.getElementById('adminGameStatus').textContent = 'Status: paused';
+      });
+
+      socket.on('game:resumed', () => {
+        log('Game resumed');
+      });
+
+      socket.on('game:ended', (data) => {
+        log('GAME OVER');
+        document.getElementById('adminGameStatus').textContent = 'Status: ended';
+        if (data.scoreboard) updateScoreboard(data.scoreboard);
+        enableControls(false);
+      });
+
+      socket.on('scoreboard:update', (data) => {
+        if (data.scoreboard) updateScoreboard(data.scoreboard);
+      });
+
+      socket.on('admin:help', (data) => {
+        data.commands.forEach(c => log(c));
+      });
+
+      socket.on('admin:error', (data) => {
+        log(`Error: ${data.message}`);
+      });
+    }
+
+    async function refreshGameState() {
+      if (!currentGameCode) return;
+      try {
+        const res = await fetch(`/api/games/${currentGameCode}`);
+        const data = await res.json();
+        updatePlayers(data.players);
+        updateScoreboard(data.scoreboard);
+      } catch {}
+    }
+
+    function updatePlayers(players) {
+      const list = document.getElementById('adminPlayerList');
+      list.innerHTML = '';
+      (players || []).forEach(p => {
+        const li = document.createElement('li');
+        li.style.color = p.color;
+        li.textContent = p.nickname;
+        list.appendChild(li);
+      });
+      document.getElementById('playerCount').textContent = (players || []).length;
+    }
+
+    function updateScoreboard(scoreboard) {
+      const container = document.getElementById('adminScoreboard');
+      if (!scoreboard || !scoreboard.length) {
+        container.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">No scores yet</div>';
+        return;
+      }
+      container.innerHTML = scoreboard.map((s, i) => {
+        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${s.rank}`;
+        return `<div style="padding:3px 0;font-size:13px;"><span style="color:${s.color || 'var(--text-muted)'}">${medal} ${s.nickname}</span> — <span style="color:var(--accent)">${s.points} pts</span> (${s.correct} correct)</div>`;
+      }).join('');
+    }
+
+    function enableControls(enabled) {
+      ['startBtn','pauseBtn','resumeBtn','skipBtn','hintBtn','scoresBtn','stopBtn'].forEach(id => {
+        document.getElementById(id).disabled = !enabled;
+      });
+    }
+
+    function sendCommand(cmd) {
+      if (!socket || !currentGameCode) return;
+      socket.emit('admin:command', { command: cmd });
+      log(`> ${cmd}`);
+    }
+
+    document.getElementById('startBtn').addEventListener('click', () => sendCommand('!start'));
+    document.getElementById('pauseBtn').addEventListener('click', () => sendCommand('!pause'));
+    document.getElementById('resumeBtn').addEventListener('click', () => sendCommand('!resume'));
+    document.getElementById('skipBtn').addEventListener('click', () => sendCommand('!skip'));
+    document.getElementById('hintBtn').addEventListener('click', () => sendCommand('!hint'));
+    document.getElementById('scoresBtn').addEventListener('click', () => sendCommand('!scores'));
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      if (confirm('End the game?')) sendCommand('!stop');
+    });
+
+    document.getElementById('sayBtn').addEventListener('click', () => {
+      const msg = document.getElementById('adminMsg').value.trim();
+      if (msg) { sendCommand(`!say ${msg}`); document.getElementById('adminMsg').value = ''; }
+    });
+
+    document.getElementById('cmdInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const cmd = document.getElementById('cmdInput').value.trim();
+        if (cmd) { sendCommand(cmd); document.getElementById('cmdInput').value = ''; }
+      }
+    });
+    document.getElementById('cmdBtn').addEventListener('click', () => {
+      const cmd = document.getElementById('cmdInput').value.trim();
+      if (cmd) { sendCommand(cmd); document.getElementById('cmdInput').value = ''; }
+    });
+
+    // Export
+    document.getElementById('exportLeadsBtn').addEventListener('click', async () => {
+      if (!currentGameCode) return;
+      try {
+        const res = await fetch(`/api/games/${currentGameCode}`);
+        const data = await res.json();
+        const players = data.players || [];
+        let csv = 'Nickname,Email\n';
+        players.forEach(p => { csv += `"${p.nickname}","${p.email || ''}"\n`; });
+        downloadCSV(csv, `kvizko-leads-${currentGameCode}.csv`);
+      } catch {}
+    });
+
+    document.getElementById('exportScoresBtn').addEventListener('click', async () => {
+      if (!currentGameCode) return;
+      try {
+        const res = await fetch(`/api/games/${currentGameCode}`);
+        const data = await res.json();
+        const scores = data.scoreboard || [];
+        let csv = 'Rank,Nickname,Points,Correct\n';
+        scores.forEach(s => { csv += `${s.rank},"${s.nickname}",${s.points},${s.correct}\n`; });
+        downloadCSV(csv, `kvizko-scores-${currentGameCode}.csv`);
+      } catch {}
+    });
+
+    function downloadCSV(csv, filename) {
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Log
+    function log(msg) {
+      const container = document.getElementById('adminLog');
+      const d = new Date();
+      const time = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+      container.innerHTML += `<div class="log-entry"><span class="log-time">[${time}]</span> ${msg}</div>`;
+      container.scrollTop = container.scrollHeight;
+    }
+
+  })();
+  </script>
+</body>
+</html>

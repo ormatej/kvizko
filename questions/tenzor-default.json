@@ -1,0 +1,222 @@
+{
+  "title": "Tenzor - Software Development Quiz",
+  "description": "Test your knowledge about software development, technologies, and Tenzor!",
+  "settings": {
+    "timePerQuestion": 30,
+    "hintsEnabled": true,
+    "shuffleQuestions": true,
+    "shuffleOptions": true
+  },
+  "questions": [
+    {
+      "type": "abcd",
+      "question": "Which programming language is most commonly used for web frontend development?",
+      "options": {
+        "A": "JavaScript",
+        "B": "Python",
+        "C": "Java",
+        "D": "C++"
+      },
+      "answer": "A",
+      "category": "Web Development",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "What does HTML stand for?",
+      "answer": ["HyperText Markup Language"],
+      "hint": "H____ T___ M_____ L_______",
+      "category": "Web Development",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "What does API stand for?",
+      "options": {
+        "A": "Application Programming Interface",
+        "B": "Advanced Program Integration",
+        "C": "Automated Process Interaction",
+        "D": "Application Process Interface"
+      },
+      "answer": "A",
+      "category": "General IT",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "What command is used to initialize a new Git repository?",
+      "answer": ["git init"],
+      "hint": "git i___",
+      "category": "DevOps",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Which database is known as a 'NoSQL' document database?",
+      "options": {
+        "A": "PostgreSQL",
+        "B": "MySQL",
+        "C": "MongoDB",
+        "D": "SQLite"
+      },
+      "answer": "C",
+      "category": "Databases",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "What does CSS stand for?",
+      "answer": ["Cascading Style Sheets"],
+      "hint": "C________ S____ S_____",
+      "category": "Web Development",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Which HTTP status code means 'Not Found'?",
+      "options": {
+        "A": "200",
+        "B": "301",
+        "C": "404",
+        "D": "500"
+      },
+      "answer": "C",
+      "category": "Web Development",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "What is the name of the JavaScript runtime built on Chrome's V8 engine?",
+      "answer": ["Node.js", "NodeJS", "Node"],
+      "hint": "N___.js",
+      "category": "Backend",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "What does 'CI/CD' stand for in DevOps?",
+      "options": {
+        "A": "Code Integration / Code Deployment",
+        "B": "Continuous Integration / Continuous Delivery",
+        "C": "Central Infrastructure / Central Database",
+        "D": "Computed Interface / Computed Design"
+      },
+      "answer": "B",
+      "category": "DevOps",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "In JavaScript, what keyword is used to declare a constant variable?",
+      "answer": ["const"],
+      "hint": "c____",
+      "category": "Programming",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Which company developed the TypeScript programming language?",
+      "options": {
+        "A": "Google",
+        "B": "Apple",
+        "C": "Microsoft",
+        "D": "Facebook"
+      },
+      "answer": "C",
+      "category": "Programming",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "What is the default port number for HTTP?",
+      "answer": ["80"],
+      "hint": "It's a two-digit number",
+      "category": "Networking",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Which of these is a version control system?",
+      "options": {
+        "A": "Docker",
+        "B": "Git",
+        "C": "Kubernetes",
+        "D": "Nginx"
+      },
+      "answer": "B",
+      "category": "DevOps",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "What symbol is used for single-line comments in JavaScript?",
+      "answer": ["//"],
+      "hint": "Two identical characters",
+      "category": "Programming",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "What does 'REST' stand for in REST API?",
+      "options": {
+        "A": "Remote Execution State Transfer",
+        "B": "Representational State Transfer",
+        "C": "Reliable Server Technology",
+        "D": "Real-time Event Stream Transfer"
+      },
+      "answer": "B",
+      "category": "Web Development",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "What is the name of the package manager for Node.js?",
+      "answer": ["npm", "yarn", "pnpm"],
+      "hint": "n__",
+      "category": "Backend",
+      "difficulty": 1
+    },
+    {
+      "type": "abcd",
+      "question": "Which protocol is used for secure web communication?",
+      "options": {
+        "A": "FTP",
+        "B": "SMTP",
+        "C": "HTTPS",
+        "D": "SSH"
+      },
+      "answer": "C",
+      "category": "Networking",
+      "difficulty": 1
+    },
+    {
+      "type": "free",
+      "question": "What does JSON stand for?",
+      "answer": ["JavaScript Object Notation"],
+      "hint": "J________ O_____ N_______",
+      "category": "Web Development",
+      "difficulty": 2
+    },
+    {
+      "type": "abcd",
+      "question": "Which of these is NOT a JavaScript framework/library?",
+      "options": {
+        "A": "React",
+        "B": "Django",
+        "C": "Vue",
+        "D": "Angular"
+      },
+      "answer": "B",
+      "category": "Programming",
+      "difficulty": 2
+    },
+    {
+      "type": "free",
+      "question": "What SQL command is used to retrieve data from a database?",
+      "answer": ["SELECT"],
+      "hint": "S_____",
+      "category": "Databases",
+      "difficulty": 1
+    }
+  ]
+}
