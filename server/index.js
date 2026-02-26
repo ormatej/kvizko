@@ -283,8 +283,86 @@ function wireGameEvents(session) {
       stmts.updateGameStatus.run('waiting', session.code);
     }
 
-    if (event === 'chat:bot') {
-      session.addToHistory({ type: 'bot', message: data.message });
+    switch (event) {
+      case 'chat:bot':
+        session.addToHistory({ type: 'bot', message: data.message });
+        break;
+      case 'game:countdown':
+        session.addToHistory({ type: 'action', message: 'Game starting...' });
+        break;
+      case 'round:question': {
+        session.addToHistory({ type: 'question', question: data.question, index: data.index, total: data.total });
+        if (data.type === 'abcd' && data.options) {
+          session.addToHistory({ type: 'bot', message: `A) ${data.options.A}` });
+          session.addToHistory({ type: 'bot', message: `B) ${data.options.B}` });
+          session.addToHistory({ type: 'bot', message: `C) ${data.options.C}` });
+          session.addToHistory({ type: 'bot', message: `D) ${data.options.D}` });
+        }
+        break;
+      }
+      case 'round:hint':
+        session.addToHistory({ type: 'hint', hint: data.hint });
+        break;
+      case 'round:correct': {
+        const streakText = data.streak >= 3 ? ` \u{1F525} ${data.streak} streak!` : '';
+        session.addToHistory({
+          type: 'correct',
+          message: `${data.nickname} got it right! +${data.points} pts (${(data.timeMs / 1000).toFixed(1)}s)${streakText}`
+        });
+        break;
+      }
+      case 'round:wrong':
+        session.addToHistory({
+          type: 'wrong',
+          nickname: data.nickname,
+          color: data.color,
+          answer: data.answer
+        });
+        break;
+      case 'round:playerAnswered':
+        session.addToHistory({
+          type: 'system',
+          message: `${data.nickname} answered. (${data.totalAnswered}/${data.totalPlayers})`
+        });
+        break;
+      case 'round:ended': {
+        session.addToHistory({ type: 'action', message: `Answer: ${data.answer}` });
+        session.addToHistory({ type: 'system', message: `${data.correctCount}/${data.totalPlayers} players got it right.` });
+        if (data.scoreboard && data.scoreboard.length) {
+          const top = data.scoreboard.map(s => `${s.nickname}: ${s.points}`).join(' | ');
+          session.addToHistory({ type: 'bot', message: `Top scores: ${top}` });
+        }
+        break;
+      }
+      case 'round:skipped':
+        session.addToHistory({ type: 'action', message: `Question skipped. Answer was: ${data.answer}` });
+        break;
+      case 'game:paused':
+        session.addToHistory({ type: 'action', message: 'Game paused by quiz master.' });
+        break;
+      case 'game:resumed':
+        session.addToHistory({ type: 'action', message: 'Game resumed!' });
+        break;
+      case 'game:ended': {
+        session.addToHistory({ type: 'action', message: 'GAME OVER!' });
+        if (data.scoreboard && data.scoreboard.length) {
+          session.addToHistory({ type: 'bot', message: '=== FINAL SCOREBOARD ===' });
+          data.scoreboard.forEach((s, i) => {
+            const medal = i === 0 ? '\u{1F947}' : i === 1 ? '\u{1F948}' : i === 2 ? '\u{1F949}' : `#${s.rank}`;
+            session.addToHistory({ type: 'bot', message: `${medal} ${s.nickname} \u{2014} ${s.points} pts (${s.correct} correct)` });
+          });
+        }
+        break;
+      }
+      case 'game:restarting':
+        session.addToHistory({ type: 'action', message: `New game starting in ${data.seconds} seconds!` });
+        break;
+      case 'scoreboard:update':
+        if (data.scoreboard) {
+          const top = data.scoreboard.map(s => `#${s.rank} ${s.nickname}: ${s.points}`).join(' | ');
+          session.addToHistory({ type: 'bot', message: `Scoreboard: ${top}` });
+        }
+        break;
     }
   };
 }
