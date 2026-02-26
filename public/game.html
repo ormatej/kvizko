@@ -144,6 +144,7 @@
         updatePlayerList(res.players || []);
         if (!hasConnectedBefore) {
           loadSidebarQr();
+          renderChatHistory(res.chatHistory);
           addBotMsg(`Welcome to #tenzor-kvizko, ${nickname}!`);
         } else {
           addSystemMsg('Reconnected to server.');
@@ -202,14 +203,44 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    function addPlayerMsg(nick, color, text) {
-      addMsg(`<span class="timestamp">${formatTime()}</span> <span class="nick" style="color:${color}">&lt;${escHtml(nick)}&gt;</span> ${escHtml(text)}`);
+    function addPlayerMsg(nick, color, text, ts) {
+      addMsg(`<span class="timestamp">${formatTime(ts)}</span> <span class="nick" style="color:${color}">&lt;${escHtml(nick)}&gt;</span> ${escHtml(text)}`);
     }
 
     function escHtml(s) {
       const div = document.createElement('div');
       div.textContent = s;
       return div.innerHTML;
+    }
+
+    function renderChatHistory(history) {
+      if (!history || !history.length) return;
+      for (const entry of history) {
+        const ts = entry.timestamp;
+        switch (entry.type) {
+          case 'chat':
+            addPlayerMsg(entry.nickname, entry.color, entry.message, ts);
+            break;
+          case 'bot':
+            addMsg(`<span class="timestamp">${formatTime(ts)}</span> <span class="nick bot">&lt;KvizkoBot&gt;</span> ${escHtml(entry.message)}`);
+            break;
+          case 'action': {
+            const div = document.createElement('div');
+            div.className = 'msg action';
+            div.innerHTML = `<span class="timestamp">${formatTime(ts)}</span> * KvizkoBot ${escHtml(entry.message)}`;
+            chatMessages.appendChild(div);
+            break;
+          }
+          case 'system': {
+            const div = document.createElement('div');
+            div.className = 'msg system';
+            div.innerHTML = `<span class="timestamp">${formatTime(ts)}</span> — ${escHtml(entry.message)}`;
+            chatMessages.appendChild(div);
+            break;
+          }
+        }
+      }
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
     // --- Player list ---

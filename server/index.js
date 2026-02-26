@@ -282,6 +282,10 @@ function wireGameEvents(session) {
     if (event === 'game:restarting') {
       stmts.updateGameStatus.run('waiting', session.code);
     }
+
+    if (event === 'chat:bot') {
+      session.addToHistory({ type: 'bot', message: data.message });
+    }
   };
 }
 
@@ -319,14 +323,20 @@ io.on('connection', (socket) => {
       status: session.status,
       theme: session.theme,
       players: session.getConnectedPlayers().map(p => ({ nickname: p.nickname, color: p.color })),
-      scoreboard: session.getScoreboard()
+      scoreboard: session.getScoreboard(),
+      chatHistory: session.getChatHistory()
     });
 
-    socket.to(`game:${gameCode}`).emit('player:joined', {
+    const joinEvent = {
       nickname: player.nickname,
       color: player.color,
       playerCount: session.getConnectedPlayers().length
+    };
+    session.addToHistory({
+      type: 'action',
+      message: `${player.nickname} has joined #tenzor-kvizko (${joinEvent.playerCount} players)`
     });
+    socket.to(`game:${gameCode}`).emit('player:joined', joinEvent);
   });
 
   socket.on('admin:auth', ({ gameCode, password }, cb) => {
@@ -372,12 +382,15 @@ io.on('connection', (socket) => {
     const player = session.players.get(socket.id);
     if (!player) return;
 
-    io.to(`game:${currentGame}`).emit('chat:message', {
+    const chatEntry = {
+      type: 'chat',
       nickname: player.nickname,
       color: player.color,
       message,
       timestamp: Date.now()
-    });
+    };
+    session.addToHistory(chatEntry);
+    io.to(`game:${currentGame}`).emit('chat:message', chatEntry);
   });
 
   socket.on('admin:command', ({ command }) => {
@@ -394,10 +407,15 @@ io.on('connection', (socket) => {
     if (!session) return;
     const player = session.removePlayer(socket.id);
     if (player) {
-      io.to(`game:${currentGame}`).emit('player:left', {
+      const leftEvent = {
         nickname: player.nickname,
         playerCount: session.getConnectedPlayers().length
+      };
+      session.addToHistory({
+        type: 'action',
+        message: `${player.nickname} has left (${leftEvent.playerCount} players)`
       });
+      io.to(`game:${currentGame}`).emit('player:left', leftEvent);
     }
   });
 });
@@ -445,6 +463,7 @@ function handleAdminCommand(session, cmd, socket) {
       break;
     case 'say':
       if (cmd.message) {
+        session.addToHistory({ type: 'bot', message: cmd.message });
         io.to(room).emit('chat:bot', { message: cmd.message });
       }
       break;
