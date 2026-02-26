@@ -42,6 +42,15 @@
           <label style="color:var(--text-muted);font-size:12px;">Question Set</label>
           <select id="questionSelect"></select>
 
+          <div style="margin:10px 0;padding:10px;border:1px dashed var(--border);background:var(--bg-primary);">
+            <label style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:6px;">Upload New Question File (.json)</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="file" id="questionFileInput" accept=".json" style="flex:1;font-size:12px;color:var(--text-muted);">
+              <button class="btn-sm primary" id="uploadQuestionBtn" type="button">Upload</button>
+            </div>
+            <div class="hidden" id="uploadStatus" style="margin-top:6px;font-size:12px;"></div>
+          </div>
+
           <label style="color:var(--text-muted);font-size:12px;">Time per Question (seconds)</label>
           <input type="number" id="timePerQuestion" value="30" min="5" max="120">
 
@@ -315,6 +324,50 @@
       const defaultFile = files.find(f => f.filename === 'slovenija-turizem.json');
       if (defaultFile) select.value = defaultFile.filename;
     }
+
+    // Upload Question File
+    document.getElementById('uploadQuestionBtn').addEventListener('click', async () => {
+      const fileInput = document.getElementById('questionFileInput');
+      const statusEl = document.getElementById('uploadStatus');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        statusEl.textContent = 'Please select a .json file first.';
+        statusEl.style.color = 'var(--text-error)';
+        statusEl.classList.remove('hidden');
+        return;
+      }
+
+      statusEl.textContent = 'Uploading...';
+      statusEl.style.color = 'var(--text-muted)';
+      statusEl.classList.remove('hidden');
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('/api/questions/upload', {
+          method: 'POST',
+          headers: { 'x-admin-password': adminPassword },
+          body: formData
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Upload failed');
+
+        statusEl.textContent = `Uploaded "${data.title}" (${data.count} questions)`;
+        statusEl.style.color = 'var(--accent)';
+        fileInput.value = '';
+
+        await loadQuestionSets();
+        document.getElementById('questionSelect').value = data.filename;
+        log(`Question file uploaded: ${data.filename} (${data.count} questions)`);
+      } catch (err) {
+        statusEl.textContent = `Error: ${err.message}`;
+        statusEl.style.color = 'var(--text-error)';
+        log(`Upload error: ${err.message}`);
+      }
+    });
 
     // Create Game
     document.getElementById('createGameBtn').addEventListener('click', async () => {
