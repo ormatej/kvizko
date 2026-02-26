@@ -626,9 +626,15 @@
 
     document.getElementById('newGameBtn').addEventListener('click', resetSetup);
 
-    // Theme preview
+    // Theme — persist last selection
+    const savedTheme = localStorage.getItem('kvizko_theme');
+    if (savedTheme) {
+      document.getElementById('themeSelect').value = savedTheme;
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
     document.getElementById('themeSelect').addEventListener('change', (e) => {
       document.documentElement.setAttribute('data-theme', e.target.value);
+      localStorage.setItem('kvizko_theme', e.target.value);
     });
 
     // Log
