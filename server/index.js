@@ -12,8 +12,10 @@ const { GameSession, loadQuestionFile, listQuestionFiles } = require('./game');
 const { parseCommand, HELP_TEXT } = require('./commands');
 
 const PORT = process.env.PORT || 3000;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin';
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Kvizko2026!';
+const RAILWAY_DOMAIN = process.env.RAILWAY_PUBLIC_DOMAIN;
+const BASE_URL = process.env.BASE_URL
+  || (RAILWAY_DOMAIN ? `https://${RAILWAY_DOMAIN}` : `http://localhost:${PORT}`);
 
 const app = express();
 const server = http.createServer(app);
