@@ -91,7 +91,7 @@ app.post('/api/games', (req, res) => {
     games.set(code, session);
     wireGameEvents(session);
     const joinUrl = `${BASE_URL}/?game=${code}`;
-    res.json({ code, title: questionData.title, joinUrl, questionCount: questionData.questions.length });
+    res.json({ code, title: questionData.title, joinUrl, questionCount: questionData.questions.length, theme: session.theme });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -114,6 +114,7 @@ app.get('/api/games/:code', (req, res) => {
     code: session.code,
     title: session.title,
     status: session.status,
+    theme: session.theme,
     players: session.getConnectedPlayers().map(p => ({ nickname: p.nickname, color: p.color })),
     scoreboard: session.getScoreboard(),
     currentIndex: session.currentIndex,
@@ -181,6 +182,7 @@ io.on('connection', (socket) => {
       player: { nickname: player.nickname, color: player.color },
       gameTitle: session.title,
       status: session.status,
+      theme: session.theme,
       players: session.getConnectedPlayers().map(p => ({ nickname: p.nickname, color: p.color })),
       scoreboard: session.getScoreboard()
     });
@@ -204,6 +206,7 @@ io.on('connection', (socket) => {
       ok: true,
       gameTitle: session.title,
       status: session.status,
+      theme: session.theme,
       players: session.getConnectedPlayers().map(p => ({ nickname: p.nickname, color: p.color })),
       scoreboard: session.getScoreboard(),
       totalQuestions: session.questions.length

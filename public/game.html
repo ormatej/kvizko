@@ -121,6 +121,9 @@
           addSystemMsg(`Error: ${res.error}`);
           return;
         }
+        if (res.theme) {
+          document.documentElement.setAttribute('data-theme', res.theme);
+        }
         channelTopic.textContent = res.gameTitle || 'Kvizko Game';
         updatePlayerList(res.players || []);
         addBotMsg(`Welcome to #tenzor-kvizko, ${nickname}!`);

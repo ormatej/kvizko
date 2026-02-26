@@ -50,11 +50,17 @@
               <input type="checkbox" id="shuffleQuestions" checked> Shuffle questions
             </label>
           </div>
-          <div style="margin:10px 0">
-            <label style="color:var(--text-muted);font-size:12px;">
-              <input type="checkbox" id="shuffleOptions" checked> Shuffle ABCD options
-            </label>
-          </div>
+        <div style="margin:10px 0">
+          <label style="color:var(--text-muted);font-size:12px;">
+            <input type="checkbox" id="shuffleOptions" checked> Shuffle ABCD options
+          </label>
+        </div>
+
+          <label style="color:var(--text-muted);font-size:12px;">Theme</label>
+          <select id="themeSelect">
+            <option value="default">mIRC Classic (Green Terminal)</option>
+            <option value="auraverse">Auraverse (Cosmic Purple/Cyan)</option>
+          </select>
 
           <button class="btn" id="createGameBtn" style="margin-top:10px;">CREATE GAME</button>
         </div>
@@ -178,10 +184,12 @@
       const questionFile = document.getElementById('questionSelect').value;
       if (!questionFile) return;
 
+      const theme = document.getElementById('themeSelect').value;
       const settings = {
         timePerQuestion: parseInt(document.getElementById('timePerQuestion').value) || 30,
         shuffleQuestions: document.getElementById('shuffleQuestions').checked,
-        shuffleOptions: document.getElementById('shuffleOptions').checked
+        shuffleOptions: document.getElementById('shuffleOptions').checked,
+        theme: theme
       };
 
       try {
@@ -214,6 +222,7 @@
 
         document.getElementById('setupForm').classList.add('hidden');
         document.getElementById('gameCreated').classList.remove('hidden');
+        document.documentElement.setAttribute('data-theme', theme);
 
         connectSocket(data.code);
         enableControls(true);
@@ -427,6 +436,11 @@
       } catch (err) {
         log(`Reset error: ${err.message}`);
       }
+    });
+
+    // Theme preview
+    document.getElementById('themeSelect').addEventListener('change', (e) => {
+      document.documentElement.setAttribute('data-theme', e.target.value);
     });
 
     // Log

@@ -125,12 +125,20 @@
     // Socket connection
     const socket = io();
 
+    fetch(`/api/games/${gameCode}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.theme) document.documentElement.setAttribute('data-theme', data.theme);
+      })
+      .catch(() => {});
+
     socket.on('connect', () => {
       socket.emit('join', { gameCode, nickname: `Leaderboard_${Date.now()}`, email: '' }, (res) => {
         if (res.error) {
           gameTitle.textContent = `Error: ${res.error}`;
           return;
         }
+        if (res.theme) document.documentElement.setAttribute('data-theme', res.theme);
         gameTitle.textContent = res.gameTitle || 'Kvizko Game';
         if (res.scoreboard) renderScoreboard(res.scoreboard);
       });
