@@ -159,6 +159,12 @@
       if (data.scoreboard) renderScoreboard(data.scoreboard);
     });
 
+    socket.on('game:restarting', () => {
+      document.querySelector('.live-badge').textContent = 'LIVE';
+      scoreBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:40px;">New game starting...</td></tr>';
+      podium.classList.add('hidden');
+    });
+
     async function refreshFull() {
       try {
         const res = await fetch(`/api/games/${gameCode}`);
