@@ -19,7 +19,11 @@ const BASE_URL = process.env.BASE_URL
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+const io = new Server(server, {
+  cors: { origin: '*' },
+  pingTimeout: 120000,
+  pingInterval: 25000
+});
 
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
@@ -140,6 +144,25 @@ app.delete('/api/leaderboard', (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+});
+
+app.get('/api/admin/games', (req, res) => {
+  if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const activeGames = [];
+  for (const [code, session] of games) {
+    activeGames.push({
+      code,
+      title: session.title,
+      status: session.status,
+      theme: session.theme,
+      playerCount: session.getConnectedPlayers().length,
+      totalQuestions: session.questions.length,
+      currentIndex: session.currentIndex
+    });
+  }
+  res.json(activeGames);
 });
 
 // --- Socket.IO ---

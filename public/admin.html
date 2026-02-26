@@ -166,6 +166,50 @@
     const adminDashboard = document.getElementById('adminDashboard');
     const authError = document.getElementById('authError');
 
+    async function enterDashboard() {
+      authScreen.classList.add('hidden');
+      adminDashboard.classList.remove('hidden');
+      loadQuestionSets();
+
+      try {
+        const gamesRes = await fetch('/api/admin/games', {
+          headers: { 'x-admin-password': adminPassword }
+        });
+        const activeGames = await gamesRes.json();
+        if (activeGames.length > 0) {
+          const game = activeGames[0];
+          currentGameCode = game.code;
+          sessionStorage.setItem('kvizko_admin_game', game.code);
+          document.getElementById('displayCode').textContent = game.code;
+          document.getElementById('adminGameCode').textContent = `Game: ${game.code}`;
+          document.getElementById('adminGameStatus').textContent = `Status: ${game.status}`;
+
+          const joinUrl = `${window.location.origin}/?game=${game.code}`;
+          const joinContainer = document.getElementById('joinUrlDisplay');
+          joinContainer.innerHTML = '';
+          const joinLink = document.createElement('a');
+          joinLink.href = joinUrl;
+          joinLink.textContent = joinUrl;
+          joinLink.target = '_blank';
+          joinLink.style.cssText = 'color:var(--accent);font-size:12px;word-break:break-all;';
+          joinContainer.appendChild(joinLink);
+
+          fetch(`/api/games/${game.code}/qr`)
+            .then(r => r.text())
+            .then(svg => { document.getElementById('qrContainer').innerHTML = svg; })
+            .catch(() => {});
+
+          document.getElementById('setupForm').classList.add('hidden');
+          document.getElementById('gameCreated').classList.remove('hidden');
+          if (game.theme) document.documentElement.setAttribute('data-theme', game.theme);
+
+          connectSocket(game.code);
+          enableControls(true);
+          log(`Reconnected to game: ${game.code} (${game.title}, ${game.status})`);
+        }
+      } catch {}
+    }
+
     // Auth
     document.getElementById('authForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -178,14 +222,28 @@
           headers: { 'x-admin-password': adminPassword }
         });
         if (!res.ok) throw new Error('Wrong password');
-        authScreen.classList.add('hidden');
-        adminDashboard.classList.remove('hidden');
-        loadQuestionSets();
+        sessionStorage.setItem('kvizko_admin_pwd', adminPassword);
+        await enterDashboard();
       } catch (err) {
         authError.textContent = err.message || 'Auth failed';
         authError.classList.remove('hidden');
       }
     });
+
+    // Auto-login if session is still valid
+    (async function autoReconnect() {
+      const savedPwd = sessionStorage.getItem('kvizko_admin_pwd');
+      if (!savedPwd) return;
+      try {
+        const res = await fetch('/api/admin/auth', {
+          method: 'POST',
+          headers: { 'x-admin-password': savedPwd }
+        });
+        if (!res.ok) return;
+        adminPassword = savedPwd;
+        await enterDashboard();
+      } catch {}
+    })();
 
     async function loadQuestionSets() {
       const res = await fetch('/api/questions');
@@ -224,6 +282,7 @@
         if (data.error) throw new Error(data.error);
 
         currentGameCode = data.code;
+        sessionStorage.setItem('kvizko_admin_game', data.code);
         document.getElementById('displayCode').textContent = data.code;
 
         const joinLink = document.createElement('a');
@@ -323,7 +382,21 @@
     }
 
     function connectSocket(code) {
-      socket = io();
+      if (socket) { socket.disconnect(); socket = null; }
+      socket = io({
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 30000
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && socket && !socket.connected) {
+          socket.connect();
+        }
+      });
+
       socket.on('connect', () => {
         socket.emit('admin:auth', { gameCode: code, password: adminPassword }, (res) => {
           if (res.error) {
@@ -609,6 +682,7 @@
     function resetSetup() {
       if (socket) { socket.disconnect(); socket = null; }
       currentGameCode = null;
+      sessionStorage.removeItem('kvizko_admin_game');
       document.getElementById('setupForm').classList.remove('hidden');
       document.getElementById('gameCreated').classList.add('hidden');
       document.getElementById('newGameBtn').classList.add('hidden');

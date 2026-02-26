@@ -114,10 +114,19 @@
     inputNick.textContent = `<${nickname}>`;
 
     // Socket
-    const socket = io();
+    const socket = io({
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 30000
+    });
+
+    let hasConnectedBefore = false;
 
     socket.on('connect', () => {
       statusConnection.textContent = 'Connected';
+      statusConnection.style.color = '';
       socket.emit('join', { gameCode, nickname, email }, (res) => {
         if (res.error) {
           addSystemMsg(`Error: ${res.error}`);
@@ -128,18 +137,29 @@
         }
         channelTopic.textContent = res.gameTitle || 'Kvizko Game';
         updatePlayerList(res.players || []);
-        loadSidebarQr();
-        addBotMsg(`Welcome to #tenzor-kvizko, ${nickname}!`);
+        if (!hasConnectedBefore) {
+          loadSidebarQr();
+          addBotMsg(`Welcome to #tenzor-kvizko, ${nickname}!`);
+        } else {
+          addSystemMsg('Reconnected to server.');
+        }
         if (res.status === 'waiting') {
           addSystemMsg('Waiting for the quiz master to start the game...');
         }
         if (res.scoreboard) updateMyScore(res.scoreboard);
+        hasConnectedBefore = true;
       });
     });
 
     socket.on('disconnect', () => {
-      statusConnection.textContent = 'Disconnected';
-      addSystemMsg('Connection lost. Reconnecting...');
+      statusConnection.textContent = 'Reconnecting...';
+      statusConnection.style.color = '#cc0000';
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && !socket.connected) {
+        socket.connect();
+      }
     });
 
     // --- Chat ---
