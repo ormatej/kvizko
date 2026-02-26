@@ -49,6 +49,10 @@
               <button class="btn-sm primary" id="uploadQuestionBtn" type="button">Upload</button>
             </div>
             <div class="hidden" id="uploadStatus" style="margin-top:6px;font-size:12px;"></div>
+            <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);">
+              <a href="/api/questions/template" download="kvizko-template.json" class="btn-sm" style="display:inline-block;text-decoration:none;text-align:center;">Download Template</a>
+              <span style="color:var(--text-muted);font-size:11px;margin-left:6px;">Give this to an LLM to generate new question sets</span>
+            </div>
           </div>
 
           <label style="color:var(--text-muted);font-size:12px;">Time per Question (seconds)</label>

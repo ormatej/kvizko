@@ -18,7 +18,7 @@ function loadQuestionFile(filename) {
 
 function listQuestionFiles() {
   return fs.readdirSync(QUESTIONS_DIR)
-    .filter(f => f.endsWith('.json'))
+    .filter(f => f.endsWith('.json') && f !== '_template.json')
     .map(f => {
       try {
         const data = loadQuestionFile(f);
