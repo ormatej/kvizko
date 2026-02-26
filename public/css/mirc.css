@@ -786,6 +786,12 @@ html, body {
 }
 
 /* ===== ADMIN PAGE ===== */
+html.admin-view,
+html.admin-view body {
+  overflow: auto;
+  height: auto;
+}
+
 .admin-container {
   display: flex;
   flex-direction: column;
@@ -944,7 +950,7 @@ html, body {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--border);
-  height: 420px;
+  height: 320px;
 }
 
 .channel-view-bar {
@@ -1040,12 +1046,6 @@ html, body {
 
   .admin-container {
     min-height: auto;
-  }
-
-  html.admin-view,
-  html.admin-view body {
-    overflow: auto;
-    height: auto;
   }
 
   .admin-body {

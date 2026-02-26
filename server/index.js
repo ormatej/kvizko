@@ -134,6 +134,61 @@ app.get('/api/leaderboard', (req, res) => {
   res.json(stmts.getLeaderboard.all());
 });
 
+app.get('/api/last-game', (req, res) => {
+  const lastGame = stmts.getLastEndedGame.get();
+  if (!lastGame) return res.json({ lastGame: null, scores: [] });
+  const scores = stmts.getLastGameScores.all(lastGame.id);
+  res.json({ lastGame: { code: lastGame.code, title: lastGame.title, ended_at: lastGame.ended_at }, scores });
+});
+
+app.get('/api/global-stats', (req, res) => {
+  if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const overview = stmts.getGlobalStats.get();
+    const leaderboard = stmts.getGlobalLeaderboard.all();
+    const lastGame = stmts.getLastEndedGame.get();
+    let lastGameScores = [];
+    if (lastGame) {
+      lastGameScores = stmts.getLastGameScores.all(lastGame.id);
+    }
+    res.json({ overview, leaderboard, lastGame, lastGameScores });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/leads', (req, res) => {
+  if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    res.json(stmts.getGlobalLeads.all());
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/leads/csv', (req, res) => {
+  if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const leads = stmts.getGlobalLeads.all();
+    const header = 'Nickname,Email,Games Played,Total Points,Total Correct,Best Streak,First Seen,Last Played,Last Game';
+    const rows = leads.map(l =>
+      `"${(l.nickname || '').replace(/"/g, '""')}","${(l.email || '').replace(/"/g, '""')}",${l.games_played},${l.total_points},${l.total_correct},${l.best_streak || 0},"${l.first_seen || ''}","${l.last_played || ''}","${(l.last_game_title || '').replace(/"/g, '""')}"`
+    );
+    const csv = [header, ...rows].join('\n');
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="kvizko-global-leads.csv"');
+    res.send(csv);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.delete('/api/leaderboard', (req, res) => {
   if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'Unauthorized' });

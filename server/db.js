@@ -90,12 +90,72 @@ const stmts = {
   getLeaderboard: db.prepare(`
     SELECT p.nickname, p.email, SUM(s.points) as total_points,
            SUM(s.correct_answers) as total_correct,
-           COUNT(s.game_id) as games_played
+           SUM(s.total_answers) as total_answers,
+           MAX(s.best_streak) as best_streak,
+           COUNT(DISTINCT s.game_id) as games_played
     FROM scores s
     JOIN players p ON p.id = s.player_id
     GROUP BY p.id
     ORDER BY total_points DESC
     LIMIT 50
+  `),
+
+  getGlobalLeaderboard: db.prepare(`
+    SELECT p.id as player_id, p.nickname, p.email, p.created_at as first_seen,
+           SUM(s.points) as total_points,
+           SUM(s.correct_answers) as total_correct,
+           SUM(s.total_answers) as total_answers,
+           MAX(s.best_streak) as best_streak,
+           COUNT(DISTINCT s.game_id) as games_played,
+           MAX(g.ended_at) as last_played
+    FROM scores s
+    JOIN players p ON p.id = s.player_id
+    JOIN games g ON g.id = s.game_id
+    GROUP BY p.id
+    ORDER BY total_points DESC
+  `),
+
+  getGlobalLeads: db.prepare(`
+    SELECT DISTINCT p.id, p.nickname, p.email, p.created_at as first_seen,
+           COUNT(DISTINCT s.game_id) as games_played,
+           COALESCE(SUM(s.points), 0) as total_points,
+           COALESCE(SUM(s.correct_answers), 0) as total_correct,
+           COALESCE(MAX(s.best_streak), 0) as best_streak,
+           MAX(g.ended_at) as last_played,
+           MAX(g.title) as last_game_title
+    FROM players p
+    LEFT JOIN scores s ON s.player_id = p.id
+    LEFT JOIN games g ON g.id = s.game_id
+    GROUP BY p.id
+    ORDER BY p.created_at DESC
+  `),
+
+  getLastEndedGame: db.prepare(`
+    SELECT * FROM games
+    WHERE status = 'ended' AND ended_at IS NOT NULL
+    ORDER BY ended_at DESC
+    LIMIT 1
+  `),
+
+  getLastGameScores: db.prepare(`
+    SELECT p.nickname, p.email, s.points, s.correct_answers, s.total_answers,
+           s.best_streak, s.streak
+    FROM scores s
+    JOIN players p ON p.id = s.player_id
+    WHERE s.game_id = ?
+    ORDER BY s.points DESC
+  `),
+
+  getGlobalStats: db.prepare(`
+    SELECT
+      COUNT(DISTINCT p.id) as total_players,
+      COUNT(DISTINCT g.id) as total_games,
+      COALESCE(SUM(s.points), 0) as total_points_awarded,
+      COALESCE(SUM(s.correct_answers), 0) as total_correct_answers,
+      COALESCE(SUM(s.total_answers), 0) as total_answers
+    FROM scores s
+    JOIN players p ON p.id = s.player_id
+    JOIN games g ON g.id = s.game_id
   `),
 
   getGamePlayers: db.prepare(`

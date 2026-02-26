@@ -64,10 +64,17 @@
       </div>
     </div>
 
+    <!-- Last Game Banner (alltime mode) -->
+    <div class="hidden" id="lastGameBanner" style="width:100%;max-width:700px;margin-bottom:20px;background:var(--bg-secondary);border:1px solid var(--border);padding:16px;">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Last Game Played</div>
+      <div id="lastGameBannerTitle" style="font-size:16px;font-weight:700;color:var(--text-primary);"></div>
+      <div id="lastGameBannerScores" style="margin-top:8px;font-size:13px;"></div>
+    </div>
+
     <!-- Score Table -->
     <table class="score-table" id="scoreTable">
       <thead>
-        <tr>
+        <tr id="scoreTableHead">
           <th class="rank-col">#</th>
           <th>Player</th>
           <th style="text-align:right;">Correct</th>
@@ -106,6 +113,13 @@
     if (mode === 'alltime') {
       document.querySelector('.live-badge').textContent = 'ALL TIME';
       gameTitle.textContent = 'All-Time Leaderboard';
+      document.getElementById('scoreTableHead').innerHTML = `
+        <th class="rank-col">#</th>
+        <th>Player</th>
+        <th style="text-align:center;">Games</th>
+        <th style="text-align:right;">Correct</th>
+        <th class="points-col">Points</th>
+      `;
       loadAllTime();
       setInterval(loadAllTime, 15000);
       return;
@@ -194,9 +208,11 @@
         const tr = document.createElement('tr');
         tr.className = 'score-row';
         if (idx < 3) tr.classList.add('highlight');
+        const gamesCol = s._alltime ? `<td style="text-align:center;">${s.games_played || 0}</td>` : '';
         tr.innerHTML = `
           <td class="rank-col">${s.rank}</td>
           <td style="color:${s.color || 'var(--text-primary)'}">${s.nickname}</td>
+          ${gamesCol}
           <td style="text-align:right;">${s.correct || 0}</td>
           <td class="points-col">${s.points}</td>
         `;
@@ -213,9 +229,26 @@
           nickname: d.nickname,
           points: d.total_points,
           correct: d.total_correct,
-          color: 'var(--text-primary)'
+          games_played: d.games_played,
+          color: 'var(--text-primary)',
+          _alltime: true
         }));
         renderScoreboard(sb);
+      } catch {}
+
+      try {
+        const lgRes = await fetch('/api/last-game');
+        const lgData = await lgRes.json();
+        if (lgData.lastGame && lgData.scores && lgData.scores.length) {
+          const banner = document.getElementById('lastGameBanner');
+          banner.classList.remove('hidden');
+          document.getElementById('lastGameBannerTitle').textContent = lgData.lastGame.title || lgData.lastGame.code;
+          const scoresHtml = lgData.scores.slice(0, 5).map((s, i) => {
+            const medal = i === 0 ? '\u{1F947}' : i === 1 ? '\u{1F948}' : i === 2 ? '\u{1F949}' : `#${i+1}`;
+            return `${medal} ${s.nickname}: ${s.points} pts`;
+          }).join(' &nbsp;|&nbsp; ');
+          document.getElementById('lastGameBannerScores').innerHTML = scoresHtml;
+        }
       } catch {}
     }
 

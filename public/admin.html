@@ -124,14 +124,69 @@
         <div class="admin-log" id="adminLog"></div>
 
         <div style="margin-top:20px;">
-          <h2>Export</h2>
+          <h2>Current Game Export</h2>
           <div class="btn-row">
-            <button class="btn-sm" id="exportLeadsBtn">Export Leads (CSV)</button>
-            <button class="btn-sm" id="exportScoresBtn">Export Scores (CSV)</button>
+            <button class="btn-sm" id="exportLeadsBtn">Export Game Leads (CSV)</button>
+            <button class="btn-sm" id="exportScoresBtn">Export Game Scores (CSV)</button>
           </div>
-          <div style="margin-top:12px;">
-            <button class="btn-sm danger" id="resetLeaderboardBtn">Reset Leaderboard</button>
+        </div>
+      </div>
+
+      <!-- Global Stats Panel -->
+      <div class="admin-panel admin-channel-view">
+        <h2>Global Stats &amp; Leads</h2>
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+          <button class="btn-sm primary" id="loadGlobalStatsBtn">Refresh Stats</button>
+          <button class="btn-sm" id="exportGlobalLeadsBtn">Export All Leads (CSV)</button>
+          <button class="btn-sm" id="exportGlobalScoresBtn">Export Global Scores (CSV)</button>
+          <button class="btn-sm danger" id="resetLeaderboardBtn" style="margin-left:auto;">Reset All Data</button>
+        </div>
+
+        <!-- Overview Cards -->
+        <div id="globalOverview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px;">
+          <div style="background:var(--bg-primary);border:1px solid var(--border);padding:12px;text-align:center;">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Total Players</div>
+            <div style="font-size:24px;font-weight:700;color:var(--accent);" id="statTotalPlayers">-</div>
           </div>
+          <div style="background:var(--bg-primary);border:1px solid var(--border);padding:12px;text-align:center;">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Total Games</div>
+            <div style="font-size:24px;font-weight:700;color:var(--accent);" id="statTotalGames">-</div>
+          </div>
+          <div style="background:var(--bg-primary);border:1px solid var(--border);padding:12px;text-align:center;">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Points Awarded</div>
+            <div style="font-size:24px;font-weight:700;color:var(--accent);" id="statTotalPoints">-</div>
+          </div>
+          <div style="background:var(--bg-primary);border:1px solid var(--border);padding:12px;text-align:center;">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Accuracy</div>
+            <div style="font-size:24px;font-weight:700;color:var(--accent);" id="statAccuracy">-</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <!-- Last Game -->
+          <div>
+            <h2 style="color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">
+              Last Game Played
+            </h2>
+            <div id="lastGameInfo" style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">No games finished yet</div>
+            <div id="lastGameScores"></div>
+          </div>
+
+          <!-- Global Leaderboard -->
+          <div>
+            <h2 style="color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">
+              All-Time Leaderboard
+            </h2>
+            <div id="globalLeaderboard"></div>
+          </div>
+        </div>
+
+        <!-- All Leads Table -->
+        <div style="margin-top:20px;">
+          <h2 style="color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">
+            All Collected Leads (<span id="leadsCount">0</span>)
+          </h2>
+          <div id="globalLeadsTable" style="max-height:300px;overflow-y:auto;font-size:12px;"></div>
         </div>
       </div>
 
@@ -170,6 +225,7 @@
       authScreen.classList.add('hidden');
       adminDashboard.classList.remove('hidden');
       loadQuestionSets();
+      loadGlobalStats();
 
       try {
         const gamesRes = await fetch('/api/admin/games', {
@@ -529,6 +585,7 @@
           enableControls(false);
           document.getElementById('newGameBtn').classList.remove('hidden');
         }
+        setTimeout(loadGlobalStats, 1000);
       });
 
       socket.on('game:restarting', (data) => {
@@ -662,6 +719,133 @@
       URL.revokeObjectURL(url);
     }
 
+    // --- Global Stats ---
+
+    async function loadGlobalStats() {
+      try {
+        const [statsRes, leadsRes] = await Promise.all([
+          fetch('/api/global-stats', { headers: { 'x-admin-password': adminPassword } }),
+          fetch('/api/leads', { headers: { 'x-admin-password': adminPassword } })
+        ]);
+        const stats = await statsRes.json();
+        const leads = await leadsRes.json();
+
+        if (stats.error || leadsRes.status !== 200) {
+          log('Failed to load global stats');
+          return;
+        }
+
+        const ov = stats.overview || {};
+        document.getElementById('statTotalPlayers').textContent = ov.total_players || 0;
+        document.getElementById('statTotalGames').textContent = ov.total_games || 0;
+        document.getElementById('statTotalPoints').textContent = (ov.total_points_awarded || 0).toLocaleString();
+        const acc = ov.total_answers > 0
+          ? Math.round((ov.total_correct_answers / ov.total_answers) * 100) + '%'
+          : '-';
+        document.getElementById('statAccuracy').textContent = acc;
+
+        // Last game
+        const lgInfo = document.getElementById('lastGameInfo');
+        const lgScores = document.getElementById('lastGameScores');
+        if (stats.lastGame) {
+          const lg = stats.lastGame;
+          lgInfo.innerHTML = `<strong style="color:var(--text-primary);">${escHtml(lg.title || lg.code)}</strong> &mdash; Code: ${escHtml(lg.code)}<br>Ended: ${lg.ended_at || 'N/A'}`;
+          if (stats.lastGameScores && stats.lastGameScores.length) {
+            lgScores.innerHTML = stats.lastGameScores.map((s, i) => {
+              const medal = i === 0 ? '&#x1F947;' : i === 1 ? '&#x1F948;' : i === 2 ? '&#x1F949;' : `#${i+1}`;
+              const accPct = s.total_answers > 0 ? Math.round((s.correct_answers / s.total_answers) * 100) : 0;
+              return `<div style="padding:3px 0;font-size:12px;">${medal} <strong>${escHtml(s.nickname)}</strong> &mdash; ${s.points} pts (${s.correct_answers}/${s.total_answers} correct, ${accPct}%, streak ${s.best_streak})</div>`;
+            }).join('');
+          } else {
+            lgScores.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">No scores recorded</div>';
+          }
+        } else {
+          lgInfo.textContent = 'No games finished yet';
+          lgScores.innerHTML = '';
+        }
+
+        // Global leaderboard
+        const glb = document.getElementById('globalLeaderboard');
+        if (stats.leaderboard && stats.leaderboard.length) {
+          glb.innerHTML = stats.leaderboard.map((s, i) => {
+            const medal = i === 0 ? '&#x1F947;' : i === 1 ? '&#x1F948;' : i === 2 ? '&#x1F949;' : `#${i+1}`;
+            const accPct = s.total_answers > 0 ? Math.round((s.total_correct / s.total_answers) * 100) : 0;
+            return `<div style="padding:3px 0;font-size:12px;">${medal} <strong>${escHtml(s.nickname)}</strong> &mdash; <span style="color:var(--accent);">${s.total_points} pts</span> (${s.games_played} games, ${accPct}% accuracy, best streak ${s.best_streak || 0})</div>`;
+          }).join('');
+        } else {
+          glb.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">No data yet</div>';
+        }
+
+        // Leads table
+        const leadsTable = document.getElementById('globalLeadsTable');
+        document.getElementById('leadsCount').textContent = leads.length;
+        if (leads.length) {
+          let html = '<table style="width:100%;border-collapse:collapse;font-size:12px;">';
+          html += '<thead><tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:4px 6px;color:var(--text-muted);">Nickname</th><th style="text-align:left;padding:4px 6px;color:var(--text-muted);">Email</th><th style="text-align:center;padding:4px 6px;color:var(--text-muted);">Games</th><th style="text-align:right;padding:4px 6px;color:var(--text-muted);">Points</th><th style="text-align:left;padding:4px 6px;color:var(--text-muted);">Last Played</th></tr></thead><tbody>';
+          leads.forEach(l => {
+            html += `<tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:4px 6px;">${escHtml(l.nickname)}</td>
+              <td style="padding:4px 6px;color:var(--text-muted);">${escHtml(l.email || '—')}</td>
+              <td style="padding:4px 6px;text-align:center;">${l.games_played}</td>
+              <td style="padding:4px 6px;text-align:right;color:var(--accent);">${l.total_points}</td>
+              <td style="padding:4px 6px;color:var(--text-muted);font-size:11px;">${l.last_played || '—'}</td>
+            </tr>`;
+          });
+          html += '</tbody></table>';
+          leadsTable.innerHTML = html;
+        } else {
+          leadsTable.innerHTML = '<div style="color:var(--text-muted);">No leads collected yet</div>';
+        }
+
+        log('Global stats loaded');
+      } catch (err) {
+        log(`Global stats error: ${err.message}`);
+      }
+    }
+
+    document.getElementById('loadGlobalStatsBtn').addEventListener('click', loadGlobalStats);
+
+    // Export global leads as CSV (server-generated)
+    document.getElementById('exportGlobalLeadsBtn').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/leads/csv', {
+          headers: { 'x-admin-password': adminPassword }
+        });
+        if (!res.ok) throw new Error('Failed to export');
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'kvizko-global-leads.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+        log('Global leads exported');
+      } catch (err) {
+        log(`Export error: ${err.message}`);
+      }
+    });
+
+    // Export global scores as CSV
+    document.getElementById('exportGlobalScoresBtn').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/global-stats', {
+          headers: { 'x-admin-password': adminPassword }
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        const lb = data.leaderboard || [];
+        let csv = 'Rank,Nickname,Email,Total Points,Total Correct,Total Answers,Accuracy %,Best Streak,Games Played,Last Played\n';
+        lb.forEach((s, i) => {
+          const accPct = s.total_answers > 0 ? Math.round((s.total_correct / s.total_answers) * 100) : 0;
+          csv += `${i+1},"${(s.nickname||'').replace(/"/g,'""')}","${(s.email||'').replace(/"/g,'""')}",${s.total_points},${s.total_correct},${s.total_answers},${accPct},${s.best_streak||0},${s.games_played},"${s.last_played||''}"\n`;
+        });
+        downloadCSV(csv, 'kvizko-global-scores.csv');
+        log('Global scores exported');
+      } catch (err) {
+        log(`Export error: ${err.message}`);
+      }
+    });
+
     // Reset Leaderboard
     document.getElementById('resetLeaderboardBtn').addEventListener('click', async () => {
       if (!confirm('This will delete ALL game scores, answer logs, and game history. Continue?')) return;
@@ -673,6 +857,7 @@
         const data = await res.json();
         if (data.error) throw new Error(data.error);
         log('Leaderboard reset successfully');
+        loadGlobalStats();
       } catch (err) {
         log(`Reset error: ${err.message}`);
       }
