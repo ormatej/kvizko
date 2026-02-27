@@ -450,6 +450,7 @@
       disableInput();
       const isMe = data.nickname === nickname;
       const streakText = data.streak >= 3 ? ` \u{1F525} ${data.streak} streak!` : '';
+      addActionMsg(`Answer: ${data.answer}`);
       const div = document.createElement('div');
       div.className = 'msg correct-flash';
       div.innerHTML = `<span class="timestamp">${formatTime()}</span> * <span class="correct-text">${escHtml(data.nickname)} got it right! +${data.points} pts (${(data.timeMs/1000).toFixed(1)}s)${streakText}</span>`;
