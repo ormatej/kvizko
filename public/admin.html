@@ -20,182 +20,159 @@
         <button type="submit" class="btn">LOGIN</button>
         <div class="error-msg hidden" id="authError"></div>
       </form>
-      <div class="brand">powered by Tenzor d.o.o.</div>
+      <img src="/images/tenzor-logo-horizontal.png" alt="powered by Tenzor d.o.o." class="brand-logo horizontal">
     </div>
   </div>
 
   <!-- Admin Dashboard -->
   <div class="admin-container hidden" id="adminDashboard">
     <div class="admin-header">
-      <h1>KVIZKO ADMIN</h1>
-      <div>
-        <span id="adminGameStatus" style="color:var(--text-muted);font-size:13px;"></span>
+      <div class="admin-header-left">
+        <h1>KVIZKO ADMIN</h1>
+        <span id="adminGameStatus" class="admin-status-badge"></span>
+      </div>
+      <div class="admin-header-right">
+        <div id="joinUrlDisplay"></div>
+        <div id="qrContainer" class="header-qr"></div>
       </div>
     </div>
 
     <div class="admin-body">
-      <!-- Game Setup Panel -->
+      <!-- Game Panel (Setup + Controls unified) -->
       <div class="admin-panel" id="setupPanel">
-        <h2>Game Setup</h2>
+        <h2>Game</h2>
         <div id="setupForm">
-          <label style="color:var(--text-muted);font-size:12px;">Question Set</label>
+          <label class="field-label">Question Set</label>
           <select id="questionSelect"></select>
 
-          <div style="margin:10px 0;padding:10px;border:1px dashed var(--border);background:var(--bg-primary);">
-            <label style="color:var(--text-muted);font-size:12px;display:block;margin-bottom:6px;">Upload New Question File (.json)</label>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-              <input type="file" id="questionFileInput" accept=".json" style="flex:1;min-width:0;font-size:12px;color:var(--text-muted);">
-              <button class="btn-sm primary" id="uploadQuestionBtn" type="button">Upload</button>
+          <details class="upload-section">
+            <summary>Upload new question file</summary>
+            <div class="upload-section-body">
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <input type="file" id="questionFileInput" accept=".json" style="flex:1;min-width:0;font-size:12px;color:var(--text-muted);">
+                <button class="btn-sm primary" id="uploadQuestionBtn" type="button">Upload</button>
+              </div>
+              <div class="hidden" id="uploadStatus" style="margin-top:6px;font-size:12px;"></div>
+              <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);">
+                <a href="/api/questions/template" download="kvizko-template.json" class="btn-sm" style="display:inline-block;text-decoration:none;text-align:center;">Download Template</a>
+                <span style="color:var(--text-muted);font-size:11px;margin-left:6px;">for LLM generation</span>
+              </div>
             </div>
-            <div class="hidden" id="uploadStatus" style="margin-top:6px;font-size:12px;"></div>
-            <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);">
-              <a href="/api/questions/template" download="kvizko-template.json" class="btn-sm" style="display:inline-block;text-decoration:none;text-align:center;">Download Template</a>
-              <span style="color:var(--text-muted);font-size:11px;margin-left:6px;">Give this to an LLM to generate new question sets</span>
+          </details>
+
+          <div class="field-row">
+            <div class="field-col">
+              <label class="field-label">Time (sec)</label>
+              <input type="number" id="timePerQuestion" value="30" min="5" max="120">
+            </div>
+            <div class="field-col">
+              <label class="field-label">Questions (0 = all)</label>
+              <input type="number" id="questionsPerGame" value="10" min="0" max="9999">
             </div>
           </div>
 
-          <label style="color:var(--text-muted);font-size:12px;">Time per Question (seconds)</label>
-          <input type="number" id="timePerQuestion" value="30" min="5" max="120">
-
-          <label style="color:var(--text-muted);font-size:12px;">Questions per Game (0 = all)</label>
-          <input type="number" id="questionsPerGame" value="10" min="0" max="9999">
-
-          <div style="margin:10px 0">
-            <label style="color:var(--text-muted);font-size:12px;">
-              <input type="checkbox" id="shuffleQuestions" checked> Shuffle questions
-            </label>
+          <div class="checkbox-row">
+            <label class="check-label"><input type="checkbox" id="shuffleQuestions" checked> Shuffle questions</label>
+            <label class="check-label"><input type="checkbox" id="shuffleOptions" checked> Shuffle ABCD</label>
           </div>
-        <div style="margin:10px 0">
-          <label style="color:var(--text-muted);font-size:12px;">
-            <input type="checkbox" id="shuffleOptions" checked> Shuffle ABCD options
-          </label>
-        </div>
 
-          <label style="color:var(--text-muted);font-size:12px;">Theme</label>
+          <label class="field-label">Theme</label>
           <select id="themeSelect">
             <option value="default">mIRC Classic (White)</option>
             <option value="auraverse">Auraverse (Rainbow Glow)</option>
             <option value="tenzor">Tenzor (Dark / Red / Grey)</option>
           </select>
 
-          <button class="btn" id="loadQuestionsBtn" style="margin-top:10px;">LOAD QUESTIONS</button>
+          <button class="btn" id="loadQuestionsBtn" style="margin-top:8px;">LOAD QUESTIONS</button>
         </div>
 
-        <div id="qrSection" style="margin-top:20px;text-align:center;">
-          <div id="qrContainer" style="max-width:160px;margin:10px auto;"></div>
-          <div style="margin:8px 0;" id="joinUrlDisplay"></div>
-        </div>
-      </div>
-
-      <!-- Game Controls Panel -->
-      <div class="admin-panel" id="controlsPanel">
-        <h2>Game Controls</h2>
-        <div class="btn-row">
-          <button class="btn-sm primary" id="startBtn" disabled>Start</button>
-          <button class="btn-sm" id="pauseBtn" disabled>Pause</button>
-          <button class="btn-sm" id="resumeBtn" disabled>Resume</button>
-          <button class="btn-sm" id="skipBtn" disabled>Skip</button>
-          <button class="btn-sm" id="hintBtn" disabled>Hint</button>
-          <button class="btn-sm" id="scoresBtn" disabled>Scores</button>
-          <button class="btn-sm danger" id="stopBtn" disabled>Stop</button>
+        <div class="admin-section" id="controlsPanel">
+          <h3 class="section-label">Controls</h3>
+          <div class="btn-row" style="margin-top:0;">
+            <button class="btn-sm primary" id="startBtn" disabled>Start</button>
+            <button class="btn-sm" id="pauseBtn" disabled>Pause</button>
+            <button class="btn-sm" id="resumeBtn" disabled>Resume</button>
+            <button class="btn-sm" id="skipBtn" disabled>Skip</button>
+            <button class="btn-sm" id="hintBtn" disabled>Hint</button>
+            <button class="btn-sm" id="scoresBtn" disabled>Scores</button>
+            <button class="btn-sm danger" id="stopBtn" disabled>Stop</button>
+          </div>
         </div>
 
-        <div style="margin-top:20px;">
-          <h2>Send Message</h2>
+        <div class="admin-section">
           <div style="display:flex;gap:8px;min-width:0;">
-            <input type="text" id="adminMsg" placeholder="Bot announcement..." style="flex:1;min-width:0;">
+            <input type="text" id="adminMsg" placeholder="Send announcement..." style="flex:1;min-width:0;">
             <button class="btn-sm" id="sayBtn">Say</button>
           </div>
         </div>
+      </div>
 
-        <div style="margin-top:20px;">
-          <h2>Command Line</h2>
-          <div style="display:flex;gap:8px;min-width:0;">
-            <input type="text" id="cmdInput" placeholder="!command..." style="flex:1;min-width:0;">
-            <button class="btn-sm" id="cmdBtn">Run</button>
+      <!-- Right Column Stack -->
+      <div class="admin-stack">
+        <div class="admin-panel">
+          <h2>Players (<span id="playerCount">0</span>)</h2>
+          <ul class="player-list" id="adminPlayerList"></ul>
+          <div class="admin-section">
+            <h3 class="section-label">Scoreboard</h3>
+            <div id="adminScoreboard"></div>
           </div>
         </div>
-      </div>
 
-      <!-- Players Panel -->
-      <div class="admin-panel">
-        <h2>Players (<span id="playerCount">0</span>)</h2>
-        <ul class="player-list" id="adminPlayerList"></ul>
-
-        <div style="margin-top:20px;">
-          <h2>Scoreboard</h2>
-          <div id="adminScoreboard"></div>
-        </div>
-      </div>
-
-      <!-- Event Log Panel -->
-      <div class="admin-panel">
-        <h2>Event Log</h2>
-        <div class="admin-log" id="adminLog"></div>
-
-        <div style="margin-top:20px;">
-          <h2>Current Game Export</h2>
+        <div class="admin-panel">
+          <h2>Event Log</h2>
+          <div class="admin-log" id="adminLog"></div>
           <div class="btn-row">
-            <button class="btn-sm" id="exportLeadsBtn">Export Game Leads (CSV)</button>
-            <button class="btn-sm" id="exportScoresBtn">Export Game Scores (CSV)</button>
+            <button class="btn-sm" id="exportLeadsBtn">Export Leads</button>
+            <button class="btn-sm" id="exportScoresBtn">Export Scores</button>
           </div>
         </div>
       </div>
 
-      <!-- Global Stats Panel -->
+      <!-- Global Stats -->
       <div class="admin-panel admin-channel-view">
         <h2>Global Stats &amp; Leads</h2>
         <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
           <button class="btn-sm primary" id="loadGlobalStatsBtn">Refresh Stats</button>
-          <button class="btn-sm" id="exportGlobalLeadsBtn">Export All Leads (CSV)</button>
-          <button class="btn-sm" id="exportGlobalScoresBtn">Export Global Scores (CSV)</button>
+          <button class="btn-sm" id="exportGlobalLeadsBtn">Export All Leads</button>
+          <button class="btn-sm" id="exportGlobalScoresBtn">Export Global Scores</button>
           <button class="btn-sm danger" id="resetLeaderboardBtn">Reset All Data</button>
         </div>
 
-        <!-- Overview Cards -->
-        <div id="globalOverview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:20px;">
-          <div style="background:var(--bg-primary);border:1px solid var(--border);padding:12px;text-align:center;">
-            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Total Players</div>
-            <div style="font-size:24px;font-weight:700;color:var(--accent);" id="statTotalPlayers">-</div>
+        <div id="globalOverview" class="stat-cards">
+          <div class="stat-card">
+            <div class="stat-card-label">Total Players</div>
+            <div class="stat-card-value" id="statTotalPlayers">-</div>
           </div>
-          <div style="background:var(--bg-primary);border:1px solid var(--border);padding:12px;text-align:center;">
-            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Total Games</div>
-            <div style="font-size:24px;font-weight:700;color:var(--accent);" id="statTotalGames">-</div>
+          <div class="stat-card">
+            <div class="stat-card-label">Total Games</div>
+            <div class="stat-card-value" id="statTotalGames">-</div>
           </div>
-          <div style="background:var(--bg-primary);border:1px solid var(--border);padding:12px;text-align:center;">
-            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Points Awarded</div>
-            <div style="font-size:24px;font-weight:700;color:var(--accent);" id="statTotalPoints">-</div>
+          <div class="stat-card">
+            <div class="stat-card-label">Points Awarded</div>
+            <div class="stat-card-value" id="statTotalPoints">-</div>
           </div>
-          <div style="background:var(--bg-primary);border:1px solid var(--border);padding:12px;text-align:center;">
-            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Accuracy</div>
-            <div style="font-size:24px;font-weight:700;color:var(--accent);" id="statAccuracy">-</div>
+          <div class="stat-card">
+            <div class="stat-card-label">Accuracy</div>
+            <div class="stat-card-value" id="statAccuracy">-</div>
           </div>
         </div>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
-          <!-- Last Game -->
           <div>
-            <h2 style="color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">
-              Last Game Played
-            </h2>
+            <h3 class="section-label" style="border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">Last Game Played</h3>
             <div id="lastGameInfo" style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">No games finished yet</div>
             <div id="lastGameScores"></div>
           </div>
-
-          <!-- Global Leaderboard -->
           <div>
-            <h2 style="color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">
-              All-Time Leaderboard
-            </h2>
+            <h3 class="section-label" style="border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">All-Time Leaderboard</h3>
             <div id="globalLeaderboard"></div>
           </div>
         </div>
 
-        <!-- All Leads Table -->
-        <div style="margin-top:20px;">
-          <h2 style="color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">
+        <div style="margin-top:16px;">
+          <h3 class="section-label" style="border-bottom:1px solid var(--border);padding-bottom:6px;margin-bottom:10px;">
             All Collected Leads (<span id="leadsCount">0</span>)
-          </h2>
+          </h3>
           <div id="globalLeadsTable" style="max-height:300px;overflow-y:auto;overflow-x:auto;font-size:12px;-webkit-overflow-scrolling:touch;"></div>
         </div>
       </div>
@@ -268,7 +245,7 @@
         joinLink.href = joinUrl;
         joinLink.textContent = joinUrl;
         joinLink.target = '_blank';
-        joinLink.style.cssText = 'color:var(--accent);font-size:12px;word-break:break-all;';
+        joinLink.style.cssText = 'word-break:break-all;';
         joinContainer.appendChild(joinLink);
       } catch {}
     }
@@ -724,16 +701,6 @@
       if (msg) { sendCommand(`!say ${msg}`); document.getElementById('adminMsg').value = ''; }
     });
 
-    document.getElementById('cmdInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const cmd = document.getElementById('cmdInput').value.trim();
-        if (cmd) { sendCommand(cmd); document.getElementById('cmdInput').value = ''; }
-      }
-    });
-    document.getElementById('cmdBtn').addEventListener('click', () => {
-      const cmd = document.getElementById('cmdInput').value.trim();
-      if (cmd) { sendCommand(cmd); document.getElementById('cmdInput').value = ''; }
-    });
 
     // Export
     document.getElementById('exportLeadsBtn').addEventListener('click', async () => {

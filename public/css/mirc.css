@@ -368,6 +368,68 @@ select:focus-visible {
   opacity: 1;
 }
 
+/* ===== TENZOR LOGO BRANDING ===== */
+.brand-logo {
+  display: block;
+  margin: 0 auto;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.brand-logo:hover {
+  opacity: 1;
+}
+
+.brand-logo.vertical {
+  max-height: 90px;
+  margin-top: 28px;
+}
+
+.brand-logo.horizontal {
+  max-height: 32px;
+  margin-top: 24px;
+}
+
+.brand-logo.horizontal.small {
+  max-height: 22px;
+}
+
+.leaderboard-brand {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.leaderboard-brand .brand-logo {
+  max-height: 36px;
+}
+
+.game-brand {
+  position: fixed;
+  bottom: 42px;
+  right: 10px;
+  z-index: 5;
+  opacity: 0.25;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.game-brand .brand-logo {
+  max-height: 18px;
+  opacity: 1;
+}
+
+[data-theme="tenzor"] .brand-logo {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+@media (max-width: 600px) {
+  .brand-logo.vertical { max-height: 64px; }
+  .brand-logo.horizontal { max-height: 26px; }
+  .leaderboard-brand .brand-logo { max-height: 28px; }
+  .game-brand { bottom: 38px; right: 6px; }
+  .game-brand .brand-logo { max-height: 14px; }
+}
+
 .form-group {
   margin-bottom: 18px;
   text-align: left;
@@ -1083,32 +1145,80 @@ html.admin-view body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 24px;
+  padding: 10px 20px;
   background: var(--bg-channel-bar);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 50;
+  gap: 16px;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
 }
 
 .admin-header h1 {
   color: var(--accent);
-  font-size: 18px;
+  font-size: 16px;
   letter-spacing: 3px;
+  white-space: nowrap;
+}
+
+.admin-status-badge {
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.admin-header-right #joinUrlDisplay {
+  font-size: 11px;
+}
+
+.admin-header-right #joinUrlDisplay a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.admin-header-right #joinUrlDisplay a:hover {
+  color: var(--accent);
+}
+
+.header-qr {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.header-qr svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .admin-body {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  padding: 20px;
+  gap: 16px;
+  padding: 16px;
   flex: 1;
 }
 
 .admin-panel {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
-  padding: 20px;
+  padding: 16px;
   transition: border-color 0.2s;
 }
 
@@ -1121,8 +1231,8 @@ html.admin-view body {
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -1131,13 +1241,13 @@ html.admin-view body {
 .admin-panel input[type="password"],
 .admin-panel input[type="number"] {
   width: 100%;
-  padding: 8px 10px;
+  padding: 7px 10px;
   background: var(--bg-primary);
   border: 1px solid var(--border);
   color: var(--text-primary);
   font-family: inherit;
   font-size: 13px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   outline: none;
 }
 
@@ -1146,9 +1256,136 @@ html.admin-view body {
   border-color: var(--accent);
 }
 
+/* Compact layout utilities */
+.admin-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.section-label {
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.field-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.field-row {
+  display: flex;
+  gap: 12px;
+}
+
+.field-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 16px;
+  margin: 6px 0 10px;
+}
+
+.check-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.15s;
+}
+
+.check-label:hover {
+  color: var(--text-primary);
+}
+
+.upload-section {
+  margin: 8px 0;
+  border: 1px dashed var(--border);
+  background: var(--bg-primary);
+}
+
+.upload-section summary {
+  padding: 8px 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s;
+  list-style: none;
+}
+
+.upload-section summary::-webkit-details-marker {
+  display: none;
+}
+
+.upload-section summary::before {
+  content: '+';
+  display: inline-block;
+  width: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+
+.upload-section[open] summary::before {
+  content: '\2212';
+}
+
+.upload-section summary:hover {
+  color: var(--accent);
+}
+
+.upload-section-body {
+  padding: 0 10px 10px;
+}
+
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  padding: 10px;
+  text-align: center;
+}
+
+.stat-card-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-card-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
 .btn-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
   margin-top: 10px;
 }
@@ -1438,10 +1675,34 @@ html.admin-view body {
   }
 
   .admin-header {
-    flex-direction: column;
-    gap: 4px;
+    flex-wrap: wrap;
+    gap: 8px;
     padding: 10px 14px;
-    text-align: center;
+  }
+
+  .admin-header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .admin-header-right {
+    gap: 8px;
+  }
+
+  .header-qr {
+    width: 40px;
+    height: 40px;
+  }
+
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .checkbox-row {
+    flex-direction: column;
+    gap: 6px;
   }
 
   .btn-row {
