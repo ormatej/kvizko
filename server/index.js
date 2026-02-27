@@ -6,7 +6,6 @@ const { Server } = require('socket.io');
 const path = require('path');
 const fs = require('fs');
 const QRCode = require('qrcode');
-const { v4: uuidv4 } = require('uuid');
 const multer = require('multer');
 const { db, stmts } = require('./db');
 const { GameSession, loadQuestionFile, listQuestionFiles } = require('./game');
@@ -29,7 +28,8 @@ const io = new Server(server, {
 app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
-const games = new Map();
+const ROOM = 'channel';
+let channel = null; // current GameSession (singleton)
 
 function generateCode() {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -132,7 +132,7 @@ app.delete('/api/questions/:filename', (req, res) => {
   }
 });
 
-app.post('/api/games', (req, res) => {
+app.post('/api/channel/load', (req, res) => {
   if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
@@ -140,21 +140,33 @@ app.post('/api/games', (req, res) => {
   try {
     const questionData = loadQuestionFile(questionFile);
     const code = generateCode();
+
+    if (channel) {
+      channel.cancelRestart();
+      channel._clearTimers();
+      channel.onEvent = null;
+    }
+
     stmts.createGame.run(code, questionData.title, questionFile);
     const session = new GameSession(code, questionData, settings || {});
-    games.set(code, session);
+    channel = session;
     wireGameEvents(session);
-    const joinUrl = `${BASE_URL}/?game=${code}`;
-    res.json({ code, title: questionData.title, joinUrl, questionCount: questionData.questions.length, theme: session.theme });
+
+    io.to(ROOM).emit('channel:newgame', {
+      title: questionData.title,
+      theme: session.theme,
+      questionCount: questionData.questions.length
+    });
+
+    res.json({ title: questionData.title, questionCount: questionData.questions.length, theme: session.theme });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-app.get('/api/games/:code/qr', async (req, res) => {
-  const joinUrl = `${BASE_URL}/?game=${req.params.code}`;
+app.get('/api/qr', async (req, res) => {
   try {
-    const svg = await QRCode.toString(joinUrl, {
+    const svg = await QRCode.toString(BASE_URL, {
       type: 'svg',
       margin: 1,
       color: { dark: '#000000', light: '#00000000' }
@@ -165,18 +177,17 @@ app.get('/api/games/:code/qr', async (req, res) => {
   }
 });
 
-app.get('/api/games/:code', (req, res) => {
-  const session = games.get(req.params.code);
-  if (!session) return res.status(404).json({ error: 'Game not found' });
+app.get('/api/channel', (req, res) => {
+  if (!channel) return res.json({ active: false });
   res.json({
-    code: session.code,
-    title: session.title,
-    status: session.status,
-    theme: session.theme,
-    players: session.getConnectedPlayers().map(p => ({ nickname: p.nickname, color: p.color })),
-    scoreboard: session.getScoreboard(),
-    currentIndex: session.currentIndex,
-    totalQuestions: session.questions.length
+    active: true,
+    title: channel.title,
+    status: channel.status,
+    theme: channel.theme,
+    players: channel.getConnectedPlayers().map(p => ({ nickname: p.nickname, color: p.color })),
+    scoreboard: channel.getScoreboard(),
+    currentIndex: channel.currentIndex,
+    totalQuestions: channel.questions.length
   });
 });
 
@@ -251,30 +262,27 @@ app.delete('/api/leaderboard', (req, res) => {
   }
 });
 
-app.get('/api/admin/games', (req, res) => {
+app.get('/api/admin/channel', (req, res) => {
   if (req.headers['x-admin-password'] !== ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
-  const activeGames = [];
-  for (const [code, session] of games) {
-    activeGames.push({
-      code,
-      title: session.title,
-      status: session.status,
-      theme: session.theme,
-      playerCount: session.getConnectedPlayers().length,
-      totalQuestions: session.questions.length,
-      currentIndex: session.currentIndex
-    });
-  }
-  res.json(activeGames);
+  if (!channel) return res.json({ active: false });
+  res.json({
+    active: true,
+    title: channel.title,
+    status: channel.status,
+    theme: channel.theme,
+    playerCount: channel.getConnectedPlayers().length,
+    totalQuestions: channel.questions.length,
+    currentIndex: channel.currentIndex
+  });
 });
 
 // --- Socket.IO ---
 
 function wireGameEvents(session) {
   session.onEvent = (event, data) => {
-    io.to(`game:${session.code}`).emit(event, data);
+    io.to(ROOM).emit(event, data);
 
     if (event === 'game:ended') {
       stmts.endGame.run(session.code);
@@ -368,12 +376,12 @@ function wireGameEvents(session) {
 }
 
 io.on('connection', (socket) => {
-  let currentGame = null;
+  let inChannel = false;
   let isAdmin = false;
 
-  socket.on('join', ({ gameCode, nickname, email }, cb) => {
-    const session = games.get(gameCode);
-    if (!session) return cb?.({ error: 'Game not found' });
+  socket.on('join', ({ nickname, email }, cb) => {
+    if (!channel) return cb?.({ error: 'No game loaded yet. Waiting for the quiz master...' });
+    const session = channel;
     if (session.status === 'ended' && !session._restartTimer) return cb?.({ error: 'Game has already ended' });
 
     let dbPlayer = stmts.findPlayerByNickAndEmail.get(nickname, email || '');
@@ -385,10 +393,10 @@ io.on('connection', (socket) => {
     const existing = session.reconnectPlayer(socket.id, dbPlayer.id);
     const player = existing || session.addPlayer(socket.id, nickname, email, dbPlayer.id);
 
-    socket.join(`game:${gameCode}`);
-    currentGame = gameCode;
+    socket.join(ROOM);
+    inChannel = true;
 
-    const gameDbId = stmts.getGame.get(gameCode)?.id;
+    const gameDbId = stmts.getGame.get(session.code)?.id;
     if (gameDbId) {
       stmts.upsertScore.run(gameDbId, dbPlayer.id, player.points,
         player.correctAnswers, player.totalAnswers, player.streak, player.bestStreak);
@@ -414,19 +422,27 @@ io.on('connection', (socket) => {
       type: 'action',
       message: `${player.nickname} has joined #tenzor-kvizko (${joinEvent.playerCount} players)`
     });
-    socket.to(`game:${gameCode}`).emit('player:joined', joinEvent);
+    socket.to(ROOM).emit('player:joined', joinEvent);
   });
 
-  socket.on('admin:auth', ({ gameCode, password }, cb) => {
+  socket.on('admin:auth', ({ password }, cb) => {
     if (password !== ADMIN_PASSWORD) return cb?.({ error: 'Wrong password' });
-    const session = games.get(gameCode);
-    if (!session) return cb?.({ error: 'Game not found' });
     isAdmin = true;
-    currentGame = gameCode;
-    socket.join(`game:${gameCode}`);
-    socket.join(`admin:${gameCode}`);
+    inChannel = true;
+    socket.join(ROOM);
+    socket.join('admin');
+
+    const session = channel;
+    if (!session) {
+      return cb?.({
+        ok: true,
+        active: false
+      });
+    }
+
     cb?.({
       ok: true,
+      active: true,
       gameTitle: session.title,
       status: session.status,
       theme: session.theme,
@@ -437,17 +453,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('answer', ({ answer }, cb) => {
-    if (!currentGame) return;
-    const session = games.get(currentGame);
-    if (!session) return;
-    const result = session.submitAnswer(socket.id, answer);
+    if (!inChannel || !channel) return;
+    const result = channel.submitAnswer(socket.id, answer);
     cb?.(result);
   });
 
   socket.on('chat', ({ message }) => {
-    if (!currentGame) return;
-    const session = games.get(currentGame);
-    if (!session) return;
+    if (!inChannel || !channel) return;
+    const session = channel;
 
     if (isAdmin) {
       const cmd = parseCommand(message);
@@ -468,38 +481,33 @@ io.on('connection', (socket) => {
       timestamp: Date.now()
     };
     session.addToHistory(chatEntry);
-    io.to(`game:${currentGame}`).emit('chat:message', chatEntry);
+    io.to(ROOM).emit('chat:message', chatEntry);
   });
 
   socket.on('admin:command', ({ command }) => {
-    if (!isAdmin || !currentGame) return;
-    const session = games.get(currentGame);
-    if (!session) return;
+    if (!isAdmin || !channel) return;
     const cmd = parseCommand(command);
-    if (cmd) handleAdminCommand(session, cmd, socket);
+    if (cmd) handleAdminCommand(channel, cmd, socket);
   });
 
   socket.on('disconnect', () => {
-    if (!currentGame) return;
-    const session = games.get(currentGame);
-    if (!session) return;
-    const player = session.removePlayer(socket.id);
+    if (!inChannel || !channel) return;
+    const player = channel.removePlayer(socket.id);
     if (player) {
       const leftEvent = {
         nickname: player.nickname,
-        playerCount: session.getConnectedPlayers().length
+        playerCount: channel.getConnectedPlayers().length
       };
-      session.addToHistory({
+      channel.addToHistory({
         type: 'action',
         message: `${player.nickname} has left (${leftEvent.playerCount} players)`
       });
-      io.to(`game:${currentGame}`).emit('player:left', leftEvent);
+      io.to(ROOM).emit('player:left', leftEvent);
     }
   });
 });
 
 function handleAdminCommand(session, cmd, socket) {
-  const room = `game:${session.code}`;
   switch (cmd.action) {
     case 'start':
       if (session.start()) {
@@ -524,7 +532,7 @@ function handleAdminCommand(session, cmd, socket) {
       session.forceHint();
       break;
     case 'scores':
-      io.to(room).emit('scoreboard:update', { scoreboard: session.getScoreboard() });
+      io.to(ROOM).emit('scoreboard:update', { scoreboard: session.getScoreboard() });
       break;
     case 'kick':
       if (cmd.target) {
@@ -533,7 +541,7 @@ function handleAdminCommand(session, cmd, socket) {
             io.to(sid).emit('kicked', { reason: 'Kicked by admin' });
             const kickedSocket = io.sockets.sockets.get(sid);
             if (kickedSocket) kickedSocket.disconnect(true);
-            io.to(room).emit('chat:bot', { message: `${p.nickname} has been kicked.` });
+            io.to(ROOM).emit('chat:bot', { message: `${p.nickname} has been kicked.` });
             break;
           }
         }
@@ -542,7 +550,7 @@ function handleAdminCommand(session, cmd, socket) {
     case 'say':
       if (cmd.message) {
         session.addToHistory({ type: 'bot', message: cmd.message });
-        io.to(room).emit('chat:bot', { message: cmd.message });
+        io.to(ROOM).emit('chat:bot', { message: cmd.message });
       }
       break;
     case 'help':

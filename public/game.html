@@ -73,11 +73,10 @@
   (function() {
     'use strict';
 
-    const gameCode = new URLSearchParams(window.location.search).get('game');
     const nickname = sessionStorage.getItem('kvizko_nick');
     const email = sessionStorage.getItem('kvizko_email') || '';
 
-    if (!gameCode || !nickname) {
+    if (!nickname) {
       window.location.href = '/';
       return;
     }
@@ -132,7 +131,7 @@
     socket.on('connect', () => {
       statusConnection.textContent = 'Connected';
       statusConnection.style.color = '';
-      socket.emit('join', { gameCode, nickname, email }, (res) => {
+      socket.emit('join', { nickname, email }, (res) => {
         if (res.error) {
           addSystemMsg(`Error: ${res.error}`);
           return;
@@ -275,7 +274,7 @@
 
     async function loadSidebarQr() {
       try {
-        const res = await fetch(`/api/games/${gameCode}/qr`);
+        const res = await fetch('/api/qr');
         const svg = await res.text();
         sidebarQr.innerHTML = svg + '<div class="sidebar-qr-label">Scan to join</div>';
         mobileQrCorner.innerHTML = svg + '<div class="qr-label">Join</div>';
@@ -384,12 +383,12 @@
 
     socket.on('player:joined', (data) => {
       addActionMsg(`${data.nickname} has joined #tenzor-kvizko (${data.playerCount} players)`);
-      fetch(`/api/games/${gameCode}`).then(r => r.json()).then(d => updatePlayerList(d.players));
+      fetch('/api/channel').then(r => r.json()).then(d => { if (d.players) updatePlayerList(d.players); });
     });
 
     socket.on('player:left', (data) => {
       addActionMsg(`${data.nickname} has left (${data.playerCount} players)`);
-      fetch(`/api/games/${gameCode}`).then(r => r.json()).then(d => updatePlayerList(d.players));
+      fetch('/api/channel').then(r => r.json()).then(d => { if (d.players) updatePlayerList(d.players); });
     });
 
     socket.on('chat:message', (data) => {
@@ -487,7 +486,6 @@
 
       if (data.scoreboard) updateMyScore(data.scoreboard);
 
-      // Highlight correct ABCD button
       if (currentQuestionType === 'abcd') {
         const correctKey = data.answer.charAt(0);
         Object.keys(abcdBtns).forEach(k => {
@@ -520,17 +518,17 @@
       if (data.scoreboard && data.scoreboard.length) {
         addBotMsg('=== FINAL SCOREBOARD ===');
         data.scoreboard.forEach((s, i) => {
-          const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${s.rank}`;
-          addBotMsg(`${medal} ${s.nickname} — ${s.points} pts (${s.correct} correct)`);
+          const medal = i === 0 ? '\u{1F947}' : i === 1 ? '\u{1F948}' : i === 2 ? '\u{1F949}' : `#${s.rank}`;
+          addBotMsg(`${medal} ${s.nickname} \u{2014} ${s.points} pts (${s.correct} correct)`);
         });
       }
 
       if (data.scoreboard) updateMyScore(data.scoreboard);
       if (data.autoRestart) {
-        channelTopic.textContent = 'Game Over — New game starting soon...';
+        channelTopic.textContent = 'Game Over \u{2014} New game starting soon...';
         addSystemMsg('A new game will start automatically...');
       } else {
-        channelTopic.textContent = 'Game Over — Thanks for playing!';
+        channelTopic.textContent = 'Game Over \u{2014} Thanks for playing!';
       }
     });
 
@@ -543,6 +541,24 @@
       statusRank.textContent = 'Rank: -';
       answered = false;
       chatInput.disabled = false;
+    });
+
+    socket.on('channel:newgame', (data) => {
+      stopTimer();
+      myScore = 0;
+      myRank = '-';
+      statusScore.textContent = 'Score: 0';
+      statusRank.textContent = 'Rank: -';
+      answered = false;
+      chatInput.disabled = false;
+      currentQuestionType = null;
+      abcdBar.classList.add('hidden');
+      inputBar.classList.remove('hidden');
+
+      if (data.theme) document.documentElement.setAttribute('data-theme', data.theme);
+      channelTopic.textContent = data.title || 'Waiting for game to start...';
+      addActionMsg(`New quiz loaded: ${data.title} (${data.questionCount} questions)`);
+      addSystemMsg('Waiting for the quiz master to start the game...');
     });
 
     socket.on('scoreboard:update', (data) => {

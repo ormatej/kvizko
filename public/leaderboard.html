@@ -53,17 +53,17 @@
     <div class="podium hidden" id="podium">
       <div class="podium-place second" id="podium2">
         <div class="podium-rank">2</div>
-        <div class="podium-nick" id="podium2Nick">—</div>
+        <div class="podium-nick" id="podium2Nick">&mdash;</div>
         <div class="podium-score" id="podium2Score">0 pts</div>
       </div>
       <div class="podium-place first" id="podium1">
         <div class="podium-rank">1</div>
-        <div class="podium-nick" id="podium1Nick">—</div>
+        <div class="podium-nick" id="podium1Nick">&mdash;</div>
         <div class="podium-score" id="podium1Score">0 pts</div>
       </div>
       <div class="podium-place third" id="podium3">
         <div class="podium-rank">3</div>
-        <div class="podium-nick" id="podium3Nick">—</div>
+        <div class="podium-nick" id="podium3Nick">&mdash;</div>
         <div class="podium-score" id="podium3Score">0 pts</div>
       </div>
     </div>
@@ -107,12 +107,17 @@
     'use strict';
 
     const params = new URLSearchParams(window.location.search);
-    const gameCode = params.get('game');
     const mode = params.get('mode') || 'game'; // 'game' or 'alltime'
 
     const podium = document.getElementById('podium');
     const scoreBody = document.getElementById('scoreBody');
     const gameTitle = document.getElementById('gameTitle');
+
+    // Load QR (always the same root URL)
+    fetch('/api/qr')
+      .then(r => r.text())
+      .then(svg => { document.getElementById('qrCode').innerHTML = svg; })
+      .catch(() => {});
 
     if (mode === 'alltime') {
       document.querySelector('.live-badge').textContent = 'ALL TIME';
@@ -129,31 +134,24 @@
       return;
     }
 
-    if (!gameCode) {
-      gameTitle.textContent = 'No game code provided. Add ?game=CODE to URL.';
-      return;
-    }
-
-    // Load QR
-    fetch(`/api/games/${gameCode}/qr`)
-      .then(r => r.text())
-      .then(svg => { document.getElementById('qrCode').innerHTML = svg; })
-      .catch(() => {});
-
-    // Socket connection
-    const socket = io();
-
-    fetch(`/api/games/${gameCode}`)
+    // Live mode -- connect to channel
+    fetch('/api/channel')
       .then(r => r.json())
       .then(data => {
         if (data.theme) document.documentElement.setAttribute('data-theme', data.theme);
+        if (data.active) {
+          gameTitle.textContent = data.title || 'Kvizko Game';
+          if (data.scoreboard) renderScoreboard(data.scoreboard);
+        }
       })
       .catch(() => {});
 
+    const socket = io();
+
     socket.on('connect', () => {
-      socket.emit('join', { gameCode, nickname: `Leaderboard_${Date.now()}`, email: '' }, (res) => {
+      socket.emit('join', { nickname: `Leaderboard_${Date.now()}`, email: '' }, (res) => {
         if (res.error) {
-          gameTitle.textContent = `Error: ${res.error}`;
+          gameTitle.textContent = 'Waiting for quiz master to load a game...';
           return;
         }
         if (res.theme) document.documentElement.setAttribute('data-theme', res.theme);
@@ -187,11 +185,21 @@
       podium.classList.add('hidden');
     });
 
+    socket.on('channel:newgame', (data) => {
+      const badge = document.querySelector('.live-badge');
+      badge.textContent = 'LIVE';
+      badge.classList.remove('final');
+      gameTitle.textContent = data.title || 'Kvizko Game';
+      if (data.theme) document.documentElement.setAttribute('data-theme', data.theme);
+      scoreBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:40px;">New quiz loaded. Waiting to start...</td></tr>';
+      podium.classList.add('hidden');
+    });
+
     async function refreshFull() {
       try {
-        const res = await fetch(`/api/games/${gameCode}`);
+        const res = await fetch('/api/channel');
         const data = await res.json();
-        if (data.scoreboard) renderScoreboard(data.scoreboard);
+        if (data.active && data.scoreboard) renderScoreboard(data.scoreboard);
       } catch {}
     }
 

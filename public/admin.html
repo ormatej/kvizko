@@ -29,7 +29,6 @@
     <div class="admin-header">
       <h1>KVIZKO ADMIN</h1>
       <div>
-        <span id="adminGameCode" style="color:var(--accent);font-size:14px;margin-right:16px;"></span>
         <span id="adminGameStatus" style="color:var(--text-muted);font-size:13px;"></span>
       </div>
     </div>
@@ -79,14 +78,12 @@
             <option value="tenzor">Tenzor (Dark / Red / Grey)</option>
           </select>
 
-          <button class="btn" id="createGameBtn" style="margin-top:10px;">CREATE GAME</button>
+          <button class="btn" id="loadQuestionsBtn" style="margin-top:10px;">LOAD QUESTIONS</button>
         </div>
 
-        <div class="hidden" id="gameCreated" style="margin-top:20px;">
-          <div class="game-code-display" id="displayCode"></div>
-          <div id="qrContainer" style="text-align:center;margin:10px 0;max-width:160px;margin-left:auto;margin-right:auto;"></div>
-          <div style="text-align:center;margin:8px 0;" id="joinUrlDisplay"></div>
-          <button class="btn hidden" id="newGameBtn" style="margin-top:14px;background:var(--text-error);">NEW GAME</button>
+        <div id="qrSection" style="margin-top:20px;text-align:center;">
+          <div id="qrContainer" style="max-width:160px;margin:10px auto;"></div>
+          <div style="margin:8px 0;" id="joinUrlDisplay"></div>
         </div>
       </div>
 
@@ -227,8 +224,8 @@
     'use strict';
 
     let adminPassword = '';
-    let currentGameCode = null;
     let socket = null;
+    let gameLoaded = false;
 
     const authScreen = document.getElementById('authScreen');
     const adminDashboard = document.getElementById('adminDashboard');
@@ -239,43 +236,40 @@
       adminDashboard.classList.remove('hidden');
       loadQuestionSets();
       loadGlobalStats();
+      loadQrCode();
 
       try {
-        const gamesRes = await fetch('/api/admin/games', {
+        const res = await fetch('/api/admin/channel', {
           headers: { 'x-admin-password': adminPassword }
         });
-        const activeGames = await gamesRes.json();
-        if (activeGames.length > 0) {
-          const game = activeGames[0];
-          currentGameCode = game.code;
-          sessionStorage.setItem('kvizko_admin_game', game.code);
-          document.getElementById('displayCode').textContent = game.code;
-          document.getElementById('adminGameCode').textContent = `Game: ${game.code}`;
-          document.getElementById('adminGameStatus').textContent = `Status: ${game.status}`;
-
-          const joinUrl = `${window.location.origin}/?game=${game.code}`;
-          const joinContainer = document.getElementById('joinUrlDisplay');
-          joinContainer.innerHTML = '';
-          const joinLink = document.createElement('a');
-          joinLink.href = joinUrl;
-          joinLink.textContent = joinUrl;
-          joinLink.target = '_blank';
-          joinLink.style.cssText = 'color:var(--accent);font-size:12px;word-break:break-all;';
-          joinContainer.appendChild(joinLink);
-
-          fetch(`/api/games/${game.code}/qr`)
-            .then(r => r.text())
-            .then(svg => { document.getElementById('qrContainer').innerHTML = svg; })
-            .catch(() => {});
-
-          document.getElementById('setupForm').classList.add('hidden');
-          document.getElementById('gameCreated').classList.remove('hidden');
-          if (game.theme) document.documentElement.setAttribute('data-theme', game.theme);
-
-          connectSocket(game.code);
+        const channelData = await res.json();
+        if (channelData.active) {
+          gameLoaded = true;
+          document.getElementById('adminGameStatus').textContent = `Status: ${channelData.status}`;
+          if (channelData.theme) document.documentElement.setAttribute('data-theme', channelData.theme);
           enableControls(true);
-          log(`Reconnected to game: ${game.code} (${game.title}, ${game.status})`);
+          log(`Reconnected to channel (${channelData.title}, ${channelData.status})`);
         }
+      } catch {}
+
+      connectSocket();
+    }
+
+    async function loadQrCode() {
+      try {
+        const qrRes = await fetch('/api/qr');
+        const qrSvg = await qrRes.text();
+        document.getElementById('qrContainer').innerHTML = qrSvg;
+
+        const joinUrl = window.location.origin;
+        const joinContainer = document.getElementById('joinUrlDisplay');
+        joinContainer.innerHTML = '';
+        const joinLink = document.createElement('a');
+        joinLink.href = joinUrl;
+        joinLink.textContent = joinUrl;
+        joinLink.target = '_blank';
+        joinLink.style.cssText = 'color:var(--accent);font-size:12px;word-break:break-all;';
+        joinContainer.appendChild(joinLink);
       } catch {}
     }
 
@@ -373,8 +367,8 @@
       }
     });
 
-    // Create Game
-    document.getElementById('createGameBtn').addEventListener('click', async () => {
+    // Load Questions into Channel
+    document.getElementById('loadQuestionsBtn').addEventListener('click', async () => {
       const questionFile = document.getElementById('questionSelect').value;
       if (!questionFile) return;
 
@@ -388,7 +382,7 @@
       };
 
       try {
-        const res = await fetch('/api/games', {
+        const res = await fetch('/api/channel/load', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPassword },
           body: JSON.stringify({ questionFile, settings })
@@ -396,33 +390,16 @@
         const data = await res.json();
         if (data.error) throw new Error(data.error);
 
-        currentGameCode = data.code;
-        sessionStorage.setItem('kvizko_admin_game', data.code);
-        document.getElementById('displayCode').textContent = data.code;
-
-        const joinLink = document.createElement('a');
-        joinLink.href = data.joinUrl;
-        joinLink.textContent = data.joinUrl;
-        joinLink.target = '_blank';
-        joinLink.style.cssText = 'color:var(--accent);font-size:12px;word-break:break-all;';
-        const joinContainer = document.getElementById('joinUrlDisplay');
-        joinContainer.innerHTML = '';
-        joinContainer.appendChild(joinLink);
-
-        document.getElementById('adminGameCode').textContent = `Game: ${data.code}`;
+        gameLoaded = true;
         document.getElementById('adminGameStatus').textContent = 'Status: waiting';
-
-        const qrRes = await fetch(`/api/games/${data.code}/qr`);
-        const qrSvg = await qrRes.text();
-        document.getElementById('qrContainer').innerHTML = qrSvg;
-
-        document.getElementById('setupForm').classList.add('hidden');
-        document.getElementById('gameCreated').classList.remove('hidden');
         document.documentElement.setAttribute('data-theme', theme);
 
-        connectSocket(data.code);
+        if (socket && socket.connected) {
+          socket.emit('admin:auth', { password: adminPassword }, () => {});
+        }
+
         enableControls(true);
-        log(`Game created: ${data.code} (${data.questionCount} questions)`);
+        log(`Questions loaded: ${data.title} (${data.questionCount} questions)`);
 
         const controlsPanel = document.getElementById('controlsPanel');
         if (controlsPanel) {
@@ -496,7 +473,7 @@
       cvTimerBar.classList.add('hidden');
     }
 
-    function connectSocket(code) {
+    function connectSocket() {
       if (socket) { socket.disconnect(); socket = null; }
       socket = io({
         reconnection: true,
@@ -513,16 +490,18 @@
       });
 
       socket.on('connect', () => {
-        socket.emit('admin:auth', { gameCode: code, password: adminPassword }, (res) => {
+        socket.emit('admin:auth', { password: adminPassword }, (res) => {
           if (res.error) {
             log(`Auth error: ${res.error}`);
             return;
           }
           log('Connected as admin');
           cvSystem('Connected to channel #tenzor-kvizko as admin');
-          cvTopic.textContent = res.gameTitle || 'Kvizko Game';
-          updatePlayers(res.players);
-          updateScoreboard(res.scoreboard);
+          if (res.active) {
+            cvTopic.textContent = res.gameTitle || 'Kvizko Game';
+            updatePlayers(res.players);
+            updateScoreboard(res.scoreboard);
+          }
         });
       });
 
@@ -563,9 +542,9 @@
       });
 
       socket.on('round:correct', (data) => {
-        log(`✓ ${data.nickname} answered correctly (+${data.points} pts)`);
+        log(`\u2713 ${data.nickname} answered correctly (+${data.points} pts)`);
         cvStopTimer();
-        const streakText = data.streak >= 3 ? ` 🔥 ${data.streak} streak!` : '';
+        const streakText = data.streak >= 3 ? ` \u{1F525} ${data.streak} streak!` : '';
         cvAdd(`<span class="timestamp">${cvTime()}</span> * <span class="correct-text">${escHtml(data.nickname)} got it right! +${data.points} pts (${(data.timeMs/1000).toFixed(1)}s)${streakText}</span>`);
         refreshGameState();
       });
@@ -576,7 +555,7 @@
       });
 
       socket.on('round:wrong', (data) => {
-        log(`✗ ${data.nickname} wrong: "${data.answer}"`);
+        log(`\u2717 ${data.nickname} wrong: "${data.answer}"`);
         cvAdd(`<span class="timestamp">${cvTime()}</span> <span class="nick" style="color:${data.color}">&lt;${escHtml(data.nickname)}&gt;</span> <span class="wrong-text">${escHtml(data.answer)}</span>`);
       });
 
@@ -626,23 +605,22 @@
         if (data.scoreboard && data.scoreboard.length) {
           cvBot('=== FINAL SCOREBOARD ===');
           data.scoreboard.forEach((s, i) => {
-            const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${s.rank}`;
-            cvBot(`${medal} ${s.nickname} — ${s.points} pts (${s.correct} correct)`);
+            const medal = i === 0 ? '\u{1F947}' : i === 1 ? '\u{1F948}' : i === 2 ? '\u{1F949}' : `#${s.rank}`;
+            cvBot(`${medal} ${s.nickname} \u{2014} ${s.points} pts (${s.correct} correct)`);
           });
         }
         if (data.autoRestart) {
           document.getElementById('adminGameStatus').textContent = 'Status: ended (restarting...)';
           log('New game will start automatically in 15 seconds...');
           cvSystem('A new game will start automatically...');
-          cvTopic.textContent = 'Game Over — New game starting soon...';
+          cvTopic.textContent = 'Game Over \u{2014} New game starting soon...';
         } else {
           document.getElementById('adminGameStatus').textContent = 'Status: ended';
-          cvTopic.textContent = 'Game Over — Thanks for playing!';
+          cvTopic.textContent = 'Game Over \u{2014} Thanks for playing!';
         }
         if (data.scoreboard) updateScoreboard(data.scoreboard);
         if (!data.autoRestart) {
           enableControls(false);
-          document.getElementById('newGameBtn').classList.remove('hidden');
         }
         setTimeout(loadGlobalStats, 1000);
       });
@@ -652,6 +630,17 @@
         document.getElementById('adminGameStatus').textContent = 'Status: restarting';
         cvAction(`New game starting in ${data.seconds} seconds!`);
         cvTopic.textContent = 'New game starting...';
+        updateScoreboard([]);
+        enableControls(true);
+      });
+
+      socket.on('channel:newgame', (data) => {
+        log(`New quiz loaded: ${data.title} (${data.questionCount} questions)`);
+        cvStopTimer();
+        cvAction(`New quiz loaded: ${data.title} (${data.questionCount} questions)`);
+        cvTopic.textContent = data.title || 'Waiting for game to start...';
+        document.getElementById('adminGameStatus').textContent = 'Status: waiting';
+        if (data.theme) document.documentElement.setAttribute('data-theme', data.theme);
         updateScoreboard([]);
         enableControls(true);
       });
@@ -674,12 +663,13 @@
     }
 
     async function refreshGameState() {
-      if (!currentGameCode) return;
       try {
-        const res = await fetch(`/api/games/${currentGameCode}`);
+        const res = await fetch('/api/channel');
         const data = await res.json();
-        updatePlayers(data.players);
-        updateScoreboard(data.scoreboard);
+        if (data.active) {
+          updatePlayers(data.players);
+          updateScoreboard(data.scoreboard);
+        }
       } catch {}
     }
 
@@ -702,8 +692,8 @@
         return;
       }
       container.innerHTML = scoreboard.map((s, i) => {
-        const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${s.rank}`;
-        return `<div style="padding:3px 0;font-size:13px;"><span style="color:${s.color || 'var(--text-muted)'}">${medal} ${s.nickname}</span> — <span style="color:var(--accent)">${s.points} pts</span> (${s.correct} correct)</div>`;
+        const medal = i === 0 ? '\u{1F947}' : i === 1 ? '\u{1F948}' : i === 2 ? '\u{1F949}' : `#${s.rank}`;
+        return `<div style="padding:3px 0;font-size:13px;"><span style="color:${s.color || 'var(--text-muted)'}">${medal} ${s.nickname}</span> \u{2014} <span style="color:var(--accent)">${s.points} pts</span> (${s.correct} correct)</div>`;
       }).join('');
     }
 
@@ -714,7 +704,7 @@
     }
 
     function sendCommand(cmd) {
-      if (!socket || !currentGameCode) return;
+      if (!socket) return;
       socket.emit('admin:command', { command: cmd });
       log(`> ${cmd}`);
     }
@@ -747,26 +737,26 @@
 
     // Export
     document.getElementById('exportLeadsBtn').addEventListener('click', async () => {
-      if (!currentGameCode) return;
       try {
-        const res = await fetch(`/api/games/${currentGameCode}`);
+        const res = await fetch('/api/channel');
         const data = await res.json();
+        if (!data.active) return;
         const players = data.players || [];
         let csv = 'Nickname,Email\n';
         players.forEach(p => { csv += `"${p.nickname}","${p.email || ''}"\n`; });
-        downloadCSV(csv, `kvizko-leads-${currentGameCode}.csv`);
+        downloadCSV(csv, 'kvizko-leads.csv');
       } catch {}
     });
 
     document.getElementById('exportScoresBtn').addEventListener('click', async () => {
-      if (!currentGameCode) return;
       try {
-        const res = await fetch(`/api/games/${currentGameCode}`);
+        const res = await fetch('/api/channel');
         const data = await res.json();
+        if (!data.active) return;
         const scores = data.scoreboard || [];
         let csv = 'Rank,Nickname,Points,Correct\n';
         scores.forEach(s => { csv += `${s.rank},"${s.nickname}",${s.points},${s.correct}\n`; });
-        downloadCSV(csv, `kvizko-scores-${currentGameCode}.csv`);
+        downloadCSV(csv, 'kvizko-scores.csv');
       } catch {}
     });
 
@@ -803,12 +793,11 @@
           : '-';
         document.getElementById('statAccuracy').textContent = acc;
 
-        // Last game
         const lgInfo = document.getElementById('lastGameInfo');
         const lgScores = document.getElementById('lastGameScores');
         if (stats.lastGame) {
           const lg = stats.lastGame;
-          lgInfo.innerHTML = `<strong style="color:var(--text-primary);">${escHtml(lg.title || lg.code)}</strong> &mdash; Code: ${escHtml(lg.code)}<br>Ended: ${lg.ended_at || 'N/A'}`;
+          lgInfo.innerHTML = `<strong style="color:var(--text-primary);">${escHtml(lg.title || lg.code)}</strong> &mdash; Ended: ${lg.ended_at || 'N/A'}`;
           if (stats.lastGameScores && stats.lastGameScores.length) {
             lgScores.innerHTML = stats.lastGameScores.map((s, i) => {
               const medal = i === 0 ? '&#x1F947;' : i === 1 ? '&#x1F948;' : i === 2 ? '&#x1F949;' : `#${i+1}`;
@@ -823,7 +812,6 @@
           lgScores.innerHTML = '';
         }
 
-        // Global leaderboard
         const glb = document.getElementById('globalLeaderboard');
         if (stats.leaderboard && stats.leaderboard.length) {
           glb.innerHTML = stats.leaderboard.map((s, i) => {
@@ -835,7 +823,6 @@
           glb.innerHTML = '<div style="color:var(--text-muted);font-size:12px;">No data yet</div>';
         }
 
-        // Leads table
         const leadsTable = document.getElementById('globalLeadsTable');
         document.getElementById('leadsCount').textContent = leads.length;
         if (leads.length) {
@@ -844,10 +831,10 @@
           leads.forEach(l => {
             html += `<tr style="border-bottom:1px solid var(--border);">
               <td style="padding:4px 6px;">${escHtml(l.nickname)}</td>
-              <td style="padding:4px 6px;color:var(--text-muted);">${escHtml(l.email || '—')}</td>
+              <td style="padding:4px 6px;color:var(--text-muted);">${escHtml(l.email || '\u{2014}')}</td>
               <td style="padding:4px 6px;text-align:center;">${l.games_played}</td>
               <td style="padding:4px 6px;text-align:right;color:var(--accent);">${l.total_points}</td>
-              <td style="padding:4px 6px;color:var(--text-muted);font-size:11px;">${l.last_played || '—'}</td>
+              <td style="padding:4px 6px;color:var(--text-muted);font-size:11px;">${l.last_played || '\u{2014}'}</td>
             </tr>`;
           });
           html += '</tbody></table>';
@@ -864,7 +851,6 @@
 
     document.getElementById('loadGlobalStatsBtn').addEventListener('click', loadGlobalStats);
 
-    // Export global leads as CSV (server-generated)
     document.getElementById('exportGlobalLeadsBtn').addEventListener('click', async () => {
       try {
         const res = await fetch('/api/leads/csv', {
@@ -884,7 +870,6 @@
       }
     });
 
-    // Export global scores as CSV
     document.getElementById('exportGlobalScoresBtn').addEventListener('click', async () => {
       try {
         const res = await fetch('/api/global-stats', {
@@ -905,7 +890,6 @@
       }
     });
 
-    // Reset Leaderboard
     document.getElementById('resetLeaderboardBtn').addEventListener('click', async () => {
       if (!confirm('This will delete ALL game scores, answer logs, and game history. Continue?')) return;
       try {
@@ -922,29 +906,7 @@
       }
     });
 
-    // New Game — reset setup panel
-    function resetSetup() {
-      if (socket) { socket.disconnect(); socket = null; }
-      currentGameCode = null;
-      sessionStorage.removeItem('kvizko_admin_game');
-      document.getElementById('setupForm').classList.remove('hidden');
-      document.getElementById('gameCreated').classList.add('hidden');
-      document.getElementById('newGameBtn').classList.add('hidden');
-      document.getElementById('adminGameCode').textContent = '';
-      document.getElementById('adminGameStatus').textContent = '';
-      document.getElementById('displayCode').textContent = '';
-      document.getElementById('qrContainer').innerHTML = '';
-      document.getElementById('joinUrlDisplay').innerHTML = '';
-      document.getElementById('adminPlayerList').innerHTML = '';
-      document.getElementById('playerCount').textContent = '0';
-      document.getElementById('adminScoreboard').innerHTML = '<div style="color:var(--text-muted);font-size:12px;">No scores yet</div>';
-      enableControls(false);
-      loadQuestionSets();
-    }
-
-    document.getElementById('newGameBtn').addEventListener('click', resetSetup);
-
-    // Theme — persist last selection
+    // Theme -- persist last selection
     const savedTheme = localStorage.getItem('kvizko_theme');
     if (savedTheme) {
       document.getElementById('themeSelect').value = savedTheme;
