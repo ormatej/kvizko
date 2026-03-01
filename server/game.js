@@ -93,12 +93,12 @@ class GameSession {
     this.questionsPerGame = settings.questionsPerGame || qs.questionsPerGame || 10;
     this.theme = settings.theme || 'default';
 
-    let questions = questionData.questions || [];
-    if (this.shuffleQuestions) questions = shuffleArray(questions);
-    if (this.questionsPerGame > 0 && this.questionsPerGame < questions.length) {
-      questions = questions.slice(0, this.questionsPerGame);
-    }
-    this.questions = questions;
+    this._originalQuestions = questionData.questions || [];
+    this._deck = this.shuffleQuestions
+      ? shuffleArray(this._originalQuestions)
+      : [...this._originalQuestions];
+    this._deckPosition = 0;
+    this.questions = this._deal();
 
     this.currentIndex = -1;
     this.currentQuestion = null;
@@ -108,12 +108,28 @@ class GameSession {
     this.roundAnswers = new Map();
     this._roundParticipants = new Set();
     this.isPaused = false;
-    this._originalQuestions = questionData.questions || [];
     this._restartTimer = null;
 
-    this._usedQuestionIndices = new Set();
     this.chatHistory = [];
     this.onEvent = null;
+  }
+
+  _deal() {
+    const count = (this.questionsPerGame > 0 && this.questionsPerGame < this._originalQuestions.length)
+      ? this.questionsPerGame
+      : this._originalQuestions.length;
+
+    const dealt = [];
+    for (let i = 0; i < count; i++) {
+      if (this._deckPosition >= this._deck.length) {
+        this._deck = this.shuffleQuestions
+          ? shuffleArray(this._originalQuestions)
+          : [...this._originalQuestions];
+        this._deckPosition = 0;
+      }
+      dealt.push(this._deck[this._deckPosition++]);
+    }
+    return dealt;
   }
 
   addToHistory(entry) {
@@ -237,22 +253,7 @@ class GameSession {
       player.bestStreak = 0;
     }
 
-    let available = this._originalQuestions.filter((_, i) => !this._usedQuestionIndices.has(i));
-    if (available.length === 0) {
-      this._usedQuestionIndices.clear();
-      available = [...this._originalQuestions];
-    }
-
-    let questions;
-    if (this.shuffleQuestions) {
-      questions = shuffleArray(available);
-    } else {
-      questions = [...available];
-    }
-    if (this.questionsPerGame > 0 && this.questionsPerGame < questions.length) {
-      questions = questions.slice(0, this.questionsPerGame);
-    }
-    this.questions = questions;
+    this.questions = this._deal();
 
     this.currentIndex = -1;
     this.currentQuestion = null;
@@ -294,8 +295,6 @@ class GameSession {
     }
 
     this.currentQuestion = this.questions[this.currentIndex];
-    const origIdx = this._originalQuestions.indexOf(this.currentQuestion);
-    if (origIdx !== -1) this._usedQuestionIndices.add(origIdx);
     this.questionStartTime = Date.now();
     this.roundAnswers = new Map();
     this._roundParticipants = new Set();
