@@ -141,6 +141,10 @@ app.post('/api/channel/load', (req, res) => {
     const questionData = loadQuestionFile(questionFile);
     const code = generateCode();
 
+    const oldPlayers = channel
+      ? [...channel.players.values()].filter(p => p.connected)
+      : [];
+
     if (channel) {
       channel.cancelRestart();
       channel._clearTimers();
@@ -151,6 +155,10 @@ app.post('/api/channel/load', (req, res) => {
     const session = new GameSession(code, questionData, settings || {});
     channel = session;
     wireGameEvents(session);
+
+    for (const p of oldPlayers) {
+      session.addPlayer(p.socketId, p.nickname, p.email, p.playerId);
+    }
 
     io.to(ROOM).emit('channel:newgame', {
       title: questionData.title,
