@@ -111,6 +111,7 @@ class GameSession {
     this._originalQuestions = questionData.questions || [];
     this._restartTimer = null;
 
+    this._usedQuestionIndices = new Set();
     this.chatHistory = [];
     this.onEvent = null;
   }
@@ -236,11 +237,17 @@ class GameSession {
       player.bestStreak = 0;
     }
 
+    let available = this._originalQuestions.filter((_, i) => !this._usedQuestionIndices.has(i));
+    if (available.length === 0) {
+      this._usedQuestionIndices.clear();
+      available = [...this._originalQuestions];
+    }
+
     let questions;
     if (this.shuffleQuestions) {
-      questions = shuffleArray(this._originalQuestions);
+      questions = shuffleArray(available);
     } else {
-      questions = [...this._originalQuestions];
+      questions = [...available];
     }
     if (this.questionsPerGame > 0 && this.questionsPerGame < questions.length) {
       questions = questions.slice(0, this.questionsPerGame);
@@ -287,6 +294,8 @@ class GameSession {
     }
 
     this.currentQuestion = this.questions[this.currentIndex];
+    const origIdx = this._originalQuestions.indexOf(this.currentQuestion);
+    if (origIdx !== -1) this._usedQuestionIndices.add(origIdx);
     this.questionStartTime = Date.now();
     this.roundAnswers = new Map();
     this._roundParticipants = new Set();
